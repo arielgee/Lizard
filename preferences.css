@@ -1,0 +1,49 @@
+﻿body {
+  font-family: Tahoma, Verdana, Segoe, sans-serif !important;
+  font-size: 16px !important;        /*13.75px*/
+  font-weight: normal !important;
+  max-width: 650px !important;
+}
+
+input[type="checkbox"] {
+  width: 20px !important;
+  height: 20px !important;
+  margin: 0 !important;
+}
+
+input[type="color"] {
+  width: 40px !important;
+  height: 20px !important;
+  border: 1px solid black !important;
+  padding: 1px !important;
+  background-color: white !important;
+}
+
+.caption {
+    font-size: 22.5px !important;
+    margin-bottom: 30px !important;
+}
+.preference {
+    height: 20px !important;
+    padding-bottom: 50px !important;
+    margin-bottom: 25px !important;
+    border-bottom: 1px solid lightgray !important;
+}
+
+.preferenceLabel {
+    height: 20px !important;
+    line-height: 20px !important;
+}
+
+.preferenceControl {    
+    float: right !important;
+    height: 20px !important;
+}  
+
+#btnDefaults {
+    float: right !important;
+    background-color: rgb(251, 251, 251) !important;
+    border: 1px solid rgb(193, 193, 193) !important;
+    border-radius: 2px !important;
+    height: 30px !important;
+}

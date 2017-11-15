@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="preferences.css" />
+    <script src="common.js"></script>
+    <script src="preferences.js"></script>
+</head>
+<body>
+
+    <label class="caption">Options</label>
+
+    <div class="preference">
+        <label for="helpBoxOnStart" class="preferenceLabel">Show help box on session start:</label>
+        <div class="preferenceControl">
+            <input type="checkbox" id="helpBoxOnStart" />
+        </div>
+    </div>
+
+    <div class="preference">
+        <label class="preferenceLabel">Colorize colors:</label>
+        <div class="preferenceControl">
+            <input type="color" id="colorizeColor" /> on <input type="color" id="colorizeBackgroundColor" />
+        </div>
+    </div>
+
+    <div class="preference">
+        <label class="preferenceLabel">Decolorize colors:</label>
+        <div class="preferenceControl">
+            <input type="color" id="decolorizeColor" /> on <input type="color" id="decolorizeBackgroundColor" />
+        </div>
+    </div>
+
+    <div class="preference">
+        <button type="button" id="btnDefaults" class="addon-control">Restore Defaults</button>
+    </div>
+
+</body>
+</html>

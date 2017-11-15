@@ -1,0 +1,70 @@
+{
+  "manifest_version": 2,
+  "applications": {
+    "gecko": {
+      "id": "lizard@webExtension.arielg.il",
+      "strict_min_version": "56.0"
+    }
+  },
+  "name": "Lizard",
+  "version": "1.0",
+  "description": "Selecting elements in a web page.\n\nShamelessly borrowed from 'Aardvark' and 'Element Hiding Helper for Adblock Plus' when I was lacking.",
+  "author": "arielg",
+
+  "permissions": [
+    "activeTab",
+    "menus",
+    "clipboardWrite",
+    "<all_urls>",
+    "storage"
+  ],
+
+  "icons": {
+    "32": "icons/lizard-32.png",
+    "48": "icons/lizard-48.png"
+  },
+
+  "web_accessible_resources": [
+    "icons/lizard-32.png",
+    "icons/lizard-48.png"
+  ],
+
+  "browser_action": {
+    "default_icon": "icons/lizard-32.png",
+    "default_title": "Lizard",
+    "browser_style": true
+  },
+
+  "commands": {
+    "kb-toggle-lizard-state": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L"
+      },
+      "description": "Start Lizard Session"
+    },
+    "kb-reload-lizard-extension": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Down"
+      },
+      "description": "Reload Lizard Extension"
+    }
+  },
+
+  "background": {
+    "scripts": [ "common.js", "background.js" ]
+  },
+
+  "content_scripts": [
+    {
+      "matches": [ "<all_urls>" ],
+      "js": [ "common.js", "content.js" ],
+      "css": [ "content.css" ],
+      "run_at": "document_end"
+    }
+  ],
+
+  "options_ui": {
+    "page": "preferences.html",
+    "browser_style": true
+  }
+}
