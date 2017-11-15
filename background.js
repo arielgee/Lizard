@@ -47,7 +47,7 @@ browser.commands.onCommand.addListener(function (command) {
 });
 
 //////////////////////////////////////////////////////////////////////
-// Handle messages from lizard's content script
+// Handle messages from content script
 browser.runtime.onMessage.addListener((message) => {
 
 	switch (message.type) {
