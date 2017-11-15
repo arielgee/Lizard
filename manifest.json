@@ -8,7 +8,7 @@
   },
   "name": "Lizard",
   "version": "1.0",
-  "description": "Selecting elements in a web page.\n\nShamelessly borrowed from 'Aardvark' and 'Element Hiding Helper for Adblock Plus' when I was lacking.",
+  "description": "Selecting elements in a page and removing the annoying ones.\n\nSomething similar to the 'Aardvark' and 'Element Hiding Helper for Adblock Plus'.",
   "author": "arielg",
 
   "permissions": [
