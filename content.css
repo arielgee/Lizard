@@ -47,6 +47,7 @@
 }
 
 #lizardBoxBorder {
+	box-sizing: border-box !important;
 	position: static !important;
 	display: block !important;
 	border: 2px solid red !important;

@@ -322,8 +322,8 @@ function createSelectionBox() {
 
 	box.style.left = vpRect.left + "px";
 	box.style.top = vpRect.top + "px";
-	boxBorder.style.width = (vpRect.width <= BOX_BORDER_WIDTH ? 0 : vpRect.width - BOX_BORDER_WIDTH * 2) + "px";
-	boxBorder.style.height = (vpRect.height <= BOX_BORDER_WIDTH ? 0 : vpRect.height - BOX_BORDER_WIDTH * 2) + "px";
+	boxBorder.style.width = (vpRect.width <= BOX_BORDER_WIDTH ? 0 : vpRect.width) + "px";
+	boxBorder.style.height = (vpRect.height <= BOX_BORDER_WIDTH ? 0 : vpRect.height) + "px";
 
 	/*console.log("[lizard]", "Node: ", g_lizardState.currentElement.nodeName,
 		"\ninnerWidth/Height", innerWidth, "/", innerHeight,
