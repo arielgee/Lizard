@@ -360,8 +360,8 @@ function getElementViewportRect(elm, innerWidth, innerHeight) {
 
 	const rect = elm.getBoundingClientRect();
 
-	vpRect.left = parseInt(rect.left < 0 ? 0 : Math.min(rect.left, innerWidth));
-	vpRect.top = parseInt(rect.top < 0 ? 0 : Math.min(rect.top, innerHeight));
+	vpRect.left = parseInt(rect.left < 0 ? 0 : Math.min(rect.left, innerWidth - BOX_BORDER_WIDTH));
+	vpRect.top = parseInt(rect.top < 0 ? 0 : Math.min(rect.top, innerHeight - BOX_BORDER_WIDTH));
 
 	vpRect.width = parseInt(rect.right <= 0 ? 0 : (rect.left < 0 ? rect.right : Math.min(rect.width, Math.max(innerWidth - rect.left, 0))));
 	vpRect.height = parseInt(rect.bottom <= 0 ? 0 : (rect.top < 0 ? rect.bottom : Math.min(rect.height, Math.max(innerHeight - rect.top, 0))));
