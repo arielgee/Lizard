@@ -266,7 +266,7 @@ function stopSelection() {
 //////////////////////////////////////////////////////////////////////
 //
 function selectElement(elm) {
-	if(elm && !(elm.className.includes(CLS_LIZARD_ELEMENT)) ) {
+	if(elm && ((typeof elm.className !== "string") || !(elm.className.includes(CLS_LIZARD_ELEMENT)))) {
 		g_lizardState.currentElement = elm;
 	}
 }
