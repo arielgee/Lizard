@@ -13,6 +13,7 @@
 	margin: 0px !important;
 	border: none !important;
 	border-radius: 0 !important;
+	box-sizing: content-box !important;
 
 	right: auto !important;
 	bottom: auto !important;
@@ -144,10 +145,11 @@
     color: black !important;
     background-color: #a3a3a3 !important;
 
+    font-family: "Segoe UI Symbol" !important;
     font-size: 11px !important;
     font-weight: bold !important;
     text-align: center !important;
-    line-height: 19px !important;
+    line-height: 17px !important;
 
     cursor: pointer !important;
 }
