@@ -5,7 +5,7 @@ console.log("[lizard] -- background.js --");
 
 let g_lizardTaggleStateMenuID = -1;
 
-browser.browserAction.setBadgeBackgroundColor({ color: [139, 0, 0, 96] });		// DarkRed; fix color
+browser.browserAction.setBadgeBackgroundColor({ color: [50, 205, 50, 128] });		// LimeGreen; fix color
 
 //////////////////////////////////////////////////////////////////////
 // Toolbar button
