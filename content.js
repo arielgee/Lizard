@@ -708,18 +708,28 @@ function onClickHtmlCopy(event) {
 	let htmPre = document.getElementById(ID_LIZARD_HTML_BOX_PRE);
 
 	if (htmPre) {
-		
-		console.log("sell", htmPre.getSelection());
-		let rng = document.createRange();
 
-		rng.selectNodeContents(htmPre);
 		let sel = window.getSelection();
-		sel.removeAllRanges();
-		sel.addRange(rng);
 
-		document.execCommand("copy");
+		if ((sel.anchorOffset !== sel.focusOffset) &&							// something is selected
+			(sel.anchorNode.parentNode.id === sel.focusNode.parentNode.id) &&	// selection in same node
+			(sel.focusNode.parentNode.id === ID_LIZARD_HTML_BOX_PRE)) {			// selection is in ID_LIZARD_HTML_BOX_PRE
 
-		sel.removeAllRanges();
+			document.execCommand("copy");		// copy user selected text in ID_LIZARD_HTML_BOX_PRE element
+
+		} else {
+
+			let rng = document.createRange();
+
+			rng.selectNodeContents(htmPre);
+			sel = window.getSelection();
+			sel.removeAllRanges();
+			sel.addRange(rng);
+
+			document.execCommand("copy");		// copy all text in ID_LIZARD_HTML_BOX_PRE element
+
+			sel.removeAllRanges();
+		}
 	}
 }
 
