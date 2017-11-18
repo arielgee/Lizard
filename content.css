@@ -198,7 +198,8 @@
 	box-sizing: content-box !important;
 	background-color: gray !important;
 
-	font-family: Tahoma, Sans !important;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+	font-size: 12px !important;
 	font-weight: bold !important;
 	color: white !important;
 
@@ -228,6 +229,7 @@
     position:relative !important;
 	padding: 5px 10px 0 33px !important;
 	white-space: nowrap !important;
+	font-size: 11px !important;
 }
 
 #lizardHelpBox .helpColor {
