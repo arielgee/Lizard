@@ -1,5 +1,5 @@
 # Lizard
 
-Selecting elements in a page and removing the annoying ones.
+Select and remove annoying elements in a page.
 
-Something similar to the 'Aardvark' and 'Element Hiding Helper for Adblock Plus'
+Pretty similar to the 'Aardvark' and 'Element Hiding Helper for Adblock Plus'.
