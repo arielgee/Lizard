@@ -380,7 +380,7 @@ function getElementViewportRect(elm, innerWidth, innerHeight) {
 //
 function getLabelContent(elm) {
 
-	let labelInnerHTML = "<b>" + elm.nodeName.toLowerCase() + "</b>";
+	let labelInnerHTML = "<strong>" + elm.nodeName.toLowerCase() + "</strong>";
 	if (elm.id !== "") {
 		labelInnerHTML += ", id: " + elm.id;
 	}
