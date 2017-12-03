@@ -599,9 +599,11 @@ function blinkElement() {
 	if(!elm)
 		return;
 
+	let currVisibility = elm.style.visibility;
+
 	for(let i=0; i<5; i++) {
 		setTimeout(function(){ elm.style.visibility = "hidden"; }, i*400);
-		setTimeout(function(){ elm.style.visibility = "visible"; }, i*400+200);
+		setTimeout(function () { elm.style.visibility = currVisibility; }, i*400+200);
 	}
 }
 
