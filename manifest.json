@@ -14,26 +14,40 @@
   "permissions": [
     "activeTab",
     "menus",
+    "notifications",
     "clipboardWrite",
     "<all_urls>",
     "storage"
   ],
 
   "icons": {
+    "16": "icons/lizard-16.png",
     "32": "icons/lizard-32.png",
     "48": "icons/lizard-48.png"
   },
 
   "web_accessible_resources": [
-    "icons/lizard-32.png",
-    "icons/lizard-48.png"
+    "icons/lizard-32.png"
   ],
 
   "browser_action": {
-    "default_icon": "icons/lizard-32.png",
-    "default_title": "Lizard",
-    "browser_style": true
+    "browser_style": true,
+    "default_title": "Lizard [OFF]",
+    "default_icon": {
+      "16": "icons/lizard-gray-16.png",
+      "32": "icons/lizard-gray-32.png",
+      "48": "icons/lizard-gray-48.png"
+    }
   },
+
+  //"page_action": {
+  //  "browser_style": true,
+  //  "default_title": "Lizard [OFF]",
+  //  "default_icon": {
+  //    "19": "icons/lizard-gray-19.png",
+  //    "38": "icons/lizard-gray-38.png"
+  //  }
+  //},
 
   "commands": {
     "kb-toggle-lizard-state": {
@@ -59,12 +73,12 @@
       "matches": [ "<all_urls>" ],
       "js": [ "common.js", "content.js" ],
       "css": [ "content.css" ],
-      "run_at": "document_end"
+      "run_at": "document_idle"
     }
   ],
 
   "options_ui": {
-    "page": "preferences.html",
-    "browser_style": true
+    "browser_style": true,
+    "page": "preferences/preferences.html"
   }
 }

@@ -2,240 +2,233 @@
 @namespace url("http://www.w3.org/1999/xhtml");
 
 .lizardWebExtElement {
-	position: static !important;
-	visibility: visible !important;
-	display: block !important;
-	float: none !important;
-	clear: none !important;
-	z-index: 2147483640 !important;	/* max is 2147483647, so i have 7 more z-indexes to maneuver */
-
-	padding: 0px !important;
-	margin: 0px !important;
-	border: none !important;
-	border-radius: 0 !important;
-	box-sizing: content-box !important;
-
-	right: auto !important;
-	bottom: auto !important;
-	max-width: none !important;
-	max-height: none !important;
-	min-width: 0px !important;
-	min-height: 0px !important;
-
-	background: transparent !important;
-	opacity: 1 !important;
-	clip: auto !important;
-	cursor: auto !important;
-	outline: none !important;
-	text-indent: 0px !important;
-	direction: ltr !important;
-	text-align: left !important;
-	line-height: normal !important;
-
-	-moz-user-input: auto !important;
-	-moz-binding: none !important;
-	-moz-user-select: none !important;
-	-moz-user-focus: none !important;
+  position: static !important;
+  visibility: visible !important;
+  display: block !important;
+  float: none !important;
+  clear: none !important;
+  z-index: 2147483640 !important; /* max is 2147483647, so i have 7 more z-indexes to maneuver */
+  padding: 0px !important;
+  margin: 0px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-sizing: content-box !important;
+  right: auto !important;
+  bottom: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  min-width: 0px !important;
+  min-height: 0px !important;
+  background: transparent !important;
+  opacity: 1 !important;
+  clip: auto !important;
+  cursor: auto !important;
+  outline: none !important;
+  text-indent: 0px !important;
+  direction: ltr !important;
+  text-align: left !important;
+  line-height: normal !important;
+  -moz-user-input: auto !important;
+  -moz-binding: none !important;
+  -moz-user-select: none !important;
+  -moz-user-focus: none !important;
 }
 
 /** Box **/
 #lizardBoxContainer {
-	position: fixed !important;
-	z-index: 2147483641 !important;
-	width: auto !important;
-	height: auto !important;
-	-moz-user-input: none !important;
+  position: fixed !important;
+  z-index: 2147483641 !important;
+  width: auto !important;
+  height: auto !important;
+  -moz-user-input: none !important;
 }
 
 #lizardBoxBorder {
-	box-sizing: border-box !important;
-	position: static !important;
-	display: block !important;
-	border: 2px solid red !important;
-	box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.6) !important;
-	-moz-user-input: none !important;
+  box-sizing: border-box !important;
+  position: static !important;
+  display: block !important;
+  border: 2px solid red !important;
+  box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.6) !important;
+  -moz-user-input: none !important;
 }
 
 #lizardBoxLabelTag {
-	position: relative !important;
-	float: left !important;
-	padding: 2px 5px !important;
-	background-color: #FFFFCA !important;
-
-	border-width: 0 1px 1px 1px !important;
-	border-style: solid !important;
-	border-color: black !important;
-	border-bottom-left-radius: 0.3em !important;
-	border-bottom-right-radius: 0.3em !important;
-
-	white-space: nowrap !important;
-	width: auto !important;
-	height: auto !important;
-	-moz-user-input: none !important;
-
-	font-family: Tahoma, Sans !important;
-	font-size: 11px !important;
-	color: black !important;
-	white-space: pre-wrap !important;
+  position: relative !important;
+  float: left !important;
+  padding: 2px 5px !important;
+  background-color: #FFFFCA !important;
+  border-width: 0 1px 1px 1px !important;
+  border-style: solid !important;
+  border-color: black !important;
+  border-bottom-left-radius: 0.3em !important;
+  border-bottom-right-radius: 0.3em !important;
+  white-space: nowrap !important;
+  width: auto !important;
+  height: auto !important;
+  -moz-user-input: none !important;
+  font-family: Tahoma, Sans !important;
+  font-size: 11px !important;
+  color: black !important;
+  white-space: pre-wrap !important;
 }
 
-#lizardBoxLabelTag.floater {
-	border-top-width: 1px !important;
-	border-top-left-radius: 0.3em !important;
-	border-top-right-radius: 0.3em !important;
-	margin-left: 2px !important;
+  #lizardBoxLabelTag.floater {
+    border-top-width: 1px !important;
+    border-top-left-radius: 0.3em !important;
+    border-top-right-radius: 0.3em !important;
+    margin-left: 2px !important;
+  }
+
+/** Source **/
+#lizardSourceBox {
+  position: fixed !important;
+  z-index: 2147483642 !important;
+  min-height: 95px !important;
+  max-height: 380px !important;
+  min-width: 680px !important;
+  max-width: 80% !important;
+  width: auto !important;
+  border: 1px solid green !important;
+  box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
+  background-color: #FFFFE1 !important;
+  -moz-user-select: auto !important;
+  -moz-user-focus: auto !important;
 }
 
-/** HTML **/
-#lizardHtmlBox {
-	position: fixed !important;
-	z-index: 2147483642 !important;
-
-    min-height: 70px !important;
-	max-height: 380px !important;
-	min-width: 680px !important;
-	max-width: 80% !important;
-	width: auto !important;
-
-	border: 1px solid green !important;
-	box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
-	background-color: #FFFFE1 !important;
-	-moz-user-select: auto !important;
-	-moz-user-focus: auto !important;
+#lizardSourceBoxLeftBorder {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 26px !important;
+  height: 100% !important;
+  background-color: green !important;
 }
 
-#lizardHtmlBoxLeftBorder {
-	position: absolute !important;
-	top: 0 !important;
-	left: 0 !important;
-	width: 26px !important;
-	height: 100% !important;
-	background-color: green !important;
+#lizardSourceBoxSourceType {
+  position: absolute !important;
+  left: 4px !important;
+  bottom: -10px !important;
+  transform: rotate(270deg) !important;
+  transform-origin: left top 0 !important;
+
+  color: white !important;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: normal !important;
 }
 
-#lizardHtmlBoxPre {
-	margin: 0 0 0 26px !important;
-	padding: 8px 16px !important;
-
-	width: auto !important;
-	height: auto !important;
-	max-height: 360px !important;
-	max-width: 100% !important;
-	overflow: auto !important;
-    word-break: normal !important;
-    word-wrap: normal !important;
-    white-space: pre-wrap !important;
-
-	font-family: "Courier New", monospace !important;
-	font-size: 12px !important;
-	font-weight: normal !important;
-	color: black !important;
-
-	-moz-user-select: auto !important;
-	-moz-user-focus: auto !important;
+#lizardSourceBoxPre {
+  margin: 0 0 0 26px !important;
+  padding: 8px 16px !important;
+  width: auto !important;
+  height: auto !important;
+  max-height: 360px !important;
+  max-width: 100% !important;
+  overflow: auto !important;
+  word-break: normal !important;
+  word-wrap: normal !important;
+  white-space: pre-wrap !important;
+  font-family: "Courier New", monospace !important;
+  font-size: 12px !important;
+  font-weight: normal !important;
+  color: black !important;
+  -moz-user-select: auto !important;
+  -moz-user-focus: auto !important;
 }
 
-#lizardHtmlBoxClose,
-#lizardHtmlBoxCopy {
-    width: 18px !important;
-    height: 18px !important;
-    margin: 3px !important;
-
-    border: 1px solid black !important;
-    color: black !important;
-    background-color: #a3a3a3 !important;
-
-    font-family: "Segoe UI Symbol" !important;
-    font-size: 11px !important;
-    font-weight: bold !important;
-    text-align: center !important;
-    line-height: 17px !important;
-
-    cursor: pointer !important;
+#lizardSourceBoxClose,
+#lizardSourceBoxCopy {
+  width: 18px !important;
+  height: 18px !important;
+  margin: 3px !important;
+  border: 1px solid black !important;
+  color: black !important;
+  background-color: #a3a3a3 !important;
+  font-family: "Segoe UI Symbol" !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  text-align: center !important;
+  line-height: 17px !important;
+  cursor: pointer !important;
 }
 
-#lizardHtmlBoxClose:hover,
-#lizardHtmlBoxCopy:hover {
+  #lizardSourceBoxClose:hover,
+  #lizardSourceBoxCopy:hover {
     color: white !important;
     border-color: white !important;
-}
+  }
 
-#lizardHtmlBoxClose:active,
-#lizardHtmlBoxCopy:active {
-	background-color: green !important;
-}
+  #lizardSourceBoxClose:active,
+  #lizardSourceBoxCopy:active {
+    background-color: green !important;
+  }
 
 /** Help **/
 #lizardHelpBox {
-	position: fixed !important;
-	width: auto !important;
-    z-index: 2147483643 !important;
-
-	opacity: 0.5 !important;
-	background-color: #FFFFE1 !important;
-	border: 1px solid black !important;
-	box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
-
-	padding: 8px 8px !important;
-
-	font-family: Tahoma, Sans !important;
-	font-size: 11px !important;
-	color: black !important;
+  position: fixed !important;
+  width: auto !important;
+  z-index: 2147483643 !important;
+  opacity: 0.5 !important;
+  background-color: #FFFFE1 !important;
+  border: 1px solid black !important;
+  box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
+  padding: 8px 8px !important;
+  font-family: Tahoma, Sans !important;
+  font-size: 11px !important;
+  color: black !important;
 }
 
-#lizardHelpBox:hover,
-#lizardHelpBox.justShowedUp {
-	opacity: 1 !important;
-}
- 
-#lizardHelpBox .letterKey {
-	float:left !important;
-	width: 21px !important;
-	height: 21px !important;
+  #lizardHelpBox:hover,
+  #lizardHelpBox.justShowedUp {
+    opacity: 1 !important;
+  }
 
-	border: 1px solid black !important;
-	border-radius: 0.3em !important;
-	box-sizing: content-box !important;
-	background-color: gray !important;
-
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-	font-size: 12px !important;
-	font-weight: bold !important;
-	color: white !important;
-
+  #lizardHelpBox .letterKey {
+    letter-spacing: 1px !important;
+    float: left !important;
+    width: 21px !important;
+    height: 21px !important;
+    border: 1px solid black !important;
+    border-radius: 0.3em !important;
+    box-sizing: content-box !important;
+    background-color: gray !important;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    color: white !important;
     text-align: center !important;
     line-height: 21px !important;
-}
+  }
 
-#lizardHelpBox .helpImg {
+  #lizardHelpBox .helpImg {
     float: right !important;
     width: 26px !important;
     height: 26px !important;
-}
+  }
 
-#lizardHelpBox .helpRec:first-child {
-	font-size: 14px !important;
-	font-weight: bold !important;
-	margin-bottom: 10px !important;
-}
+  #lizardHelpBox .helpRec:first-child {
+    font-size: 14px !important;
+    font-weight: bold !important;
+    margin-bottom: 10px !important;
+  }
 
-#lizardHelpBox .helpRec:not(:first-child) {
-	margin: 6px !important;
-	width: auto !important;
-	height: 23px !important;
-}
+  #lizardHelpBox .helpRec:not(:first-child) {
+    margin: 6px !important;
+    width: auto !important;
+    height: 23px !important;
+  }
 
-#lizardHelpBox .helpText {
-    position:relative !important;
-	padding: 5px 10px 0 33px !important;
-	white-space: nowrap !important;
-	font-size: 11px !important;
-}
+  #lizardHelpBox .helpText {
+    position: relative !important;
+    padding: 5px 10px 0 33px !important;
+    white-space: nowrap !important;
+    font-size: 11px !important;
+  }
 
-#lizardHelpBox .helpColor {
+  #lizardHelpBox .helpColor {
     display: inline !important;
     border-radius: 50% !important;
     box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.6) !important;
     font-size: 80% !important;
     margin: 0 3px 0 3px !important;
-}
+  }

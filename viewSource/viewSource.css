@@ -1,0 +1,23 @@
+﻿/*
+  View Source
+*/
+
+:root {
+  background-color: #FFFFE1 !important;
+}
+
+#lizardSourceBoxPre {
+  margin: 0 0 0 8px !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: auto !important;
+  word-break: normal !important;
+  word-wrap: normal !important;
+  white-space: pre-wrap !important;
+  font-family: "Courier New", monospace !important;
+  font-size: 12px !important;
+  font-weight: normal !important;
+  color: black !important;
+  -moz-user-select: auto !important;
+  -moz-user-focus: auto !important;
+}
