@@ -26,6 +26,8 @@
 
 	const WTF_IMAGE_PATH = { 48: "icons/lizard-wtf-48.png" };
 
+	const VIEW_SOURCE_PAGE = "viewSource/viewSource.html";
+
 
 	let lizardToggleStateMenuID = -1;
 
@@ -101,18 +103,15 @@
 				//////////////////////////////////////////////////////////////
 
 			case prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_WINDOW:
-				let popupURL = browser.extension.getURL("viewSource/viewSource.html");
-
-				browser.windows.create({
-					url: popupURL,
-					titlePreface: "View " + "aa" + " ", //message.data.type.toUpperCase()
-					type: "popup",
-					allowScriptsToClose: true,
-					height: 350,
-					width: 680
-				});
+				openViewSourcePage(message.data.type, true);
 				break;
 				//////////////////////////////////////////////////////////////
+
+			case prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_TAB:
+				openViewSourcePage(message.data.type, false);
+				break;
+				//////////////////////////////////////////////////////////////
+				
 		}
 	});
 
@@ -164,6 +163,32 @@
 			"message": message
 		});
 		setTimeout(function () { browser.notifications.clear(notifId); }, timeout);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	// 
+	function openViewSourcePage(type, newWindow) {
+
+		let viewSourceURL = browser.extension.getURL(VIEW_SOURCE_PAGE);
+		
+		if (newWindow) {
+			browser.windows.create({
+				url: viewSourceURL,
+				type: "popup",
+				allowScriptsToClose: true,
+				height: 350,
+				width: 680
+			});
+		} else {
+			
+			let getting = browser.tabs.query({ active: true, currentWindow: true });
+			getting.then((tabs) => {
+				browser.tabs.create({
+					url: viewSourceURL,
+					index: (tabs[0].index)+1
+				});
+			});
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////

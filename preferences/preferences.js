@@ -6,6 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	let elmHelpBoxOnStart = document.getElementById("helpBoxOnStart");
 	let elmViewSourceHtml = document.getElementById("viewSrcHtml");
 	let elmViewSourceCss = document.getElementById("viewSrcCss");
+	let elmOpenViewSourceInWin = document.getElementById("openViewSrcInWin");
+	let elmOpenViewSourceInTab = document.getElementById("openViewSrcInTab");
+	let elmOpenViewSourceInPage = document.getElementById("openViewSrcInPage");	
 	let elmColorizeColor = document.getElementById("colorizeColor");
 	let elmColorizeBackgroundColor = document.getElementById("colorizeBackgroundColor");
 	let elmDecolorizeColor = document.getElementById("decolorizeColor");
@@ -17,10 +20,21 @@ document.addEventListener("DOMContentLoaded", () => {
 	prefs.getHelpBoxOnStart().then((checked) => { elmHelpBoxOnStart.checked = checked; });
 
 	prefs.getViewSourceType().then((type) => {
-		if (type === prefs.VIEW_SOURCE_HTML)
-			elmViewSourceHtml.checked = (type === prefs.VIEW_SOURCE_HTML);
-		else if (type === prefs.VIEW_SOURCE_CSS)
+		if (type === prefs.SOURCE_HTML) {
+			elmViewSourceHtml.checked = true;
+		} else if (type === prefs.SOURCE_CSS) {
 			elmViewSourceCss.checked = true;
+		}
+	});
+
+	prefs.getOpenViewSourceIn().then((value) => {
+		if(value === prefs.VIEW_SOURCE_IN_WINDOW) {
+			elmOpenViewSourceInWin.checked = true;
+		} else if(value === prefs.VIEW_SOURCE_IN_TAB) {
+			elmOpenViewSourceInTab.checked = true;
+		} else if(value === prefs.VIEW_SOURCE_IN_PAGE) {
+			elmOpenViewSourceInPage.checked = true;
+		}
 	});
 
 	prefs.getColorizeColors().then((colors) => {
@@ -36,8 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// save preferences when changed
 	elmHelpBoxOnStart.addEventListener("change", () => { prefs.setHelpBoxOnStart(elmHelpBoxOnStart.checked); });
-	elmViewSourceHtml.addEventListener("click", () => { prefs.setViewSourceType(prefs.VIEW_SOURCE_HTML); });
-	elmViewSourceCss.addEventListener("click", () => { prefs.setViewSourceType(prefs.VIEW_SOURCE_CSS); });
+	elmViewSourceHtml.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_HTML); });
+	elmViewSourceCss.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_CSS); });
+	elmOpenViewSourceInWin.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_WINDOW); });
+	elmOpenViewSourceInTab.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_TAB); });
+	elmOpenViewSourceInPage.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_PAGE); });	
 	elmColorizeColor.addEventListener("change", () => { prefs.setColorizeColors( [elmColorizeColor.value, elmColorizeBackgroundColor.value] ); });
 	elmColorizeBackgroundColor.addEventListener("change", () => { prefs.setColorizeColors( [elmColorizeColor.value, elmColorizeBackgroundColor.value] ); });
 	elmDecolorizeColor.addEventListener("change", () => { prefs.setDecolorizeColors( [elmDecolorizeColor.value, elmDecolorizeBackgroundColor.value] ); });
@@ -47,8 +64,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	elmButtonDefaults.addEventListener("click", () => {
 		let defPrefs = prefs.restoreDefaults();
 		elmHelpBoxOnStart.checked = defPrefs.helpBoxOnStart;
-		elmViewSourceHtml.checked = (defPrefs.viewSourceType === prefs.VIEW_SOURCE_HTML);
-		elmViewSourceCss.checked = (defPrefs.viewSourceType === prefs.VIEW_SOURCE_CSS);
+		elmViewSourceHtml.checked = (defPrefs.viewSourceType === prefs.SOURCE_HTML);
+		elmViewSourceCss.checked = (defPrefs.viewSourceType === prefs.SOURCE_CSS);
+		elmOpenViewSourceInWin.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_WINDOW);
+		elmOpenViewSourceInTab.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_TAB);
+		elmOpenViewSourceInPage.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_PAGE);
 		elmColorizeColor.value = defPrefs.colorizeColors[0];
 		elmColorizeBackgroundColor.value = defPrefs.colorizeColors[1];
 		elmDecolorizeColor.value = defPrefs.decolorizeColors[0];

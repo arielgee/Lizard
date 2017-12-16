@@ -188,7 +188,7 @@
 				removeInfoBoxes();
 				break;
 			case "t":
-				__test(lizardState.currentElement.outerHTML);
+				__test();
 				break;
 			default:
 	//			console.log("[lizard] Unused key:" + event.key);
@@ -627,72 +627,69 @@
 	//	
 	function viewSource() {
 
+		let elm = lizardState.currentElement;
+		
+		if (!elm)
+			return;
+				
 		prefs.getViewSourceType().then((type) => {
-			//_viewSource(type);
 
-			viewSourceInWindow(type)
+			let source;
+
+			if (type === prefs.SOURCE_HTML) {
+				source = sanitizeHtmlFromLizardElements(elm.outerHTML);
+			} else if (type === prefs.SOURCE_CSS) {
+				let style = window.getComputedStyle(elm);				
+				for (let i = 0; i < style.length; i++)
+					source += style[i] + ": " + style.getPropertyValue(style[i]) + "\n";
+			} else {
+				source = "wtf?";
+			}
+
+			prefs.getOpenViewSourceIn().then((value) => {
+				if(value === prefs.VIEW_SOURCE_IN_WINDOW) {
+					viewSourceInWindow(type, source);		
+				} else if(value === prefs.VIEW_SOURCE_IN_TAB) {
+					viewSourceInTab(type, source);
+				} else if(value === prefs.VIEW_SOURCE_IN_PAGE) {
+					viewSourceInPage(type, source);
+				}
+			});
 		});
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function viewSourceInWindow(srcType) {
+	function viewSourceInWindow(type, source) {
 
-		let elm = lizardState.currentElement;
-
-		if (!elm)
-			return;
+		prefs.setSavedViewSourceData(source, type);
 
 		let msg = BROWSER_MESSAGE(prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_WINDOW);
-		let sourceData;
 
-		if (srcType === prefs.VIEW_SOURCE_HTML) {
+		browser.runtime.sendMessage(msg);
+	}
 
-			msg.data["type"]= prefs.VIEW_SOURCE_HTML;
-			sourceData = sanitizeHtmlFromLizardElements(elm.outerHTML);
+	//////////////////////////////////////////////////////////////////////
+	//
+	function viewSourceInTab(type, source) {
 
-		} else if (srcType === prefs.VIEW_SOURCE_CSS) {
+		prefs.setSavedViewSourceData(source, type);
 
-			msg.data["type"]= prefs.VIEW_SOURCE_CSS;
-
-			let style = window.getComputedStyle(elm);
-
-			for (let i = 0; i < style.length; i++)
-				sourceData += style[i]+ ": " +style.getPropertyValue(style[i]) + "\n";
-
-		} else
-			sourceData = "wtf?";
-
-		prefs.setSavedViewSourceData(sourceData);
+		let msg = BROWSER_MESSAGE(prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_TAB);
 
 		browser.runtime.sendMessage(msg);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//	
-	function _viewSource(srcType) {
+	function viewSourceInPage(type, source) {
 
-		let elm = lizardState.currentElement;
-
-		if (!elm)
-			return;
-
-		let sourceData;
 		let sourceBox;
 		let sourceBoxLeftBorder;
 		let sourceBoxPre;
 		let btnClose;
 		let btnCopy;
 		let lblType;
-
-		if (srcType === prefs.VIEW_SOURCE_HTML) {
-			sourceData = sanitizeHtmlFromLizardElements(elm.outerHTML);
-		} else if (srcType === prefs.VIEW_SOURCE_CSS) {
-			let style = window.getComputedStyle(elm);
-			for (let i = 0; i < style.length; i++)
-				sourceData += style[i] + ": " +style.getPropertyValue(style[i]) + "\n";
-		} else
-			sourceData = "wtf?";
 
 		sourceBox = document.getElementById(ID_LIZARD_SOURCE_BOX);
 
@@ -742,9 +739,9 @@
 			lblType = sourceBox.querySelector("#" + ID_LIZARD_SOURCE_BOX_SOURCE_TYPE);
 		}
 
-		lblType.textContent = srcType.toUpperCase();
+		lblType.textContent = type.toUpperCase();
 
-		sourceBoxPre.textContent = sourceData;
+		sourceBoxPre.textContent = source;
 
 		let point = getSourceBoxPosition(sourceBox, lizardState.currentElement.getBoundingClientRect());
 
@@ -1059,7 +1056,15 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function __test(data) {
+	function __test() {
+
+		console.log("__test");
+
+		console.log("rootElement.", document.documentElement);
+		document.documentElement.style.visibility = "hidden";
+		
+		lizardState.currentElement.style.visibility = "visible";
+
 	}
 
 })();
