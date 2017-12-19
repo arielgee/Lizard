@@ -79,8 +79,9 @@
 	browser.commands.onCommand.addListener(function (command) {
 
 		if (command == "kb-toggle-lizard-state") {
-			browser.tabs.query({ currentWindow: true, active: true })
-				.then((tabs) => { sendToggleLizardStateMessage(tabs[0].id); });
+			browser.tabs.query({ currentWindow: true, active: true }).then((tabs) => {
+				sendToggleLizardStateMessage(tabs[0].id);
+			});
 		} else if (command == "kb-reload-lizard-extension") {
 			reloadLizardWebExtension();
 		}
@@ -103,12 +104,12 @@
 				//////////////////////////////////////////////////////////////
 
 			case prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_WINDOW:
-				openViewSourcePage(message.data.type, true);
+				openViewSourcePage(message.data.type, message.data.id, true);
 				break;
 				//////////////////////////////////////////////////////////////
 
 			case prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_TAB:
-				openViewSourcePage(message.data.type, false);
+				openViewSourcePage(message.data.type, message.data.id, false);
 				break;
 				//////////////////////////////////////////////////////////////
 				
@@ -135,7 +136,7 @@
 			browserActionImagePaths = pageActionImagePaths = WTF_IMAGE_PATH;
 		}
 
-		browser.menus.update(lizardToggleStateMenuID, { title: `${action} Lizard Session` });	// menu item
+		browser.menus.update(lizardToggleStateMenuID, { title: action + " Lizard Session" });	// menu item
 
 		let getting = browser.tabs.query({ active: true, currentWindow: true });
 		getting.then((tabs) => {
@@ -167,9 +168,9 @@
 
 	//////////////////////////////////////////////////////////////////////
 	// 
-	function openViewSourcePage(type, newWindow) {
+	function openViewSourcePage(type, id, newWindow) {
 
-		let viewSourceURL = browser.extension.getURL(VIEW_SOURCE_PAGE);
+		let viewSourceURL = browser.extension.getURL(VIEW_SOURCE_PAGE) + "?id=" + id;
 		
 		if (newWindow) {
 			browser.windows.create({
@@ -177,7 +178,7 @@
 				type: "popup",
 				allowScriptsToClose: true,
 				height: 350,
-				width: 680
+				width: 700
 			});
 		} else {
 			

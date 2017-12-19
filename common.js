@@ -8,16 +8,15 @@ let prefs = (function () {
 	const MSG_LIZARD_OPEN_VIEW_SOURCE_WINDOW = "lizardOpenViewSourceWindow";
 	const MSG_LIZARD_OPEN_VIEW_SOURCE_TAB = "lizardOpenViewSourceTab";
 
-	const SOURCE_HTML = "html";
-	const SOURCE_CSS = "css";
+	const SOURCE_TYPE = { HTML: "HTML", CSS: "CSS" };
+	const SOURCE_TYPES_ARRAY = [ SOURCE_TYPE.HTML, SOURCE_TYPE.CSS ];
 
-	const VIEW_SOURCE_IN_WINDOW = "inWindow";
-	const VIEW_SOURCE_IN_TAB = "inTab";
-	const VIEW_SOURCE_IN_PAGE = "inPage";
+	const VIEW_SOURCE_IN_TYPE = { WINDOW: "inWindow", TAB: "inTab", PAGE: "inPage" };
+	const VIEW_SOURCE_IN_TYPES_ARRAY = [ VIEW_SOURCE_IN_TYPE.WINDOW, VIEW_SOURCE_IN_TYPE.TAB, VIEW_SOURCE_IN_TYPE.PAGE ];
 
 	const PREF_DEF_HELP_BOX_ON_START_VALUE = true;
-	const PREF_DEF_VIEW_SOURCE_TYPE_VALUE = SOURCE_HTML;
-	const PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE = VIEW_SOURCE_IN_PAGE;
+	const PREF_DEF_VIEW_SOURCE_TYPE_VALUE = SOURCE_TYPE.HTML;
+	const PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE = VIEW_SOURCE_IN_TYPE.PAGE;
 	const PREF_DEF_COLORIZE_COLORS_VALUE = ["#FF0000", "#FFFF00"];			// default red on yellow
 	const PREF_DEF_DECOLORIZE_COLORS_VALUE = ["#000000", "#FFFFFF"];		// default black on white
 	const PREF_DEF_SAVED_VIEW_SOURCE_DATA_VALUE = "";
@@ -38,10 +37,9 @@ let prefs = (function () {
 
 		return new Promise((resolve) => {
 
-			browser.storage.local.get(PREF_HELP_BOX_ON_START)
-				.then((result) => {
-					resolve(result[PREF_HELP_BOX_ON_START] === false ? false : PREF_DEF_HELP_BOX_ON_START_VALUE);
-				});
+			browser.storage.local.get(PREF_HELP_BOX_ON_START).then((result) => {
+				resolve(result[PREF_HELP_BOX_ON_START] === false ? false : PREF_DEF_HELP_BOX_ON_START_VALUE);
+			});
 		});
 	};
 
@@ -58,14 +56,13 @@ let prefs = (function () {
 
 		return new Promise((resolve) => {
 
-			browser.storage.local.get(PREF_VIEW_SOURCE_TYPE)
-				.then((result) => {
-					if([SOURCE_HTML, SOURCE_CSS].indexOf(result[PREF_VIEW_SOURCE_TYPE]) === -1) {
-						resolve(PREF_DEF_VIEW_SOURCE_TYPE_VALUE);
-					} else {
-						resolve(result[PREF_VIEW_SOURCE_TYPE]);
-					}					
-				});
+			browser.storage.local.get(PREF_VIEW_SOURCE_TYPE).then((result) => {
+				if (SOURCE_TYPES_ARRAY.indexOf(result[PREF_VIEW_SOURCE_TYPE]) === -1) {
+					resolve(PREF_DEF_VIEW_SOURCE_TYPE_VALUE);
+				} else {
+					resolve(result[PREF_VIEW_SOURCE_TYPE]);
+				}					
+			});
 		});
 	};
 
@@ -82,14 +79,14 @@ let prefs = (function () {
 
 		return new Promise((resolve) => {
 
-			browser.storage.local.get(PREF_OPEM_VIEW_SOURCE_IN)
-				.then((result) => {
-					if([VIEW_SOURCE_IN_WINDOW, VIEW_SOURCE_IN_TAB, VIEW_SOURCE_IN_PAGE].indexOf(result[PREF_OPEM_VIEW_SOURCE_IN]) === -1) {
-						resolve(PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE);
-					} else {
-						resolve(result[PREF_OPEM_VIEW_SOURCE_IN]);
-					}
-				});
+			browser.storage.local.get(PREF_OPEM_VIEW_SOURCE_IN).then((result) => {
+
+				if (VIEW_SOURCE_IN_TYPES_ARRAY.indexOf(result[PREF_OPEM_VIEW_SOURCE_IN]) === -1) {
+					resolve(PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE);
+				} else {
+					resolve(result[PREF_OPEM_VIEW_SOURCE_IN]);
+				}
+			});
 		});
 	};
 
@@ -106,13 +103,14 @@ let prefs = (function () {
 
 		return new Promise((resolve, reject) => {
 
-			browser.storage.local.get(PREF_COLORIZE_COLORS)
-				.then((result) => {
-					if (result[PREF_COLORIZE_COLORS])
-						resolve(result[PREF_COLORIZE_COLORS].split(PREF_COLOR_SEPARATOR_CHAR));
-					else
-						resolve(PREF_DEF_COLORIZE_COLORS_VALUE);
-				});
+			browser.storage.local.get(PREF_COLORIZE_COLORS).then((result) => {
+
+				if (result[PREF_COLORIZE_COLORS]) {
+					resolve(result[PREF_COLORIZE_COLORS].split(PREF_COLOR_SEPARATOR_CHAR));
+				} else {
+					resolve(PREF_DEF_COLORIZE_COLORS_VALUE);
+				}
+			});
 		});
 	};
 
@@ -129,13 +127,14 @@ let prefs = (function () {
 
 		return new Promise((resolve, reject) => {
 
-			browser.storage.local.get(PREF_DECOLORIZE_COLORS)
-				.then((result) => {
-					if (result[PREF_DECOLORIZE_COLORS])
-						resolve(result[PREF_DECOLORIZE_COLORS].split(PREF_COLOR_SEPARATOR_CHAR));
-					else
-						resolve(PREF_DEF_DECOLORIZE_COLORS_VALUE);
-				});
+			browser.storage.local.get(PREF_DECOLORIZE_COLORS).then((result) => {
+
+				if (result[PREF_DECOLORIZE_COLORS]) {
+					resolve(result[PREF_DECOLORIZE_COLORS].split(PREF_COLOR_SEPARATOR_CHAR));
+				} else {
+					resolve(PREF_DEF_DECOLORIZE_COLORS_VALUE);
+				}
+			});
 		});
 	};
 
@@ -166,36 +165,42 @@ let prefs = (function () {
 
 	//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 	//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
-	//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 
 	//////////////////////////////////////////////////////////////////////
-	let getSavedViewSourceData = function () {
+	let getSavedViewSourceData = function (id) {
+
+		let viewSourceData = PREF_SAVED_VIEW_SOURCE_DATA + id;
+		let viewSourceType = PREF_SAVED_VIEW_SOURCE_TYPE + id;
 
 		return new Promise((resolve) => {
 
-			browser.storage.local.get(PREF_SAVED_VIEW_SOURCE_DATA)
-				.then((resultData) => {
+			browser.storage.local.get(viewSourceData).then((resultData) => {
 
-					browser.storage.local.get(PREF_SAVED_VIEW_SOURCE_TYPE)
-						.then((resultType) => {
+				browser.storage.local.get(viewSourceType).then((resultType) => {
 
-							resolve({
-								data: (resultData[PREF_SAVED_VIEW_SOURCE_DATA] ? resultData[PREF_SAVED_VIEW_SOURCE_DATA] : PREF_DEF_SAVED_VIEW_SOURCE_DATA_VALUE),
-								type: (resultType[PREF_SAVED_VIEW_SOURCE_TYPE] ? resultType[PREF_SAVED_VIEW_SOURCE_TYPE] : PREF_DEF_SAVED_VIEW_SOURCE_TYPE_VALUE)
-							});
-						});
+					resolve({
+						data: (resultData[viewSourceData]? resultData[viewSourceData]: PREF_DEF_SAVED_VIEW_SOURCE_DATA_VALUE),
+						type: (resultType[viewSourceType] ? resultType[viewSourceType] : PREF_DEF_SAVED_VIEW_SOURCE_TYPE_VALUE)
+					});
 				});
+			});
 		});
-	}
+	};
 
 	//////////////////////////////////////////////////////////////////////
-	let setSavedViewSourceData = function (data, type) {
+	let setSavedViewSourceData = function (data, type, id) {
 
 		let obj = {};
-		obj[PREF_SAVED_VIEW_SOURCE_DATA] = data;
-		obj[PREF_SAVED_VIEW_SOURCE_TYPE] = type;
+		obj[PREF_SAVED_VIEW_SOURCE_DATA + id] = data;
+		obj[PREF_SAVED_VIEW_SOURCE_TYPE + id] = type;
 		browser.storage.local.set(obj);
-	}
+	};
+	
+	//////////////////////////////////////////////////////////////////////
+	let clearSavedViewSourceData = function (id) {
+		browser.storage.local.remove(PREF_SAVED_VIEW_SOURCE_DATA + id);
+		browser.storage.local.remove(PREF_SAVED_VIEW_SOURCE_TYPE + id);
+	};
 
 	return {
 		ACTION_MSG_LIZARD_TOGGLE_STATE: ACTION_MSG_LIZARD_TOGGLE_STATE,
@@ -204,12 +209,11 @@ let prefs = (function () {
 		MSG_LIZARD_OPEN_VIEW_SOURCE_WINDOW: MSG_LIZARD_OPEN_VIEW_SOURCE_WINDOW,
 		MSG_LIZARD_OPEN_VIEW_SOURCE_TAB: MSG_LIZARD_OPEN_VIEW_SOURCE_TAB,
 
-		SOURCE_HTML: SOURCE_HTML,
-		SOURCE_CSS: SOURCE_CSS,
+		SOURCE_TYPE: SOURCE_TYPE,
+		SOURCE_TYPES_ARRAY: SOURCE_TYPES_ARRAY,
 
-		VIEW_SOURCE_IN_WINDOW: VIEW_SOURCE_IN_WINDOW,
-		VIEW_SOURCE_IN_TAB: VIEW_SOURCE_IN_TAB,
-		VIEW_SOURCE_IN_PAGE: VIEW_SOURCE_IN_PAGE,		
+		VIEW_SOURCE_IN_TYPE: VIEW_SOURCE_IN_TYPE,
+		VIEW_SOURCE_IN_TYPES_ARRAY: VIEW_SOURCE_IN_TYPES_ARRAY,
 
 		getHelpBoxOnStart: getHelpBoxOnStart,
 		setHelpBoxOnStart: setHelpBoxOnStart,
@@ -229,7 +233,8 @@ let prefs = (function () {
 		restoreDefaults: restoreDefaults,
 		
 		getSavedViewSourceData: getSavedViewSourceData,
-		setSavedViewSourceData: setSavedViewSourceData		
+		setSavedViewSourceData: setSavedViewSourceData,
+		clearSavedViewSourceData: clearSavedViewSourceData
 	};
 	
 })();

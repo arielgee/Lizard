@@ -20,19 +20,19 @@ document.addEventListener("DOMContentLoaded", () => {
 	prefs.getHelpBoxOnStart().then((checked) => { elmHelpBoxOnStart.checked = checked; });
 
 	prefs.getViewSourceType().then((type) => {
-		if (type === prefs.SOURCE_HTML) {
+		if (type === prefs.SOURCE_TYPE.HTML) {
 			elmViewSourceHtml.checked = true;
-		} else if (type === prefs.SOURCE_CSS) {
+		} else if (type === prefs.SOURCE_TYPE.CSS) {
 			elmViewSourceCss.checked = true;
 		}
 	});
 
 	prefs.getOpenViewSourceIn().then((value) => {
-		if(value === prefs.VIEW_SOURCE_IN_WINDOW) {
+		if (value === prefs.VIEW_SOURCE_IN_TYPE.WINDOW) {
 			elmOpenViewSourceInWin.checked = true;
-		} else if(value === prefs.VIEW_SOURCE_IN_TAB) {
+		} else if (value === prefs.VIEW_SOURCE_IN_TYPE.TAB) {
 			elmOpenViewSourceInTab.checked = true;
-		} else if(value === prefs.VIEW_SOURCE_IN_PAGE) {
+		} else if (value === prefs.VIEW_SOURCE_IN_TYPE.PAGE) {
 			elmOpenViewSourceInPage.checked = true;
 		}
 	});
@@ -50,11 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// save preferences when changed
 	elmHelpBoxOnStart.addEventListener("change", () => { prefs.setHelpBoxOnStart(elmHelpBoxOnStart.checked); });
-	elmViewSourceHtml.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_HTML); });
-	elmViewSourceCss.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_CSS); });
-	elmOpenViewSourceInWin.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_WINDOW); });
-	elmOpenViewSourceInTab.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_TAB); });
-	elmOpenViewSourceInPage.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_PAGE); });	
+	elmViewSourceHtml.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_TYPE.HTML); });
+	elmViewSourceCss.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_TYPE.CSS); });
+	elmOpenViewSourceInWin.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_TYPE.WINDOW); });
+	elmOpenViewSourceInTab.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_TYPE.TAB); });
+	elmOpenViewSourceInPage.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_TYPE.PAGE); });
 	elmColorizeColor.addEventListener("change", () => { prefs.setColorizeColors( [elmColorizeColor.value, elmColorizeBackgroundColor.value] ); });
 	elmColorizeBackgroundColor.addEventListener("change", () => { prefs.setColorizeColors( [elmColorizeColor.value, elmColorizeBackgroundColor.value] ); });
 	elmDecolorizeColor.addEventListener("change", () => { prefs.setDecolorizeColors( [elmDecolorizeColor.value, elmDecolorizeBackgroundColor.value] ); });
@@ -64,11 +64,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	elmButtonDefaults.addEventListener("click", () => {
 		let defPrefs = prefs.restoreDefaults();
 		elmHelpBoxOnStart.checked = defPrefs.helpBoxOnStart;
-		elmViewSourceHtml.checked = (defPrefs.viewSourceType === prefs.SOURCE_HTML);
-		elmViewSourceCss.checked = (defPrefs.viewSourceType === prefs.SOURCE_CSS);
-		elmOpenViewSourceInWin.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_WINDOW);
-		elmOpenViewSourceInTab.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_TAB);
-		elmOpenViewSourceInPage.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_PAGE);
+		elmViewSourceHtml.checked = (defPrefs.viewSourceType === prefs.SOURCE_TYPE.HTML);
+		elmViewSourceCss.checked = (defPrefs.viewSourceType === prefs.SOURCE_TYPE.CSS);
+		elmOpenViewSourceInWin.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_TYPE.WINDOW);
+		elmOpenViewSourceInTab.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_TYPE.TAB);
+		elmOpenViewSourceInPage.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_TYPE.PAGE);
 		elmColorizeColor.value = defPrefs.colorizeColors[0];
 		elmColorizeBackgroundColor.value = defPrefs.colorizeColors[1];
 		elmDecolorizeColor.value = defPrefs.decolorizeColors[0];

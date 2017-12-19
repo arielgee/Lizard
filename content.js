@@ -31,7 +31,7 @@
 	const UNDO_ACTION_REMOVE = "undoRemove";
 	const UNDO_ACTION_COLORIZE = "undoColorize";
 
-	const BROWSER_MESSAGE = function(typeval) {
+	const BROWSER_MESSAGE = function (typeval) {
 		return {
 			type: typeval,
 			data: {
@@ -48,7 +48,7 @@
 	};
 
 	let lizardState = {
-		bSelectionStarted : false,
+		bSelectionStarted: false,
 		currentElement: null,
 		bSelectionLocked: false,
 
@@ -61,26 +61,27 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	browser.runtime.onMessage.addListener((request, sender, sendResponse) => {	
+	browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 		if (request.action === prefs.ACTION_MSG_LIZARD_TOGGLE_STATE) {
-		  if(lizardState.bSelectionStarted) {
-			  stopSelection();
-		  } else {
-			  startSelection();
-		  }
-	  }
+			if (lizardState.bSelectionStarted) {
+				stopSelection();
+			} else {
+				startSelection();
+			}
+		}
 	});
 
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onMouseMove(event) {
 
-		if(lizardState.bSelectionLocked)
+		if (lizardState.bSelectionLocked) {
 			return;
+		}
 
 		// no narrower action if mouse is moved
 		lizardState.strolledElements = [];
-	
+
 		removeSelectionBox();
 
 		unselectElement();
@@ -93,10 +94,11 @@
 	//
 	function onMouseLeave(event) {
 
-		if(lizardState.bSelectionLocked)
+		if (lizardState.bSelectionLocked) {
 			return;
+		}
 
-		if(event.target.nodeName.toLowerCase() === "html") {
+		if (event.target.nodeName.toLowerCase() === "html") {
 			removeSelectionBox();
 			unselectElement();
 		}
@@ -108,13 +110,13 @@
 
 		let elm = document.elementFromPoint(event.clientX, event.clientY);
 
-		if(elm && elm.id.startsWith(LIZARD_BOX_PREFIX) ) {
+		if (elm && elm.id.startsWith(LIZARD_BOX_PREFIX)) {
 
-			if(event.deltaY < 0)
+			if (event.deltaY < 0) {
 				wider();
-			else if(event.deltaY > 0)
+			} else if (event.deltaY > 0) {
 				narrower();
-
+			}
 			event.preventDefault();
 		}
 	}
@@ -144,8 +146,9 @@
 	//
 	function onKeyDown(event) {
 
-		if(event.preventDefaulted || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+		if (event.preventDefaulted || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
 			return;
+		}
 
 		switch (event.key.toLowerCase()) {
 			case "h":
@@ -188,10 +191,10 @@
 				removeInfoBoxes();
 				break;
 			case "t":
-				__test();
+				//__test();
 				break;
 			default:
-	//			console.log("[lizard] Unused key:" + event.key);
+				//console.log("[lizard] Unused key:" + event.key);
 				return;
 		}
 
@@ -214,7 +217,7 @@
 	//
 	function startSelection() {
 
-		if(!document || !document.body) {
+		if (!document || !document.body) {
 			alert("\tWhoops!\n\n\tSorry, this is not a valid html document.\t");
 			return;
 		}
@@ -231,7 +234,7 @@
 		document.addEventListener("keydown", onKeyDown, false);
 
 		// select something
-		onMouseMove({clientX: window.innerWidth / 2, clientY: window.innerHeight / 2, screenX: -1, screenY: -1, target: null});
+		onMouseMove({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2, screenX: -1, screenY: -1, target: null });
 
 		prefs.getHelpBoxOnStart().then((checked) => {
 			if (checked) {
@@ -269,7 +272,7 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function selectElement(elm) {
-		if(elm && ((typeof elm.className !== "string") || !(elm.className.includes(CLS_LIZARD_ELEMENT)))) {
+		if (elm && ((typeof elm.className !== "string") || !(elm.className.includes(CLS_LIZARD_ELEMENT)))) {
 			lizardState.currentElement = elm;
 		}
 	}
@@ -284,8 +287,9 @@
 	//
 	function createSelectionBox() {
 
-		if(!lizardState.currentElement)
+		if (!lizardState.currentElement) {
 			return;
+		}
 
 		let box;
 		let boxBorder;
@@ -293,7 +297,7 @@
 
 		box = document.getElementById(ID_LIZARD_BOX);
 
-		if(!box) {
+		if (!box) {
 
 			box = document.createElement("div");
 			box.id = ID_LIZARD_BOX;
@@ -316,7 +320,7 @@
 			boxBorder = box.querySelector("#" + ID_LIZARD_BOX_BORDER);
 			boxLabelTag = box.querySelector("#" + ID_LIZARD_BOX_LABEL_TAG);
 		}
-	
+
 		// real inner size accounting for the scrollbars width if they exist
 		const innerWidth = window.innerWidth - getVScrollWidth();
 		const innerHeight = window.innerHeight - getHScrollWidth();
@@ -352,8 +356,9 @@
 			isFloater = true;
 		}
 
-		if (isFloater)
+		if (isFloater) {
 			boxLabelTag.className += " floater";
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -369,13 +374,14 @@
 
 		vpRect.width = parseInt(rect.right <= 0 ? 0 : (rect.left < 0 ? rect.right : Math.min(rect.width, Math.max(innerWidth - rect.left, 0))));
 		vpRect.height = parseInt(rect.bottom <= 0 ? 0 : (rect.top < 0 ? rect.bottom : Math.min(rect.height, Math.max(innerHeight - rect.top, 0))));
-	
-		// private cases where the element (usualy html & body) is large as the innerSpace and its starting point is negative (scrolled)
-		if (rect.left < 0 && (rect.right + Math.abs(rect.left) === innerWidth) )
-			vpRect.width = innerWidth;
 
-		if (rect.top < 0 && (rect.bottom + Math.abs(rect.top) === innerHeight) )
+		// private cases where the element (usualy html & body) is large as the innerSpace and its starting point is negative (scrolled)
+		if (rect.left < 0 && (rect.right + Math.abs(rect.left) === innerWidth)) {
+			vpRect.width = innerWidth;
+		}
+		if (rect.top < 0 && (rect.bottom +Math.abs(rect.top) === innerHeight)) {
 			vpRect.height = innerHeight;
+		}
 
 		return vpRect;
 	}
@@ -385,6 +391,7 @@
 	function getLabelContent(elm) {
 
 		let labelInnerHTML = "<strong>" + elm.nodeName.toLowerCase() + "</strong>";
+
 		if (elm.id !== "") {
 			labelInnerHTML += ", id: " + elm.id;
 		}
@@ -446,8 +453,9 @@
 
 		let elm = lizardState.currentElement;
 
-		if (!elm || elm === null || elm.nodeName.toLowerCase() === "html")
+		if (!elm || elm === null || elm.nodeName.toLowerCase() === "html") {
 			return;
+		}
 
 		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_HIDE);
 
@@ -470,16 +478,16 @@
 
 		let elm = lizardState.currentElement;
 
-		if (!elm || elm === null || elm.nodeName.toLowerCase() === "html")
+		if (!elm || elm === null || elm.nodeName.toLowerCase() === "html") {
 			return;
-
+		}
 
 		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_REMOVE);
 
 		// save element and it's position
 		ua.data["element"] = elm;
 		ua.data["prev_parentNode"] = elm.parentNode;
-		ua.data["prev_nextSibling"]= elm.nextSibling;
+		ua.data["prev_nextSibling"] = elm.nextSibling;
 
 		lizardState.undoActions.push(ua);
 
@@ -491,19 +499,22 @@
 		lockSelection(false);
 	}
 
-
 	//////////////////////////////////////////////////////////////////////
 	//
 	function colorizeElement() {
-	
-		prefs.getColorizeColors().then((colors) => { colorElement(colors[0], colors[1]); });
+
+		prefs.getColorizeColors().then((colors) => {
+			colorElement(colors[0], colors[1]);
+		});
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
 	function decolorizeElement() {
 
-		prefs.getDecolorizeColors().then((colors) => { colorElement(colors[0], colors[1]); });
+		prefs.getDecolorizeColors().then((colors) => {
+			colorElement(colors[0], colors[1]);
+		});
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -512,14 +523,15 @@
 
 		let elm = lizardState.currentElement;
 
-		if (!elm)
+		if (!elm) {
 			return;
+		}
 
 		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_COLORIZE);
 
 		ua.data["element"] = elm;
-		ua.data["prev_color"]= elm.style.color;
-		ua.data["prev_backgroundColor"]= elm.style.backgroundColor;
+		ua.data["prev_color"] = elm.style.color;
+		ua.data["prev_backgroundColor"] = elm.style.backgroundColor;
 
 		lizardState.undoActions.push(ua);
 
@@ -532,13 +544,14 @@
 	function undoLastAction() {
 
 		// nothing to undo
-		if (0 === lizardState.undoActions.length)
+		if (0 === lizardState.undoActions.length) {
 			return;
+		}
 
 		// pop the last undo action
 		let ua = lizardState.undoActions.pop();
 
-		switch(ua.type) {
+		switch (ua.type) {
 			case UNDO_ACTION_HIDE:
 				ua.data.element.style.visibility = ua.data.prev_visibility;
 				break;
@@ -567,11 +580,11 @@
 	function wider() {
 
 		let elm = lizardState.currentElement;
-	
+
 		if (elm && elm.parentElement) {
-		
+
 			lizardState.strolledElements.push(elm);
-		
+
 			removeSelectionBox();
 			unselectElement();
 			selectElement(elm.parentElement);
@@ -612,14 +625,15 @@
 
 		let elm = lizardState.currentElement;
 
-		if(!elm)
+		if (!elm) {
 			return;
+		}
 
 		let currVisibility = elm.style.visibility;
 
-		for(let i=0; i<5; i++) {
-			setTimeout(function(){ elm.style.visibility = "hidden"; }, i*400);
-			setTimeout(function () { elm.style.visibility = currVisibility; }, i*400+200);
+		for (let i=0; i<5; i++) {
+			setTimeout(function () { elm.style.visibility = "hidden"; }, i * 400);
+			setTimeout(function () { elm.style.visibility = currVisibility; }, i * 400 + 200);
 		}
 	}
 
@@ -628,30 +642,32 @@
 	function viewSource() {
 
 		let elm = lizardState.currentElement;
-		
-		if (!elm)
+
+		if (!elm) {
 			return;
-				
+		}
+
 		prefs.getViewSourceType().then((type) => {
 
-			let source;
+			let source = "";
 
-			if (type === prefs.SOURCE_HTML) {
+			if (type === prefs.SOURCE_TYPE.HTML) {
 				source = sanitizeHtmlFromLizardElements(elm.outerHTML);
-			} else if (type === prefs.SOURCE_CSS) {
-				let style = window.getComputedStyle(elm);				
-				for (let i = 0; i < style.length; i++)
-					source += style[i] + ": " + style.getPropertyValue(style[i]) + "\n";
+			} else if (type === prefs.SOURCE_TYPE.CSS) {
+				let style = window.getComputedStyle(elm);
+				for (let i = 0; i < style.length; i++) {
+					source += style[i] + ": " +style.getPropertyValue(style[i]) + "\n";
+				}
 			} else {
 				source = "wtf?";
 			}
 
 			prefs.getOpenViewSourceIn().then((value) => {
-				if(value === prefs.VIEW_SOURCE_IN_WINDOW) {
-					viewSourceInWindow(type, source);		
-				} else if(value === prefs.VIEW_SOURCE_IN_TAB) {
-					viewSourceInTab(type, source);
-				} else if(value === prefs.VIEW_SOURCE_IN_PAGE) {
+				if (value === prefs.VIEW_SOURCE_IN_TYPE.WINDOW) {
+					viewSourceInNewPage(type, source, true);
+				} else if (value === prefs.VIEW_SOURCE_IN_TYPE.TAB) {
+					viewSourceInNewPage(type, source, false);
+				} else if (value === prefs.VIEW_SOURCE_IN_TYPE.PAGE) {
 					viewSourceInPage(type, source);
 				}
 			});
@@ -660,22 +676,14 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function viewSourceInWindow(type, source) {
+	function viewSourceInNewPage(type, source, newWin) {
 
-		prefs.setSavedViewSourceData(source, type);
+		let id = window.btoa(Date.now().toString() +random1to100());
 
-		let msg = BROWSER_MESSAGE(prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_WINDOW);
+		prefs.setSavedViewSourceData(source, type, id);
 
-		browser.runtime.sendMessage(msg);
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function viewSourceInTab(type, source) {
-
-		prefs.setSavedViewSourceData(source, type);
-
-		let msg = BROWSER_MESSAGE(prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_TAB);
+		let msg = BROWSER_MESSAGE(newWin ? prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_WINDOW : prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_TAB);
+		msg.data["id"] = id;
 
 		browser.runtime.sendMessage(msg);
 	}
@@ -718,11 +726,11 @@
 			btnCopy.className = CLS_LIZARD_ELEMENT;
 			btnCopy.textContent = "⧉";					// Dingbat - boxbox / String.fromCharCode(10697)
 			btnCopy.title = "Copy to clipboard";
-			
+
 			lblType = document.createElement("span");
 			lblType.id = ID_LIZARD_SOURCE_BOX_SOURCE_TYPE;
-			lblType.className = CLS_LIZARD_ELEMENT;			
-			
+			lblType.className = CLS_LIZARD_ELEMENT;
+
 			sourceBoxLeftBorder.appendChild(btnClose);
 			sourceBoxLeftBorder.appendChild(btnCopy);
 			sourceBoxLeftBorder.appendChild(lblType);
@@ -739,7 +747,7 @@
 			lblType = sourceBox.querySelector("#" + ID_LIZARD_SOURCE_BOX_SOURCE_TYPE);
 		}
 
-		lblType.textContent = type.toUpperCase();
+		lblType.textContent = type;
 
 		sourceBoxPre.textContent = source;
 
@@ -757,24 +765,28 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function getSourceBoxPosition(elm, rectReference) {
-	
+
 		const EXTRA = 25;
 		let point = { left: 0, top: 0 };
-	
+
 		point.left = rectReference.left + EXTRA;
 		point.top = rectReference.top + EXTRA;
 
-		if (point.left + elm.offsetWidth > window.innerWidth)
+		if (point.left + elm.offsetWidth > window.innerWidth) {
 			point.left = window.innerWidth - elm.offsetWidth - EXTRA;
+		}
 
-		if (point.left < EXTRA)
+		if (point.left < EXTRA) {
 			point.left = EXTRA;
+		}
 
-		if (point.top + elm.offsetHeight > window.innerHeight)
+		if (point.top + elm.offsetHeight > window.innerHeight) {
 			point.top = window.innerHeight - elm.offsetHeight - EXTRA;
+		}
 
-		if (point.top < EXTRA)
+		if (point.top < EXTRA) {
 			point.top = EXTRA;
+		}
 
 		return point;
 	}
@@ -790,8 +802,8 @@
 			let notifyMsg;
 			let sel = window.getSelection();
 
-			if ((sel.anchorOffset !== sel.focusOffset) &&							// something is selected
-				(sel.anchorNode.parentNode.id === sel.focusNode.parentNode.id) &&	// selection in same node
+			if ((sel.anchorOffset !== sel.focusOffset) &&								// something is selected
+				(sel.anchorNode.parentNode.id === sel.focusNode.parentNode.id) &&		// selection in same node
 				(sel.focusNode.parentNode.id === ID_LIZARD_SOURCE_BOX_PRE)) {			// selection is in ID_LIZARD_SOURCE_BOX_PRE
 
 				document.execCommand("copy");		// copy user selected text in ID_LIZARD_SOURCE_BOX_PRE element
@@ -809,7 +821,7 @@
 
 				sel.removeAllRanges();
 				notifyMsg = "Entire Source Copied to Clipboard.";
-		}
+			}
 
 			displayNotification(notifyMsg, 4300);
 		}
@@ -845,57 +857,41 @@
 			hlp.className = CLS_LIZARD_ELEMENT;
 			document.body.appendChild(hlp);
 
-			/*
-			//let doc = document.implementation.createHTMLDocument("lizardDocument");
-			
-			let frm = document.createElement("frame");
-			frm.id = "frmID";
-			frm.className = "frmClass";
-			document.body.appendChild(frm);
-			
-						
-			
-			hlp = frm.contentDocument.createElement("div");
-			hlp.id = ID_LIZARD_HELP_BOX;
-			hlp.className = CLS_LIZARD_ELEMENT;
-			frm.contentDocument.body.appendChild(hlp);
-			*/
-
 			hlp.style.top = "20px";
 			hlp.style.left = "15px";
 		}
-	
-		const htmlFmt = "<p class='{0} {1}'>Lizard Hotkeys<img class='{0} {4}' src={5}></img></p>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>H</span><span class='{0} {3}'>Hide selection (or: shift+click)</span></div>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>R</span><span class='{0} {3}'>Remove selection (collapses element)</span></div>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>C</span><span class='{0} {3}'>" +
-							"Colorize selection (<span class='{0} {6}' style='background-color:{7} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{8} !important;'>&emsp;</span>)</span>" +
-						"</div>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>D</span><span class='{0} {3}'>" +
-							"Decolorize selection (<span class='{0} {6}' style='background-color:{9} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{10} !important;'>&emsp;</span>)</span>" +
-						"</div>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>U</span><span class='{0} {3}'>Undo</span></div>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>W</span><span class='{0} {3}'>Wider selection (or: mouse wheel up)</span></div>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>N</span><span class='{0} {3}'>Narrower selection (or: mouse wheel down)</span></div>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>L</span><span class='{0} {3}'>Lock/Unlock selection</span></div>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>B</span><span class='{0} {3}'>Blink selection</span></div>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>V</span><span class='{0} {3}'>View source ({11})</span></div>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>Q</span><span class='{0} {3}'>Quit</span></div>" +
-						"<div class='{0} {1}'><span class='{0} {2}'>F1</span><span class='{0} {3}'>Show help</span></div>";
 
-		hlp.innerHTML = htmlFmt.format([CLS_LIZARD_ELEMENT, CLS_HELP_RECORD, CLS_LETTER_KEY,
-										CLS_HELP_TEXT, CLS_HELP_IMG, browser.extension.getURL(PATH_TO_HELP_IMG), CLS_HELP_COLOR,
-										colorizeColors[0], colorizeColors[1], decolorizeColors[0], decolorizeColors[1], srcType.toUpperCase()]);
+		const fmt = "<p class='{0} {1}'>Lizard Hotkeys<img class='{0} {4}' src={5}></img></p>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>H</span><span class='{0} {3}'>Hide selection (or: shift+click)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>R</span><span class='{0} {3}'>Remove selection (collapses element)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>C</span><span class='{0} {3}'>" +
+				"Colorize selection (<span class='{0} {6}' style='background-color:{7} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{8} !important;'>&emsp;</span>)</span>" +
+			"</div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>D</span><span class='{0} {3}'>" +
+				"Decolorize selection (<span class='{0} {6}' style='background-color:{9} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{10} !important;'>&emsp;</span>)</span>" +
+			"</div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>U</span><span class='{0} {3}'>Undo</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>W</span><span class='{0} {3}'>Wider selection (or: mouse wheel up)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>N</span><span class='{0} {3}'>Narrower selection (or: mouse wheel down)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>L</span><span class='{0} {3}'>Lock/Unlock selection</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>B</span><span class='{0} {3}'>Blink selection</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>V</span><span class='{0} {3}'>View source ({11})</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>Q</span><span class='{0} {3}'>Quit</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>F1</span><span class='{0} {3}'>Show help</span></div>";
 
-		const CLS_justShowedUp = "justShowedUp";
+		hlp.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, CLS_HELP_RECORD, CLS_LETTER_KEY,
+									CLS_HELP_TEXT, CLS_HELP_IMG, browser.extension.getURL(PATH_TO_HELP_IMG), CLS_HELP_COLOR,
+									colorizeColors[0], colorizeColors[1], decolorizeColors[0], decolorizeColors[1], srcType]);
+
+		const CLS_justShowedUp = " justShowedUp";
 
 		if (!hlp.className.includes(CLS_justShowedUp)) {
-			hlp.className += ` ${CLS_justShowedUp}`;
+			hlp.className += CLS_justShowedUp;
 		}
 
 		setTimeout(() => {
 			hlp.style.setProperty("transition", "opacity 2s", "important");
-			hlp.className = hlp.className.replace(` ${CLS_justShowedUp}`, "");
+			hlp.className = hlp.className.replace(CLS_justShowedUp, "");
 			setTimeout(() => { hlp.style.setProperty("transition", "opacity 0s", "important"); }, 2100);
 		}, 3000);
 
@@ -912,7 +908,7 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onCloseHtmlBox() {
-	
+
 		let elm = document.getElementById(ID_LIZARD_SOURCE_BOX);
 
 		if (elm) {
@@ -971,7 +967,7 @@
 	//
 	String.prototype.format = function (args) {
 		let str = this;
-		return str.replace(String.prototype.format.regex, function(item) {
+		return str.replace(String.prototype.format.regex, (item) => {
 			let intVal = parseInt(item.substring(1, item.length - 1));
 			let replace;
 			if (intVal >= 0) {
@@ -982,7 +978,7 @@
 				replace = "}";
 			} else {
 				replace = "";
-		}
+			}
 			return replace;
 		});
 	};
@@ -1019,7 +1015,6 @@
 		lizardState.scrollbarWidth = w1 - w2;
 	}
 
-
 	//////////////////////////////////////////////////////////////////////
 	//
 	function sanitizeHtmlFromLizardElements(html) {
@@ -1030,10 +1025,11 @@
 
 		let lizardElements = doc.getElementsByClassName(CLS_LIZARD_ELEMENT);
 
-			// When removing an element, it also shrinks the elements array.
-			// If removing an element with it's children also in array, children will be removed in same iteration.
-		while (lizardElements.length > 0)
+		// When removing an element, it also shrinks the elements array.
+		// If removing an element with it's children also in array, children will be removed in same iteration.
+		while (lizardElements.length > 0) {
 			lizardElements[0].parentNode.removeChild(lizardElements[0]);
+		}
 
 		return (doc.body.innerHTML);
 	}
@@ -1041,17 +1037,25 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function addListenersToAllFrames(wnd, evt, handler, useCapture) {
-		for (var i = 0; i < wnd.frames.length; i++)
+		for (var i = 0; i < wnd.frames.length; i++) {
 			addListenersToAllFrames(wnd.frames[i], handler);
+		}
 		wnd.document.addEventListener(evt, handler, useCapture);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
 	function removeListenersFromAllFrames(wnd, evt, handler, useCapture) {
-		for (var i = 0; i < wnd.frames.length; i++)
+		for (var i = 0; i < wnd.frames.length; i++) {
 			removeListenersFromAllFrames(wnd.frames[i], handler);
+		}
 		wnd.document.removeEventListener(evt, handler, useCapture);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function random1to100() {
+		return Math.floor(Math.random() * (100 -1) +1);
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1062,7 +1066,7 @@
 
 		console.log("rootElement.", document.documentElement);
 		document.documentElement.style.visibility = "hidden";
-		
+
 		lizardState.currentElement.style.visibility = "visible";
 
 	}
