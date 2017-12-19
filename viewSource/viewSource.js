@@ -4,6 +4,7 @@
 
 	const IS_POPUP_WINDOW = !(window.locationbar.visible);
 	const SCROLL_Y_OFFSET = 70;
+	const MAX_OFFSET_MULTIPLIER = 40;
 
 	let elmScrollUp;
 	let elmScrollDown;
@@ -99,8 +100,7 @@
 		let offsetY = (event.target.id.match("ScrollUp$") ? -SCROLL_Y_OFFSET : SCROLL_Y_OFFSET);
 
 		// don't scroll if there is nowhere to scroll
-		let docElm = document.documentElement;
-		if ( (offsetY < 0 && docElm.scrollTop === 0) || (offsetY > 0 && docElm.scrollTop === docElm.scrollTopMax) ) {
+		if (!canDocumentScroll(offsetY < 0 ? "up" : "down")) {
 			return;
 		}
 
@@ -112,7 +112,7 @@
 
 		// continuous scroll is done only from btnScrollUp/btnScrollDown (via EventListener -> mousedown)
 		if (event.target.id.match("^btnScroll")) {
-			scrollerTimeoutId = setTimeout(continuousScroll, 500, offsetY);
+			scrollerTimeoutId = setTimeout(continuousScroll, 500, offsetY, 1);
 		}
 	}
 
@@ -130,14 +130,19 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function continuousScroll(offsetY) {
+	function continuousScroll(offsetY, offsetMultiplier) {
+
+		// don't scroll if there is nowhere to scroll
+		if (!canDocumentScroll(offsetY < 0 ? "up" : "down")) {
+			return;
+		}
 
 		window.scrollBy({
-			top: (offsetY * 2),
+			top: (offsetY * (offsetMultiplier <= MAX_OFFSET_MULTIPLIER ? offsetMultiplier : MAX_OFFSET_MULTIPLIER)),
 			left: 0,
 			behavior: 'smooth'
 		});
-		scrollerTimeoutId = setTimeout(continuousScroll, 150, offsetY);
+		scrollerTimeoutId = setTimeout(continuousScroll, 150, offsetY, offsetMultiplier + 1);
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -169,5 +174,17 @@
 		let sval = window.location.search.match("[\?\&]" + name + "=([^\&]*)(\&?)");
 		return sval ? sval[1] : sval;
 	};
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function canDocumentScroll(direction) {
+		
+		let docElm = document.documentElement;
+
+		if (((direction === "up") && docElm.scrollTop === 0) || ((direction === "down") && docElm.scrollTop === docElm.scrollTopMax)) {
+			return false;
+		}
+		return true;
+	}
 
 })();
