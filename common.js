@@ -19,6 +19,7 @@ let prefs = (function () {
 	const PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE = VIEW_SOURCE_IN_TYPE.PAGE;
 	const PREF_DEF_COLORIZE_COLORS_VALUE = ["#FF0000", "#FFFF00"];			// default red on yellow
 	const PREF_DEF_DECOLORIZE_COLORS_VALUE = ["#000000", "#FFFFFF"];		// default black on white
+	const PREF_DEF_COLORIZE_CHILDREN = false;
 	const PREF_DEF_SAVED_VIEW_SOURCE_DATA_VALUE = "";
 	const PREF_DEF_SAVED_VIEW_SOURCE_TYPE_VALUE = "";
 
@@ -27,6 +28,7 @@ let prefs = (function () {
 	const PREF_OPEM_VIEW_SOURCE_IN = "pref_openViewSourceIn";
 	const PREF_COLORIZE_COLORS = "pref_colorizeColors";
 	const PREF_DECOLORIZE_COLORS = "pref_decolorizeColors";
+	const PREF_COLORIZE_CHILDREN = "pref_colorizeChildren";
 	const PREF_SAVED_VIEW_SOURCE_DATA = "pref_savedViewSourceData";
 	const PREF_SAVED_VIEW_SOURCE_TYPE = "pref_savedViewSourceType";
 
@@ -147,19 +149,40 @@ let prefs = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
+	let getColorizeChildren = function () {
+
+		return new Promise((resolve) => {
+
+			browser.storage.local.get(PREF_COLORIZE_CHILDREN).then((result) => {
+				resolve(result[PREF_COLORIZE_CHILDREN] === true ? true : PREF_DEF_COLORIZE_CHILDREN);
+			});
+		});
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let setColorizeChildren = function (value) {
+
+		let obj = {};
+		obj[PREF_COLORIZE_CHILDREN] = value;
+		browser.storage.local.set(obj);
+	};
+
+	//////////////////////////////////////////////////////////////////////
 	let restoreDefaults = function () {
 		this.setHelpBoxOnStart(PREF_DEF_HELP_BOX_ON_START_VALUE);
 		this.setViewSourceType(PREF_DEF_VIEW_SOURCE_TYPE_VALUE);
 		this.setOpenViewSourceIn(PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE);
 		this.setColorizeColors(PREF_DEF_COLORIZE_COLORS_VALUE);
 		this.setDecolorizeColors(PREF_DEF_DECOLORIZE_COLORS_VALUE);
+		this.setColorizeChildren(PREF_DEF_COLORIZE_CHILDREN);
 
 		return {
 			helpBoxOnStart: PREF_DEF_HELP_BOX_ON_START_VALUE,
 			viewSourceType: PREF_DEF_VIEW_SOURCE_TYPE_VALUE,
 			OpenViewSourceIn: PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE,
 			colorizeColors: PREF_DEF_COLORIZE_COLORS_VALUE,
-			decolorizeColors: PREF_DEF_DECOLORIZE_COLORS_VALUE
+			decolorizeColors: PREF_DEF_DECOLORIZE_COLORS_VALUE,
+			colorizeChildren: PREF_DEF_COLORIZE_CHILDREN
 		};
 	};
 
@@ -225,10 +248,13 @@ let prefs = (function () {
 		setOpenViewSourceIn: setOpenViewSourceIn,
 		
 		getColorizeColors: getColorizeColors,
-		getDecolorizeColors: getDecolorizeColors,
-
 		setColorizeColors: setColorizeColors,
+
+		getDecolorizeColors: getDecolorizeColors,
 		setDecolorizeColors: setDecolorizeColors,
+
+		getColorizeChildren: getColorizeChildren,
+		setColorizeChildren: setColorizeChildren,
 
 		restoreDefaults: restoreDefaults,
 		

@@ -559,7 +559,13 @@
 	function colorizeElement(invertColors) {
 
 		prefs.getColorizeColors().then((colors) => {
-			colorElement(colors[0], colors[1], invertColors);
+			prefs.getColorizeChildren().then((colorizeChildren) => {
+				if(invertColors) {
+					colorElement(colors[1], colors[0], colorizeChildren);
+				} else {
+					colorElement(colors[0], colors[1], colorizeChildren);
+				}
+			});
 		});
 	}
 
@@ -568,13 +574,19 @@
 	function decolorizeElement(invertColors) {
 
 		prefs.getDecolorizeColors().then((colors) => {
-			colorElement(colors[0], colors[1], invertColors);
+			prefs.getColorizeChildren().then((colorizeChildren) => {
+				if(invertColors) {
+					colorElement(colors[1], colors[0], colorizeChildren);
+				} else {
+					colorElement(colors[0], colors[1], colorizeChildren);
+				}
+			});
 		});
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function colorElement(foreground, background, invertColors) {
+	function colorElement(foreground, background, colorizeChildren) {
 
 		let elm = lizardState.currentElement;
 
@@ -588,18 +600,44 @@
 		ua.data["element"] = elm;
 		ua.data["prev_color"] = elm.style.color;
 		ua.data["prev_backgroundColor"] = elm.style.backgroundColor;
+		ua.data["children"] = [];
+
+		elm.style.color = foreground;
+		elm.style.backgroundColor = background;
+
+		if(colorizeChildren) {
+			colorElementChildren(elm, foreground, background, ua.data.children);
+		}		
 
 		lizardState.undoActions.push(ua);
-		
-		if (invertColors) {
-			elm.style.color = background;
-			elm.style.backgroundColor = foreground;
-		} else {
-			elm.style.color = foreground;
-			elm.style.backgroundColor = background;
-		}
 	}
 
+	//////////////////////////////////////////////////////////////////////
+	//
+	function colorElementChildren(elm, foreground, background, uaChildren) {
+
+		for(let i=0; i<elm.children.length; i++) {
+			
+			let c = elm.children[i];
+			
+			if(c.nodeType === Node.ELEMENT_NODE && !c.className.includes(CLS_LIZARD_ELEMENT)) { 
+
+				colorElementChildren(c, foreground, background, uaChildren);
+
+				let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_COLORIZE);
+
+				ua.data["element"] = c;
+				ua.data["prev_color"] = c.style.color;
+				ua.data["prev_backgroundColor"] = c.style.backgroundColor;
+						
+				c.style.color = foreground;
+				c.style.backgroundColor = background;
+
+				uaChildren.push(ua);
+			}
+		}
+	}
+	
 	//////////////////////////////////////////////////////////////////////
 	//
 	function undoLastAction() {
@@ -635,6 +673,11 @@
 				//////////////////////////////////////////////////////////////
 
 			case UNDO_ACTION_COLORIZE:
+				for(let i=0; i<ua.data.children.length; i++) {
+					let uaData = ua.data.children[i].data;
+					uaData.element.style.color = uaData.prev_color;
+					uaData.element.style.backgroundColor = uaData.prev_backgroundColor;
+				}
 				ua.data.element.style.color = ua.data.prev_color;
 				ua.data.element.style.backgroundColor = ua.data.prev_backgroundColor;
 				break;
@@ -1107,10 +1150,10 @@
 
 		if (matchs === null) {
 			return (doc.body.innerHTML);
-		} else if (matchs[1] === "html") {
-			return (doc.documentElement.outerHTML);
 		} else if (matchs[1] === "body") {
 			return (doc.body.outerHTML);
+		} else if (matchs[1] === "html") {
+			return (doc.documentElement.outerHTML);
 		}
 	}
 
