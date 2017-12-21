@@ -35,7 +35,7 @@ body {
 }
 
   #labelInfo:not(.enlarged):hover {
-    width: 525px;
+    width: 380px;
     background-color: rgba(255, 192, 192, 1);
   }
 

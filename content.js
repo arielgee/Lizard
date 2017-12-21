@@ -20,15 +20,19 @@
 	const ID_LIZARD_SOURCE_BOX_CLOSE = "lizardSourceBoxClose";
 	const ID_LIZARD_SOURCE_BOX_COPY = "lizardSourceBoxCopy";
 	const ID_LIZARD_SOURCE_BOX_SOURCE_TYPE = "lizardSourceBoxSourceType";
+	const ID_LIZARD_ISOLATE_CONTAINER = "lizardIsolateContainer";
 
 	const ID_LIZARD_HELP_BOX = "lizardHelpBox";
 
 	const PATH_TO_HELP_IMG = "icons/lizard-32.png";
 	const BOX_BORDER_WIDTH = 2;		// #lizardBoxBorder border width 2px (as in the content.css file)
 	const DEF_SCROLL_BAR_WIDTH = 16;
+	const NOTIFICATION_TIMEOUT = 4300;
+	const MANDATORY_ROOT_ELEMENTS = ["html", "body"];
 
 	const UNDO_ACTION_HIDE = "undoHide";
 	const UNDO_ACTION_REMOVE = "undoRemove";
+	const UNDO_ACTION_ISOLATE = "undoIsolate";
 	const UNDO_ACTION_COLORIZE = "undoColorize";
 
 	const BROWSER_MESSAGE = function (typeval) {
@@ -146,7 +150,7 @@
 	//
 	function onKeyDown(event) {
 
-		if (event.preventDefaulted || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+		if (event.preventDefaulted || event.altKey || event.ctrlKey || event.metaKey) {
 			return;
 		}
 
@@ -157,11 +161,14 @@
 			case "r":
 				removeElement();
 				break;
+			case "i":
+				isolateElement();
+				break;
 			case "c":
-				colorizeElement();
+				colorizeElement(event.shiftKey);
 				break;
 			case "d":
-				decolorizeElement();
+				decolorizeElement(event.shiftKey);
 				break;
 			case "u":
 				undoLastAction();
@@ -190,9 +197,11 @@
 			case "escape":
 				removeInfoBoxes();
 				break;
+/*
 			case "t":
-				//__test();
+				__test();
 				break;
+*/
 			default:
 				//console.log("[lizard] Unused key:" + event.key);
 				return;
@@ -218,7 +227,7 @@
 	function startSelection() {
 
 		if (!document || !document.body) {
-			alert("\tWhoops!\n\n\tSorry, this is not a valid html document.\t");
+			alert("\tWhoops!\n\n\tSorry, this is not a valid html document with a <body>.\t");
 			return;
 		}
 
@@ -379,7 +388,7 @@
 		if (rect.left < 0 && (rect.right + Math.abs(rect.left) === innerWidth)) {
 			vpRect.width = innerWidth;
 		}
-		if (rect.top < 0 && (rect.bottom +Math.abs(rect.top) === innerHeight)) {
+		if (rect.top < 0 && (rect.bottom + Math.abs(rect.top) === innerHeight)) {
 			vpRect.height = innerHeight;
 		}
 
@@ -453,9 +462,19 @@
 
 		let elm = lizardState.currentElement;
 
-		if (!elm || elm === null || elm.nodeName.toLowerCase() === "html") {
+		if (!elm || elm === null) {
+			displayNotification("No element is selected.", NOTIFICATION_TIMEOUT);
+			return;
+		}		
+
+		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName.toLowerCase()) !== -1) {
+			displayNotification("Root elements can't be hidden.", NOTIFICATION_TIMEOUT);
 			return;
 		}
+
+		removeSelectionBox();
+		unselectElement();
+		lockSelection(false);
 
 		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_HIDE);
 
@@ -465,11 +484,6 @@
 		lizardState.undoActions.push(ua);
 
 		elm.style.visibility = "hidden";
-
-		removeSelectionBox();
-		unselectElement();
-
-		lockSelection(false);
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -478,9 +492,19 @@
 
 		let elm = lizardState.currentElement;
 
-		if (!elm || elm === null || elm.nodeName.toLowerCase() === "html") {
+		if (!elm || elm === null) {
+			displayNotification("No element is selected.", NOTIFICATION_TIMEOUT);
 			return;
 		}
+
+		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName.toLowerCase()) !== -1) {
+			displayNotification("Root elements can't be removed.", NOTIFICATION_TIMEOUT);
+			return;
+		}
+
+		removeSelectionBox();
+		unselectElement();
+		lockSelection(false);
 
 		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_REMOVE);
 
@@ -492,38 +516,70 @@
 		lizardState.undoActions.push(ua);
 
 		elm.parentNode.removeChild(elm);
-
-		removeSelectionBox();
-		unselectElement();
-
-		lockSelection(false);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function colorizeElement() {
-
-		prefs.getColorizeColors().then((colors) => {
-			colorElement(colors[0], colors[1]);
-		});
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function decolorizeElement() {
-
-		prefs.getDecolorizeColors().then((colors) => {
-			colorElement(colors[0], colors[1]);
-		});
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function colorElement(foreground, background) {
+	function isolateElement() {
 
 		let elm = lizardState.currentElement;
 
-		if (!elm) {
+		if (!elm || elm === null) {
+			displayNotification("No valid element is selected.", NOTIFICATION_TIMEOUT);
+			return;
+		}
+
+		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName.toLowerCase()) !== -1) {
+			displayNotification("Root elements can't be isolated.", NOTIFICATION_TIMEOUT);
+			return;
+		}
+
+		removeSelectionBox();
+		unselectElement();
+		lockSelection(false);
+		removeInfoBoxes();
+
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_ISOLATE);
+
+		// save document's body and scroll position
+		ua.data["prev_body"] = document.body;
+		ua.data["prev_scrollTop"] = document.documentElement.scrollTop;
+		ua.data["prev_scrollLeft"] = document.documentElement.scrollLeft;
+
+		lizardState.undoActions.push(ua);
+
+		document.documentElement.removeChild(document.body);
+		document.body = document.createElement("body");
+		document.body.id = ID_LIZARD_ISOLATE_CONTAINER;
+		document.body.appendChild(elm.cloneNode(true));
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function colorizeElement(invertColors) {
+
+		prefs.getColorizeColors().then((colors) => {
+			colorElement(colors[0], colors[1], invertColors);
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function decolorizeElement(invertColors) {
+
+		prefs.getDecolorizeColors().then((colors) => {
+			colorElement(colors[0], colors[1], invertColors);
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function colorElement(foreground, background, invertColors) {
+
+		let elm = lizardState.currentElement;
+
+		if (!elm || elm === null) {
+			displayNotification("No element is selected.", NOTIFICATION_TIMEOUT);
 			return;
 		}
 
@@ -534,9 +590,14 @@
 		ua.data["prev_backgroundColor"] = elm.style.backgroundColor;
 
 		lizardState.undoActions.push(ua);
-
-		elm.style.color = foreground;
-		elm.style.backgroundColor = background;
+		
+		if (invertColors) {
+			elm.style.color = background;
+			elm.style.backgroundColor = foreground;
+		} else {
+			elm.style.color = foreground;
+			elm.style.backgroundColor = background;
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -562,6 +623,17 @@
 				break;
 				//////////////////////////////////////////////////////////////
 
+			case UNDO_ACTION_ISOLATE:
+				unselectElement();
+				lockSelection(false);
+				document.documentElement.removeChild(document.body);
+				document.body = document.createElement("body");
+				document.body = ua.data.prev_body;
+				document.documentElement.scrollTop = ua.data.prev_scrollTop;
+				document.documentElement.scrollLeft = ua.data.prev_scrollLeft;
+				break;
+				//////////////////////////////////////////////////////////////
+
 			case UNDO_ACTION_COLORIZE:
 				ua.data.element.style.color = ua.data.prev_color;
 				ua.data.element.style.backgroundColor = ua.data.prev_backgroundColor;
@@ -573,6 +645,7 @@
 				break;
 				//////////////////////////////////////////////////////////////
 		}
+		ua = null;
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -678,7 +751,7 @@
 	//
 	function viewSourceInNewPage(type, source, newWin) {
 
-		let id = window.btoa(Date.now().toString() +random1to100());
+		let id = window.btoa(random1to100() + Date.now().toString());
 
 		prefs.setSavedViewSourceData(source, type, id);
 
@@ -799,7 +872,6 @@
 
 		if (sourceBoxPre) {
 
-			let notifyMsg;
 			let sel = window.getSelection();
 
 			if ((sel.anchorOffset !== sel.focusOffset) &&								// something is selected
@@ -807,7 +879,6 @@
 				(sel.focusNode.parentNode.id === ID_LIZARD_SOURCE_BOX_PRE)) {			// selection is in ID_LIZARD_SOURCE_BOX_PRE
 
 				document.execCommand("copy");		// copy user selected text in ID_LIZARD_SOURCE_BOX_PRE element
-				notifyMsg = "Selection Copied to Clipboard.";
 			} else {
 
 				let rng = document.createRange();
@@ -820,10 +891,7 @@
 				document.execCommand("copy");		// copy all text in ID_LIZARD_SOURCE_BOX_PRE element
 
 				sel.removeAllRanges();
-				notifyMsg = "Entire Source Copied to Clipboard.";
 			}
-
-			displayNotification(notifyMsg, 4300);
 		}
 	}
 
@@ -862,19 +930,20 @@
 		}
 
 		const fmt = "<p class='{0} {1}'>Lizard Hotkeys<img class='{0} {4}' src={5}></img></p>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>H</span><span class='{0} {3}'>Hide selection (or: shift+click)</span></div>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>R</span><span class='{0} {3}'>Remove selection (collapses element)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>H</span><span class='{0} {3}'>Hide (or: shift+click)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>R</span><span class='{0} {3}'>Remove (collapses element)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>I</span><span class='{0} {3}'>Isolate</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>C</span><span class='{0} {3}'>" +
-				"Colorize selection (<span class='{0} {6}' style='background-color:{7} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{8} !important;'>&emsp;</span>)</span>" +
+				"Colorize (<span class='{0} {6}' style='background-color:{7} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{8} !important;'>&emsp;</span>)</span>" +
 			"</div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>D</span><span class='{0} {3}'>" +
-				"Decolorize selection (<span class='{0} {6}' style='background-color:{9} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{10} !important;'>&emsp;</span>)</span>" +
+				"Decolorize (<span class='{0} {6}' style='background-color:{9} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{10} !important;'>&emsp;</span>)</span>" +
 			"</div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>U</span><span class='{0} {3}'>Undo</span></div>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>W</span><span class='{0} {3}'>Wider selection (or: mouse wheel up)</span></div>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>N</span><span class='{0} {3}'>Narrower selection (or: mouse wheel down)</span></div>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>L</span><span class='{0} {3}'>Lock/Unlock selection</span></div>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>B</span><span class='{0} {3}'>Blink selection</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>W</span><span class='{0} {3}'>Wider (or: mouse wheel up)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>N</span><span class='{0} {3}'>Narrower (or: mouse wheel down)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>L</span><span class='{0} {3}'>Lock/Unlock</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>B</span><span class='{0} {3}'>Blink</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>V</span><span class='{0} {3}'>View source ({11})</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>Q</span><span class='{0} {3}'>Quit</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>F1</span><span class='{0} {3}'>Show help</span></div>";
@@ -884,15 +953,18 @@
 									colorizeColors[0], colorizeColors[1], decolorizeColors[0], decolorizeColors[1], srcType]);
 
 		const CLS_justShowedUp = " justShowedUp";
+		const CLS_fadeout = " fadeout";
+		const REGEXP_CLS_fadeout = new RegExp(CLS_fadeout, "g");
 
 		if (!hlp.className.includes(CLS_justShowedUp)) {
 			hlp.className += CLS_justShowedUp;
 		}
 
+		hlp.className = hlp.className.replace(REGEXP_CLS_fadeout, "");
+
 		setTimeout(() => {
-			hlp.style.setProperty("transition", "opacity 2s", "important");
-			hlp.className = hlp.className.replace(CLS_justShowedUp, "");
-			setTimeout(() => { hlp.style.setProperty("transition", "opacity 0s", "important"); }, 2100);
+			hlp.className = hlp.className.replace(CLS_justShowedUp, CLS_fadeout);
+			setTimeout(() => { hlp.className = hlp.className.replace(REGEXP_CLS_fadeout, ""); }, 2100);
 		}, 3000);
 
 		hlp.addEventListener("click", onCloseHelpBox, false);
@@ -1017,11 +1089,11 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function sanitizeHtmlFromLizardElements(html) {
+	function sanitizeHtmlFromLizardElements(source) {
 
-		let doc = document.implementation.createHTMLDocument("lizardTmpDoc");
+		let parser = new DOMParser();
 
-		doc.body.innerHTML = html;
+		let doc = parser.parseFromString(source, "text/html");
 
 		let lizardElements = doc.getElementsByClassName(CLS_LIZARD_ELEMENT);
 
@@ -1031,7 +1103,15 @@
 			lizardElements[0].parentNode.removeChild(lizardElements[0]);
 		}
 
-		return (doc.body.innerHTML);
+		let matchs = source.match(/^\<(html|body)\b/i);
+
+		if (matchs === null) {
+			return (doc.body.innerHTML);
+		} else if (matchs[1] === "html") {
+			return (doc.documentElement.outerHTML);
+		} else if (matchs[1] === "body") {
+			return (doc.body.outerHTML);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1055,20 +1135,11 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function random1to100() {
-		return Math.floor(Math.random() * (100 -1) +1);
+		return Math.floor(Math.random() * (100 - 1) + 1).toString();
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function __test() {
-
-		console.log("__test");
-
-		console.log("rootElement.", document.documentElement);
-		document.documentElement.style.visibility = "hidden";
-
-		lizardState.currentElement.style.visibility = "visible";
-
-	}
+	function __test() {}
 
 })();

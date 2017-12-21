@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let elmColorizeBackgroundColor = document.getElementById("colorizeBackgroundColor");
 	let elmDecolorizeColor = document.getElementById("decolorizeColor");
 	let elmDecolorizeBackgroundColor = document.getElementById("decolorizeBackgroundColor");
-	let elmButtonDefaults = document.getElementById("btnDefaults");
+	let elmBtnRestoreDefaults = document.getElementById("btnDefaults");
 	
 
 	// get saved preferences
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	elmDecolorizeBackgroundColor.addEventListener("change", () => { prefs.setDecolorizeColors([elmDecolorizeColor.value, elmDecolorizeBackgroundColor.value]); });
 
 	// restore defaults when requestes
-	elmButtonDefaults.addEventListener("click", () => {
+	elmBtnRestoreDefaults.addEventListener("click", () => {
 		let defPrefs = prefs.restoreDefaults();
 		elmHelpBoxOnStart.checked = defPrefs.helpBoxOnStart;
 		elmViewSourceHtml.checked = (defPrefs.viewSourceType === prefs.SOURCE_TYPE.HTML);
