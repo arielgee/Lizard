@@ -602,10 +602,12 @@
 		ua.data.items.push({
 			element:  elm,
 			prev_color: elm.style.color,
+			prev_borderColor: elm.style.borderColor,
 			prev_backgroundColor: elm.style.backgroundColor
 		});
 
 		elm.style.color = foreground;
+		elm.style.borderColor = foreground;
 		elm.style.backgroundColor = background;
 
 		if(colorizeChildren) {
@@ -630,10 +632,12 @@
 				uaItems.push({
 					element:  c,
 					prev_color: c.style.color,
+					prev_borderColor: c.style.borderColor,
 					prev_backgroundColor: c.style.backgroundColor							
 				});
 				
 				c.style.color = foreground;
+				c.style.borderColor = foreground;
 				c.style.backgroundColor = background;
 			}
 		}
@@ -677,6 +681,7 @@
 				for(let i=0; i<ua.data.items.length; i++) {
 					let e = ua.data.items[i];
 					e.element.style.color = e.prev_color;
+					e.element.style.borderColor = e.prev_borderColor;
 					e.element.style.backgroundColor = e.prev_backgroundColor;
 				}
 				break;
