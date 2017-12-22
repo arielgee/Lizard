@@ -597,16 +597,19 @@
 
 		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_COLORIZE);
 
-		ua.data["element"] = elm;
-		ua.data["prev_color"] = elm.style.color;
-		ua.data["prev_backgroundColor"] = elm.style.backgroundColor;
-		ua.data["children"] = [];
+		ua.data["items"] = [];
+
+		ua.data.items.push({
+			element:  elm,
+			prev_color: elm.style.color,
+			prev_backgroundColor: elm.style.backgroundColor
+		});
 
 		elm.style.color = foreground;
 		elm.style.backgroundColor = background;
 
 		if(colorizeChildren) {
-			colorElementChildren(elm, foreground, background, ua.data.children);
+			colorElementChildren(elm, foreground, background, ua.data.items);
 		}		
 
 		lizardState.undoActions.push(ua);
@@ -614,7 +617,7 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function colorElementChildren(elm, foreground, background, uaChildren) {
+	function colorElementChildren(elm, foreground, background, uaItems) {
 
 		for(let i=0; i<elm.children.length; i++) {
 			
@@ -622,18 +625,16 @@
 			
 			if(c.nodeType === Node.ELEMENT_NODE && !c.className.includes(CLS_LIZARD_ELEMENT)) { 
 
-				colorElementChildren(c, foreground, background, uaChildren);
+				colorElementChildren(c, foreground, background, uaItems);
 
-				let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_COLORIZE);
-
-				ua.data["element"] = c;
-				ua.data["prev_color"] = c.style.color;
-				ua.data["prev_backgroundColor"] = c.style.backgroundColor;
-						
+				uaItems.push({
+					element:  c,
+					prev_color: c.style.color,
+					prev_backgroundColor: c.style.backgroundColor							
+				});
+				
 				c.style.color = foreground;
 				c.style.backgroundColor = background;
-
-				uaChildren.push(ua);
 			}
 		}
 	}
@@ -673,13 +674,11 @@
 				//////////////////////////////////////////////////////////////
 
 			case UNDO_ACTION_COLORIZE:
-				for(let i=0; i<ua.data.children.length; i++) {
-					let uaData = ua.data.children[i].data;
-					uaData.element.style.color = uaData.prev_color;
-					uaData.element.style.backgroundColor = uaData.prev_backgroundColor;
+				for(let i=0; i<ua.data.items.length; i++) {
+					let e = ua.data.items[i];
+					e.element.style.color = e.prev_color;
+					e.element.style.backgroundColor = e.prev_backgroundColor;
 				}
-				ua.data.element.style.color = ua.data.prev_color;
-				ua.data.element.style.backgroundColor = ua.data.prev_backgroundColor;
 				break;
 				//////////////////////////////////////////////////////////////
 
