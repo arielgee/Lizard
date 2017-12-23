@@ -231,7 +231,7 @@
 			return;
 		}
 
-		if (lizardState.scrollbarWidth === -1) setScrollbarWidth();
+		if (lizardState.scrollbarWidth === -1) determineScrollbarWidth();
 
 		document.addEventListener("mousemove", onMouseMove, true);
 		document.addEventListener("mouseleave", onMouseLeave, true);
@@ -731,11 +731,9 @@
 
 		let elm = lizardState.currentElement;
 
-		if (!elm) {
-			return;
-		}
-
-		_blinkElement(elm, elm.style.visibility, 200, 3000);
+		if (elm) {
+			_blinkElement(elm, elm.style.visibility, 200, 3000);
+		}		
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1098,7 +1096,7 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function setScrollbarWidth() {
+	function determineScrollbarWidth() {
 
 		lizardState.scrollbarWidth = DEF_SCROLL_BAR_WIDTH;
 
