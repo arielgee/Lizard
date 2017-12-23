@@ -590,7 +590,7 @@
 
 		let elm = lizardState.currentElement;
 
-		if (!elm || elm === null) {
+		if (!elm || elm === null) { 
 			displayNotification("No element is selected.", NOTIFICATION_TIMEOUT);
 			return;
 		}
@@ -735,14 +735,21 @@
 			return;
 		}
 
-		let currVisibility = elm.style.visibility;
-
-		for (let i=0; i<5; i++) {
-			setTimeout(function () { elm.style.visibility = "hidden"; }, i * 400);
-			setTimeout(function () { elm.style.visibility = currVisibility; }, i * 400 + 200);
-		}
+		_blinkElement(elm, elm.style.visibility, 200, 3000);
 	}
 
+	//////////////////////////////////////////////////////////////////////
+	//
+	function _blinkElement(elm, orgVisibility, interval, duration) {
+
+		elm.style.visibility = (elm.style.visibility === "hidden" ? orgVisibility : "hidden");
+
+		if(duration > 0) {
+			setTimeout(_blinkElement, interval, elm, orgVisibility, interval, duration-interval);
+		} else {
+			elm.style.visibility = orgVisibility;
+		}
+	}
 	//////////////////////////////////////////////////////////////////////
 	//	
 	function viewSource() {
