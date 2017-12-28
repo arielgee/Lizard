@@ -22,6 +22,14 @@
     <div class="prefSeperator"></div>
 
     <div class="preference">
+        <label for="wheelToWiderNarrower" class="preferenceLabel">Use mouse wheel to wider/narrower selection&#x200A;<span id="reqRestart" class="annotation">&nbsp;require session restart&nbsp;</span></label>
+        <div class="preferenceControl">
+            <input type="checkbox" id="wheelToWiderNarrower" />
+        </div>
+    </div>
+    <div class="prefSeperator"></div>
+
+    <div class="preference">
         <label class="preferenceLabel">View source type</label>
         <div class="preferenceControl">
             <input type="radio" id="viewSrcHtml" name="viewSrcType" value="html"/><label for="viewSrcHtml" class="radioLabel">HTML</label>
@@ -44,7 +52,7 @@
     <div class="prefSeperator"></div>
 
     <div class="preference">
-        <label class="preferenceLabel">Colorization colors</label>
+        <label class="preferenceLabel">For colorize use</label>
         <div class="preferenceControl">
             <input type="color" id="colorizeColor"/> on <input type="color" id="colorizeBackgroundColor"/>
         </div>
@@ -52,7 +60,7 @@
     <div class="prefSeperator"></div>
 
     <div class="preference">
-        <label class="preferenceLabel">Decolorization colors</label>
+        <label class="preferenceLabel">For decolorize use</label>
         <div class="preferenceControl">
             <input type="color" id="decolorizeColor"/> on <input type="color" id="decolorizeBackgroundColor"/>
         </div>
@@ -60,7 +68,7 @@
     <div class="prefSeperator"></div>
 
     <div class="preference">
-        <label for="colorizeChildren" class="preferenceLabel">Colorization and Decolorization explicitly effects children</label>
+        <label for="colorizeChildren" class="preferenceLabel">Colorize and decolorize explicitly effects children</label>
         <div class="preferenceControl">
             <input type="checkbox" id="colorizeChildren"/>
         </div>

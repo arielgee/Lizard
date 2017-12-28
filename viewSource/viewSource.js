@@ -47,7 +47,7 @@
 			elmScrollUp.style.display = elmScrollDown.style.display = "none";
 		}
 
-		prefs.getSavedViewSourceData(dataId).then((result) => {
+		sourceData.getSavedViewSourceData(dataId).then((result) => {
 			document.title = "View " + result.type + " Source - Lizard";
 
 			if (result.data) {
@@ -55,7 +55,7 @@
 			} else {
 				showEnlargedLabel();
 			}
-			prefs.clearSavedViewSourceData(dataId);
+			sourceData.clearSavedViewSourceData(dataId);
 		});
 	}
 
@@ -107,7 +107,7 @@
 		window.scrollBy({
 			top: offsetY,
 			left: 0,
-			behavior: 'smooth'
+			behavior: 'smooth',
 		});
 
 		// continuous scroll is done only from btnScrollUp/btnScrollDown (via EventListener -> mousedown)
@@ -133,16 +133,15 @@
 	function continuousScroll(offsetY, offsetMultiplier) {
 
 		// don't scroll if there is nowhere to scroll
-		if (!canDocumentScroll(offsetY < 0 ? "up" : "down")) {
-			return;
-		}
+		if (canDocumentScroll(offsetY < 0 ? "up" : "down")) {
 
-		window.scrollBy({
-			top: (offsetY * (offsetMultiplier <= MAX_OFFSET_MULTIPLIER ? offsetMultiplier : MAX_OFFSET_MULTIPLIER)),
-			left: 0,
-			behavior: 'smooth'
-		});
-		scrollerTimeoutId = setTimeout(continuousScroll, 150, offsetY, offsetMultiplier + 1);
+			window.scrollBy({
+				top: (offsetY * (offsetMultiplier <= MAX_OFFSET_MULTIPLIER ? offsetMultiplier : MAX_OFFSET_MULTIPLIER)),
+				left: 0,
+				behavior: 'smooth',
+			});
+			scrollerTimeoutId = setTimeout(continuousScroll, 150, offsetY, offsetMultiplier + 1);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////

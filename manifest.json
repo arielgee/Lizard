@@ -12,11 +12,11 @@
   "author": "arielg",
 
   "permissions": [
+    "<all_urls>",
     "activeTab",
     "menus",
     "notifications",
     "clipboardWrite",
-    "<all_urls>",
     "storage"
   ],
 
@@ -67,16 +67,7 @@
   "background": {
     "scripts": [ "common.js", "background.js" ]
   },
-
-  "content_scripts": [
-    {
-      "matches": [ "<all_urls>" ],
-      "js": [ "common.js", "content.js" ],
-      "css": [ "content.css" ],
-      "run_at": "document_idle"
-    }
-  ],
-
+    
   "options_ui": {
     "browser_style": true,
     "page": "preferences/preferences.html"

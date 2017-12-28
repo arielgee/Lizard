@@ -162,6 +162,10 @@
     background-color: green !important;
   }
 
+#lizardIsolateContainer {
+  all: initial !important;
+}
+
 /** Help **/
 #lizardHelpBox {
   position: fixed !important;
@@ -243,6 +247,13 @@
     margin: 0 3px 0 3px !important;
   }
 
-#lizardIsolateContainer {
-  all: initial !important;
-}
+  #lizardHelpBox .helpFooter {
+    width: auto !important;
+  }
+
+  #lizardHelpBox .helpFooterLink {
+    display: inline !important;
+    color: blue !important;
+    text-decoration: underline !important;
+    cursor: pointer !important;
+  }

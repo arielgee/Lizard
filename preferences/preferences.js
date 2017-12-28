@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	/////////////////////////////////////////////////////////////////////////////////
 	// get elements
 	let elmHelpBoxOnStart = document.getElementById("helpBoxOnStart");
+	let elmWheelToWiderNarrower = document.getElementById("wheelToWiderNarrower");
+	let elmLabelRequireRestart = document.getElementById("reqRestart");
 	let elmViewSourceHtml = document.getElementById("viewSrcHtml");
 	let elmViewSourceCss = document.getElementById("viewSrcCss");
 	let elmOpenViewSourceInWin = document.getElementById("openViewSrcInWin");
@@ -22,6 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	// get saved preferences
 	prefs.getHelpBoxOnStart().then((checked) => {
 		elmHelpBoxOnStart.checked = checked;
+	});
+
+	prefs.getWheelToWiderNarrower().then((checked) => {
+		elmWheelToWiderNarrower.checked = checked;
 	});
 
 	prefs.getViewSourceType().then((type) => {
@@ -59,6 +65,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	/////////////////////////////////////////////////////////////////////////////////
 	// save preferences when changed
 	elmHelpBoxOnStart.addEventListener("change", () => { prefs.setHelpBoxOnStart(elmHelpBoxOnStart.checked); });
+	elmWheelToWiderNarrower.addEventListener("change", () => {
+		prefs.setWheelToWiderNarrower(elmWheelToWiderNarrower.checked);
+		elmLabelRequireRestart.className += " flash";
+	});
 	elmViewSourceHtml.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_TYPE.HTML); });
 	elmViewSourceCss.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_TYPE.CSS); });
 	elmOpenViewSourceInWin.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_TYPE.WINDOW); });
@@ -74,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	elmBtnRestoreDefaults.addEventListener("click", () => {
 		let defPrefs = prefs.restoreDefaults();
 		elmHelpBoxOnStart.checked = defPrefs.helpBoxOnStart;
+		elmWheelToWiderNarrower.checked = defPrefs.wheelToWiderNarrower;
 		elmViewSourceHtml.checked = (defPrefs.viewSourceType === prefs.SOURCE_TYPE.HTML);
 		elmViewSourceCss.checked = (defPrefs.viewSourceType === prefs.SOURCE_TYPE.CSS);
 		elmOpenViewSourceInWin.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_TYPE.WINDOW);

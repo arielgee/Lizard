@@ -26,13 +26,13 @@ body {
   transition: width 0.5s ease-in 0s, background-color 0.5s ease-in 0s;
 }
 
-#labelInfo.enlarged {
-  font-size: 16px;
-  width: 110%;
-  height: 30px;
-  line-height: 30px;
-  background-color: rgba(255, 192, 192, 1);
-}
+  #labelInfo.enlarged {
+    font-size: 16px;
+    width: 110%;
+    height: 30px;
+    line-height: 30px;
+    background-color: rgba(255, 192, 192, 1);
+  }
 
   #labelInfo:not(.enlarged):hover {
     width: 380px;
@@ -43,9 +43,9 @@ body {
   margin: 0 2px -3px 2px;
 }
 
-#imgExclamation.enlarged {
-  margin: 0 3px -2px 6px;
-}
+  #imgExclamation.enlarged {
+    margin: 0 3px -2px 6px;
+  }
 
 #lizardSourceBoxPre {
   margin: 0;

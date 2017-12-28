@@ -2,38 +2,49 @@
 
 (function () {
 
-	const IS_BUTTON_ON_ADDRESSBAR = false;				// Determine position of lizard button, address bar or toolbar (page action or browser action).
+	const IS_BUTTON_ON_TOOLBAR = true;				// Determine position of lizard button, address bar or toolbar (page action or browser action).
+													// When shifting we also need to modify the manifest.json
 
 	const BROWSER_ACTION_IMAGE_PATHS = {
 		32: "icons/lizard-32.png",
-		48: "icons/lizard-48.png"
+		48: "icons/lizard-48.png",
 	};
 
 	const BROWSER_ACTION_GRAY_IMAGE_PATHS = {
 		32: "icons/lizard-gray-32.png",
-		48: "icons/lizard-gray-48.png"
+		48: "icons/lizard-gray-48.png",
 	};
 
 	const PAGE_ACTION_IMAGE_PATHS = {
 		19: "icons/lizard-19.png",
-		38: "icons/lizard-38.png"
+		38: "icons/lizard-38.png",
 	};
 
 	const PAGE_ACTION_GRAY_IMAGE_PATHS = {
 		19: "icons/lizard-gray-19.png",
-		38: "icons/lizard-gray-38.png"
+		38: "icons/lizard-gray-38.png",
 	};
 
 	const WTF_IMAGE_PATH = { 48: "icons/lizard-wtf-48.png" };
 
 	const VIEW_SOURCE_PAGE = "viewSource/viewSource.html";
 
+	const DEF_NOTIFICATION_TIMEOUT = 4300;
 
 	let lizardToggleStateMenuID = -1;
 
+	let lastInjectTime = 0;
+
 	//////////////////////////////////////////////////////////////////////
 	// Lizard button
-	if (IS_BUTTON_ON_ADDRESSBAR === true) {
+	if (IS_BUTTON_ON_TOOLBAR === true) {
+
+		// Toolbar button
+
+		browser.browserAction.onClicked.addListener((tab) => {
+			sendToggleLizardStateMessage(tab);
+		});
+	} else {
 
 		// Page action button
 
@@ -42,14 +53,7 @@
 		});
 
 		browser.pageAction.onClicked.addListener((tab) => {
-			sendToggleLizardStateMessage(tab.id);
-		});
-	} else {
-
-		// Toolbar button
-
-		browser.browserAction.onClicked.addListener((tab) => {
-			sendToggleLizardStateMessage(tab.id);
+			sendToggleLizardStateMessage(tab);
 		});
 	}
 
@@ -58,14 +62,14 @@
 	lizardToggleStateMenuID = browser.menus.create({
 		id: "mnu-toggle-lizard-state",
 		title: "Start Lizard Session",
-		command: "_execute_browser_action",
-		contexts: ["tools_menu", "page", "link", "image", "selection", "video", "frame"]
+		command: (IS_BUTTON_ON_TOOLBAR ? "_execute_browser_action" : "_execute_page_action"),
+		contexts: ["tools_menu", "page", "link", "image", "selection", "video", "frame"],
 	});
 
 	browser.menus.create({
 		id: "mnu-reload-lizard-extension",
 		title: "Reload Lizard Extension",
-		contexts: ["browser_action"]
+		contexts: [(IS_BUTTON_ON_TOOLBAR ? "browser_action" : "page_action")],
 	});
 
 	browser.menus.onClicked.addListener(function (info, tab) {
@@ -77,13 +81,21 @@
 	//////////////////////////////////////////////////////////////////////
 	// firefox commands (keyboard)
 	browser.commands.onCommand.addListener(function (command) {
+	
+		switch (command) {
 
-		if (command == "kb-toggle-lizard-state") {
-			browser.tabs.query({ currentWindow: true, active: true }).then((tabs) => {
-				sendToggleLizardStateMessage(tabs[0].id);
-			});
-		} else if (command == "kb-reload-lizard-extension") {
-			reloadLizardWebExtension();
+			case "kb-toggle-lizard-state":
+				browser.tabs.query({ currentWindow: true, active: true }).then((tabs) => {
+					sendToggleLizardStateMessage(tabs[0]);
+				});
+				break;
+				//////////////////////////////////////////////////////////////
+
+			case "kb-reload-lizard-extension":
+				reloadLizardWebExtension();
+				break;
+				//////////////////////////////////////////////////////////////
+
 		}
 	});
 
@@ -93,28 +105,94 @@
 
 		switch (message.type) {
 
-			case prefs.MSG_LIZARD_STATE_CHANGED:
+			case msgs.MSG_SESSION_STATE_CHANGED:
 				updateLizardUI(message.data.status);
 				break;
 				//////////////////////////////////////////////////////////////
 
-			case prefs.MSG_LIZARD_DISPLAY_NOTIF:
+			case msgs.MSG_DISPLAY_NOTIFICATION:
 				createLizardNotification(message.data.message, message.data.timeout);
 				break;
 				//////////////////////////////////////////////////////////////
 
-			case prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_WINDOW:
+			case msgs.MSG_OPEN_VIEW_SOURCE_WINDOW:
 				openViewSourcePage(message.data.type, message.data.id, true);
 				break;
 				//////////////////////////////////////////////////////////////
 
-			case prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_TAB:
+			case msgs.MSG_OPEN_VIEW_SOURCE_TAB:
 				openViewSourcePage(message.data.type, message.data.id, false);
 				break;
 				//////////////////////////////////////////////////////////////
-				
+
+			case msgs.MSG_OPEN_OPTIONS_PAGE:
+				browser.runtime.openOptionsPage();
+				break;
+				//////////////////////////////////////////////////////////////
+
 		}
 	});
+
+	//////////////////////////////////////////////////////////////////////
+	// 
+	function sendToggleLizardStateMessage(tab) {
+		
+		if (tab.status !== "complete") {
+			createLizardNotification("Page not ready yet.");
+			return;
+		}
+		
+		browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }, (response) => {
+			
+			// This is UGLY but it works. if the user double clicks (2 very fast clicks) on the lizard button (or the keyboard command) the
+			// injectLizardScripts() is called twice and an error is raised due to the redeclaration and onErrorToggleSessionState() is called.
+			if ( (response === undefined) && ((Date.now() - lastInjectTime) > 500) ) {
+
+				// scripts were not injected
+
+				lastInjectTime = Date.now();
+
+				injectLizardScripts(tab).then(() => {
+					lzUtil.log("Injection time(millisec):", Date.now()-lastInjectTime);
+					browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }).catch(onErrorToggleSessionState);
+				}, onErrorToggleSessionState);
+			}
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onErrorToggleSessionState(err) {
+		lzUtil.log("Toggle session state", err);
+		updateLizardUI("wtf");
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function injectLizardScripts(tab) {
+
+		return new Promise((resolve, reject) => {
+
+			// Ordered by file size. The larger one first.
+			let injecting1 = browser.tabs.executeScript(tab.id, { file: "content.js" });
+			let injecting2 = browser.tabs.executeScript(tab.id, { file: "common.js" });
+			let injecting3 = browser.tabs.insertCSS(tab.id, { file: "content.css" });
+			let injecting4 = browser.tabs.executeScript(tab.id, { code: "const ALL_LIZARD_SCRIPTS_INJECTED=true;" });
+						
+			injecting1.then(() => {
+				injecting2.then(() => {
+					injecting3.then(() => {
+						injecting4.then(() => {
+
+							resolve();
+
+						}, (err) => { reject(new Error("Error injecting code 'const ALL_LIZARD_SCRIPTS_INJECTED=true;', " + err.message)); });
+					}, (err) => { reject(new Error("Error injecting file 'content.css', " + err.message)); });
+				}, (err) => { reject(new Error("Error injecting file 'common.js', " + err.message)); });
+			}, (err) => { reject(new Error("Error injecting file 'content.js', " + err.message)); });
+
+		});
+	}	
 
 	//////////////////////////////////////////////////////////////////////
 	// 
@@ -132,7 +210,7 @@
 			pageActionImagePaths = PAGE_ACTION_IMAGE_PATHS;
 		} else if (status !== "off") {
 			action = "wtf";
-			title = "Lizard - wtf just happened???";
+			title = "Lizard - wtf just happened???\n\nCtrl+Shift+Down to reload WebExtension.";
 			browserActionImagePaths = pageActionImagePaths = WTF_IMAGE_PATH;
 		}
 
@@ -140,28 +218,31 @@
 
 		let getting = browser.tabs.query({ active: true, currentWindow: true });
 		getting.then((tabs) => {
-			if (IS_BUTTON_ON_ADDRESSBAR === true) {
-				browser.pageAction.setTitle({ tabId: tabs[0].id, title: title });
-				browser.pageAction.setIcon({ tabId: tabs[0].id, path: pageActionImagePaths });
+			let tabId = tabs[0].id;
+			if (IS_BUTTON_ON_TOOLBAR === true) {
+				browser.browserAction.setTitle({ tabId: tabId, title: title });
+				browser.browserAction.setIcon({ tabId: tabId, path: browserActionImagePaths });
 			} else {
-				browser.browserAction.setTitle({ tabId: tabs[0].id, title: title });
-				browser.browserAction.setIcon({ tabId: tabs[0].id, path: browserActionImagePaths });
+				browser.pageAction.setTitle({ tabId: tabId, title: title });
+				browser.pageAction.setIcon({ tabId: tabId, path: pageActionImagePaths });
 			}
-		});	
+		});
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	// 
-	function createLizardNotification(message, timeout) {
+	//
+	function createLizardNotification(message, timeout = DEF_NOTIFICATION_TIMEOUT) { // ES6: default parameter value part of JS
 
-		let eventTime = Date.now();
-		let notifId = "lizard-notification-" + eventTime;
+		let notifId = "lizard-" + window.btoa(message);
+
+		// prevent displaying the same notification again and again
+		browser.notifications.clear(notifId);
 
 		browser.notifications.create(notifId, {
 			"type": "basic",
 			"title": "Lizard - Web Extension",
-			"eventTime": eventTime,					// no idea what it's good for
-			"message": message
+			"eventTime": Date.now(),					// no idea what it's good for
+			"message": message,
 		});
 		setTimeout(function () { browser.notifications.clear(notifId); }, timeout);
 	}
@@ -178,7 +259,7 @@
 				type: "popup",
 				allowScriptsToClose: true,
 				height: 350,
-				width: 700
+				width: 700,
 			});
 		} else {
 			
@@ -186,16 +267,10 @@
 			getting.then((tabs) => {
 				browser.tabs.create({
 					url: viewSourceURL,
-					index: (tabs[0].index)+1
+					index: (tabs[0].index)+1,
 				});
 			});
 		}
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	// 
-	function sendToggleLizardStateMessage(tabId) {
-		browser.tabs.sendMessage(tabId, { action: prefs.ACTION_MSG_LIZARD_TOGGLE_STATE });
 	}
 
 	//////////////////////////////////////////////////////////////////////

@@ -8,7 +8,10 @@
 	const CLS_HELP_RECORD = "helpRec";
 	const CLS_HELP_TEXT = "helpText";
 	const CLS_HELP_COLOR = "helpColor";
+	const CLS_HELP_FOOTER = "helpFooter";
+	const CLS_HELP_FOOTER_LINK = "helpFooterLink";
 	const CLS_LETTER_KEY = "letterKey";
+	
 
 	const LIZARD_BOX_PREFIX = "lizardBox";
 	const ID_LIZARD_BOX = LIZARD_BOX_PREFIX + "Container";
@@ -21,13 +24,13 @@
 	const ID_LIZARD_SOURCE_BOX_COPY = "lizardSourceBoxCopy";
 	const ID_LIZARD_SOURCE_BOX_SOURCE_TYPE = "lizardSourceBoxSourceType";
 	const ID_LIZARD_ISOLATE_CONTAINER = "lizardIsolateContainer";
+	const ID_LIZARD_HELP_FOOTER_LINK = "lizardHelpBoxFooterLink";
 
 	const ID_LIZARD_HELP_BOX = "lizardHelpBox";
 
 	const PATH_TO_HELP_IMG = "icons/lizard-32.png";
 	const BOX_BORDER_WIDTH = 2;		// #lizardBoxBorder border width 2px (as in the content.css file)
-	const DEF_SCROLL_BAR_WIDTH = 16;
-	const NOTIFICATION_TIMEOUT = 4300;
+	const DEF_SCROLL_BAR_WIDTH = 16;	
 	const MANDATORY_ROOT_ELEMENTS = ["html", "body"];
 
 	const UNDO_ACTION_HIDE = "undoHide";
@@ -60,13 +63,23 @@
 		strolledElements: [],
 
 		scrollbarWidth: -1,
+
+		useWheelToWiderNarrower: false,
 	};
 
-
+	
 	//////////////////////////////////////////////////////////////////////
 	//
 	browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-		if (request.action === prefs.ACTION_MSG_LIZARD_TOGGLE_STATE) {
+
+		// accept messages from background only when all scripts are injected
+		if (ALL_LIZARD_SCRIPTS_INJECTED === undefined || ALL_LIZARD_SCRIPTS_INJECTED !== true) {
+			return;
+		}
+
+		sendResponse({ message : "injected" });
+
+		if (request.message === msgs.MSG_TOGGLE_SESSION_STATE) {
 			if (lizardState.bSelectionStarted) {
 				stopSelection();
 			} else {
@@ -74,7 +87,7 @@
 			}
 		}
 	});
-
+	
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onMouseMove(event) {
@@ -112,9 +125,9 @@
 	//
 	function onWheel(event) {
 
-		let elm = document.elementFromPoint(event.clientX, event.clientY);
+		if (lizardState.useWheelToWiderNarrower) {
 
-		if (elm && elm.id.startsWith(LIZARD_BOX_PREFIX)) {
+			let elm = document.elementFromPoint(event.clientX, event.clientY);
 
 			if (event.deltaY < 0) {
 				wider();
@@ -122,6 +135,21 @@
 				narrower();
 			}
 			event.preventDefault();
+
+		} else {
+
+			if (!lizardState.bSelectionLocked) {
+				lizardState.strolledElements =[];
+				removeSelectionBox();
+				unselectElement();
+			}
+
+			// scroll some pixels so the UX will fill responsive
+			window.scrollBy({
+				top : (20 * event.deltaY),
+				left: 0,
+				behavior: 'smooth',
+			});
 		}
 	}
 
@@ -197,13 +225,8 @@
 			case "escape":
 				removeInfoBoxes();
 				break;
-/*
-			case "t":
-				__test();
-				break;
-*/
 			default:
-				//console.log("[lizard] Unused key:" + event.key);
+				//lzUtil.log("[lizard] Unused key:" + event.key);
 				return;
 		}
 
@@ -248,8 +271,11 @@
 		prefs.getHelpBoxOnStart().then((checked) => {
 			if (checked) {
 				showHelp();
-				//setTimeout(onCloseHelpBox, 5000);
 			}
+		});
+		
+		prefs.getWheelToWiderNarrower().then((checked) => {
+			lizardState.useWheelToWiderNarrower = checked;
 		});
 
 		lizardState.bSelectionStarted = true;
@@ -341,7 +367,7 @@
 		boxBorder.style.width = (vpRect.width <= BOX_BORDER_WIDTH ? 0 : vpRect.width) + "px";
 		boxBorder.style.height = (vpRect.height <= BOX_BORDER_WIDTH ? 0 : vpRect.height) + "px";
 
-		/*console.log("[lizard]", "Node: ", lizardState.currentElement.nodeName,
+		/*lzUtil.log("Node: ", lizardState.currentElement.nodeName,
 			"\nVScrollWidth/HScrollHeight", getVScrollWidth(), "/", getHScrollWidth(),
 			"\ninnerWidth/Height", innerWidth, "/", innerHeight,
 			"\nrect: ", lizardState.currentElement.getBoundingClientRect(),
@@ -399,7 +425,7 @@
 	//
 	function getLabelContent(elm) {
 
-		let labelInnerHTML = "<strong>" + elm.nodeName.toLowerCase() + "</strong>";
+		let labelInnerHTML = "<b>" + elm.nodeName.toLowerCase() + "</b>";
 
 		if (elm.id !== "") {
 			labelInnerHTML += ", id: " + elm.id;
@@ -463,15 +489,15 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
-			displayNotification("No element is selected.", NOTIFICATION_TIMEOUT);
+			displayNotification("No element is selected.");
 			return;
 		}		
-
+		
 		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName.toLowerCase()) !== -1) {
-			displayNotification("Root elements can't be hidden.", NOTIFICATION_TIMEOUT);
+			displayNotification("The element '<" + elm.nodeName.toLowerCase() + ">' can't be hidden.");
 			return;
 		}
-
+		
 		removeSelectionBox();
 		unselectElement();
 		lockSelection(false);
@@ -493,15 +519,15 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
-			displayNotification("No element is selected.", NOTIFICATION_TIMEOUT);
+			displayNotification("No element is selected.");
 			return;
 		}
-
+		
 		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName.toLowerCase()) !== -1) {
-			displayNotification("Root elements can't be removed.", NOTIFICATION_TIMEOUT);
+			displayNotification("The element '<" + elm.nodeName.toLowerCase() + ">' can't be removed.");
 			return;
 		}
-
+		
 		removeSelectionBox();
 		unselectElement();
 		lockSelection(false);
@@ -525,12 +551,12 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
-			displayNotification("No valid element is selected.", NOTIFICATION_TIMEOUT);
+			displayNotification("No valid element is selected.");
 			return;
 		}
 
 		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName.toLowerCase()) !== -1) {
-			displayNotification("Root elements can't be isolated.", NOTIFICATION_TIMEOUT);
+			displayNotification("The element '<" + elm.nodeName.toLowerCase() + ">' can't be isolated.");
 			return;
 		}
 
@@ -591,7 +617,7 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) { 
-			displayNotification("No element is selected.", NOTIFICATION_TIMEOUT);
+			displayNotification("No element is selected.");
 			return;
 		}
 
@@ -612,7 +638,7 @@
 			element:  elm,
 			prev_color: elm.style.color,
 			prev_borderColor: elm.style.borderColor,
-			prev_backgroundColor: elm.style.backgroundColor							
+			prev_backgroundColor: elm.style.backgroundColor,
 		});
 		
 		elm.style.color = foreground;
@@ -674,7 +700,7 @@
 				//////////////////////////////////////////////////////////////
 
 			default:
-				console.log("[lizard]", "Unknown undo type. This is not right.", ua.type, ua.data);
+				lzUtil.log("Unknown undo type. This is not right.", ua.type, ua.data);
 				break;
 				//////////////////////////////////////////////////////////////
 		}
@@ -702,10 +728,18 @@
 	//
 	function narrower() {
 
-		if(lizardState.strolledElements.length > 0) {
+		let elm;
+
+		if (lizardState.strolledElements.length > 0) {
+			elm = lizardState.strolledElements.pop();
+		} else if (lizardState.currentElement) {
+			elm = lizardState.currentElement.firstElementChild;
+		}
+
+		if (elm) {
 			removeSelectionBox();
 			unselectElement();
-			selectElement(lizardState.strolledElements.pop());
+			selectElement(elm);
 			createSelectionBox();
 		}
 	}
@@ -733,7 +767,9 @@
 
 		if (elm) {
 			_blinkElement(elm, elm.style.visibility, 200, 3000);
-		}		
+		} else {
+			displayNotification("No element is selected.");
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -748,6 +784,7 @@
 			elm.style.visibility = orgVisibility;
 		}
 	}
+
 	//////////////////////////////////////////////////////////////////////
 	//	
 	function viewSource() {
@@ -755,6 +792,7 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm) {
+			displayNotification("No element is selected.");
 			return;
 		}
 
@@ -791,9 +829,9 @@
 
 		let id = window.btoa(random1to100() + Date.now().toString());
 
-		prefs.setSavedViewSourceData(source, type, id);
+		sourceData.setSavedViewSourceData(source, type, id);
 
-		let msg = BROWSER_MESSAGE(newWin ? prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_WINDOW : prefs.MSG_LIZARD_OPEN_VIEW_SOURCE_TAB);
+		let msg = BROWSER_MESSAGE(newWin ? msgs.MSG_OPEN_VIEW_SOURCE_WINDOW : msgs.MSG_OPEN_VIEW_SOURCE_TAB);
 		msg.data["id"] = id;
 
 		browser.runtime.sendMessage(msg);
@@ -850,11 +888,16 @@
 			sourceBox.appendChild(sourceBoxPre);
 
 			document.body.appendChild(sourceBox);
+
+			btnClose.addEventListener("click", onCloseSourceBox, false);
+			btnCopy.addEventListener("click", onClickHtmlCopy, false);
+
+			sourceBoxLeftBorder.addEventListener("mousedown", onMouseDownSourceBoxBorder, false);
+			window.addEventListener("mouseup", onMouseUpSourceBoxBorder, false);
+
 		} else {
 			// querySelector is slower but i'm looking just in the ID_LIZARD_SOURCE_BOX's element
 			sourceBoxPre = sourceBox.querySelector("#" + ID_LIZARD_SOURCE_BOX_PRE);
-			btnClose = sourceBox.querySelector("#" + ID_LIZARD_SOURCE_BOX_CLOSE);
-			btnCopy = sourceBox.querySelector("#" + ID_LIZARD_SOURCE_BOX_COPY);
 			lblType = sourceBox.querySelector("#" + ID_LIZARD_SOURCE_BOX_SOURCE_TYPE);
 		}
 
@@ -866,9 +909,6 @@
 
 		sourceBox.style.left = point.left + "px";
 		sourceBox.style.top = point.top + "px";
-
-		btnClose.addEventListener("click", onCloseHtmlBox, false);
-		btnCopy.addEventListener("click", onClickHtmlCopy, false);
 
 		sourceBoxPre.focus();
 	}
@@ -933,6 +973,31 @@
 		}
 	}
 
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onMouseDownSourceBoxBorder(event) {
+		window.addEventListener('mousemove', onMoveSourceBox, true);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onMouseUpSourceBoxBorder(event) {
+		window.removeEventListener('mousemove', onMoveSourceBox, true);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onMoveSourceBox(event) {
+
+		let sourceBox = document.getElementById(ID_LIZARD_SOURCE_BOX);
+
+		if (sourceBox) {
+			sourceBox.style.top = event.clientY + 'px';
+			sourceBox.style.left = event.clientX + 'px';
+		}
+	}
+
 	//////////////////////////////////////////////////////////////////////
 	//
 	function showHelp() {
@@ -965,11 +1030,13 @@
 
 			hlp.style.top = "20px";
 			hlp.style.left = "15px";
+
+			hlp.addEventListener("click", onCloseHelpBox, false);
 		}
 
 		const fmt = "<p class='{0} {1}'>Lizard Hotkeys<img class='{0} {4}' src={5}></img></p>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>H</span><span class='{0} {3}'>Hide (or: shift+click)</span></div>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>R</span><span class='{0} {3}'>Remove (collapses element)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>R</span><span class='{0} {3}'>Remove (collapse element)</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>I</span><span class='{0} {3}'>Isolate</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>C</span><span class='{0} {3}'>" +
 				"Colorize (<span class='{0} {6}' style='background-color:{7} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{8} !important;'>&emsp;</span>)</span>" +
@@ -978,17 +1045,19 @@
 				"Decolorize (<span class='{0} {6}' style='background-color:{9} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{10} !important;'>&emsp;</span>)</span>" +
 			"</div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>U</span><span class='{0} {3}'>Undo</span></div>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>W</span><span class='{0} {3}'>Wider (or: mouse wheel up)</span></div>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>N</span><span class='{0} {3}'>Narrower (or: mouse wheel down)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>W</span><span class='{0} {3}'>Wider</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>N</span><span class='{0} {3}'>Narrower</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>L</span><span class='{0} {3}'>Lock/Unlock</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>B</span><span class='{0} {3}'>Blink</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>V</span><span class='{0} {3}'>View source ({11})</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>Q</span><span class='{0} {3}'>Quit</span></div>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>F1</span><span class='{0} {3}'>Show help</span></div>";
+			"<div class='{0} {1}'><span class='{0} {2}'>F1</span><span class='{0} {3}'>Show help</span></div>" +
+			"<div class='{0} {12}'><span id='{13}' class='{0} {14}'>Options page</span></div>";
 
 		hlp.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, CLS_HELP_RECORD, CLS_LETTER_KEY,
 									CLS_HELP_TEXT, CLS_HELP_IMG, browser.extension.getURL(PATH_TO_HELP_IMG), CLS_HELP_COLOR,
-									colorizeColors[0], colorizeColors[1], decolorizeColors[0], decolorizeColors[1], srcType]);
+									colorizeColors[0], colorizeColors[1], decolorizeColors[0], decolorizeColors[1], srcType,
+									CLS_HELP_FOOTER, ID_LIZARD_HELP_FOOTER_LINK, CLS_HELP_FOOTER_LINK]);
 
 		const CLS_justShowedUp = " justShowedUp";
 		const CLS_fadeout = " fadeout";
@@ -1005,28 +1074,33 @@
 			setTimeout(() => { hlp.className = hlp.className.replace(REGEXP_CLS_fadeout, ""); }, 2100);
 		}, 3000);
 
-		hlp.addEventListener("click", onCloseHelpBox, false);
+		document.getElementById(ID_LIZARD_HELP_FOOTER_LINK).addEventListener("click", onLizardOptionsPage, false);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
 	function removeInfoBoxes() {
-		onCloseHtmlBox();
+		onCloseSourceBox();
 		onCloseHelpBox();
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function onCloseHtmlBox() {
+	function onCloseSourceBox() {
 
 		let elm = document.getElementById(ID_LIZARD_SOURCE_BOX);
 
 		if (elm) {
-			let btn = document.getElementById(ID_LIZARD_SOURCE_BOX_CLOSE);
-			btn.removeEventListener("click", onCloseHtmlBox, false);
+			let el = document.getElementById(ID_LIZARD_SOURCE_BOX_CLOSE);
+			el.removeEventListener("click", onCloseSourceBox, false);
 
-			btn = document.getElementById(ID_LIZARD_SOURCE_BOX_COPY);
-			btn.removeEventListener("click", onClickHtmlCopy, false);
+			el = document.getElementById(ID_LIZARD_SOURCE_BOX_COPY);
+			el.removeEventListener("click", onClickHtmlCopy, false);
+
+			el = document.getElementById(ID_LIZARD_SOURCE_BOX_LEFT_BORDER);
+			el.removeEventListener("mousedown", onMouseDownSourceBoxBorder, false);
+
+			window.removeEventListener("mouse", onMouseUpSourceBoxBorder, false);
 
 			elm.parentNode.removeChild(elm);
 		}
@@ -1034,9 +1108,27 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
+	function onLizardOptionsPage(event) {
+
+		let msg = BROWSER_MESSAGE(msgs.MSG_OPEN_OPTIONS_PAGE);
+
+		browser.runtime.sendMessage(msg);
+
+		event.stopPropagation();
+		return false;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
 	function onCloseHelpBox() {
 
-		let elm = document.getElementById(ID_LIZARD_HELP_BOX);
+		let elm = document.getElementById(ID_LIZARD_HELP_FOOTER_LINK);
+
+		if (elm) {
+			elm.removeEventListener("click", onLizardOptionsPage, false);
+		}
+
+		elm = document.getElementById(ID_LIZARD_HELP_BOX);
 
 		if (elm) {
 			elm.removeEventListener("click", onCloseHelpBox, false);
@@ -1048,7 +1140,7 @@
 	//
 	function notifyToolbarButtonStatus(bStatus) {
 
-		let msg = BROWSER_MESSAGE(prefs.MSG_LIZARD_STATE_CHANGED);
+		let msg = BROWSER_MESSAGE(msgs.MSG_SESSION_STATE_CHANGED);
 		msg.data["status"] = (bStatus ? "on" : "off");
 
 		browser.runtime.sendMessage(msg);
@@ -1058,7 +1150,7 @@
 	//
 	function displayNotification(message, timeout) {
 
-		let msg = BROWSER_MESSAGE(prefs.MSG_LIZARD_DISPLAY_NOTIF);
+		let msg = BROWSER_MESSAGE(msgs.MSG_DISPLAY_NOTIFICATION);
 		msg.data["message"] = message;
 		msg.data["timeout"] = timeout;
 
@@ -1072,27 +1164,6 @@
 	//////                                                                     //////
 	/////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	String.prototype.format = function (args) {
-		let str = this;
-		return str.replace(String.prototype.format.regex, (item) => {
-			let intVal = parseInt(item.substring(1, item.length - 1));
-			let replace;
-			if (intVal >= 0) {
-				replace = args[intVal];
-			} else if (intVal === -1) {
-				replace = "{";
-			} else if (intVal === -2) {
-				replace = "}";
-			} else {
-				replace = "";
-			}
-			return replace;
-		});
-	};
-	String.prototype.format.regex = new RegExp("{-?[0-9]+}", "g");
 
 	//////////////////////////////////////////////////////////////////////
 	//
@@ -1140,8 +1211,8 @@
 		while (lizardElements.length > 0) {
 			lizardElements[0].parentNode.removeChild(lizardElements[0]);
 		}
-
-		let matchs = source.match(/^\<(html|body)\b/i);
+		
+		let matchs = source.match(/^\<(html|body)(\s|\>)/i);
 
 		if (matchs === null) {
 			return (doc.body.innerHTML);
@@ -1154,30 +1225,8 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function addListenersToAllFrames(wnd, evt, handler, useCapture) {
-		for (var i = 0; i < wnd.frames.length; i++) {
-			addListenersToAllFrames(wnd.frames[i], handler);
-		}
-		wnd.document.addEventListener(evt, handler, useCapture);
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function removeListenersFromAllFrames(wnd, evt, handler, useCapture) {
-		for (var i = 0; i < wnd.frames.length; i++) {
-			removeListenersFromAllFrames(wnd.frames[i], handler);
-		}
-		wnd.document.removeEventListener(evt, handler, useCapture);
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
 	function random1to100() {
 		return Math.floor(Math.random() * (100 - 1) + 1).toString();
 	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function __test() {}
 
 })();
