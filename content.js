@@ -4,6 +4,7 @@
 
 	const CLS_LIZARD_ELEMENT = "lizardWebExtElement";
 
+	const CLS_DRAGGABLE_ELEMENT = "lizardDraggable";
 	const CLS_HELP_IMG = "helpImg";
 	const CLS_HELP_RECORD = "helpRec";
 	const CLS_HELP_TEXT = "helpText";
@@ -858,7 +859,7 @@
 
 			sourceBoxLeftBorder = document.createElement("div");
 			sourceBoxLeftBorder.id = ID_LIZARD_SOURCE_BOX_LEFT_BORDER;
-			sourceBoxLeftBorder.className = CLS_LIZARD_ELEMENT;
+			sourceBoxLeftBorder.className = CLS_LIZARD_ELEMENT + " " + CLS_DRAGGABLE_ELEMENT;
 
 			sourceBoxPre = document.createElement("pre");
 			sourceBoxPre.id = ID_LIZARD_SOURCE_BOX_PRE;
@@ -878,7 +879,7 @@
 
 			lblType = document.createElement("span");
 			lblType.id = ID_LIZARD_SOURCE_BOX_SOURCE_TYPE;
-			lblType.className = CLS_LIZARD_ELEMENT;
+			lblType.className = CLS_LIZARD_ELEMENT + " " + CLS_DRAGGABLE_ELEMENT;
 
 			sourceBoxLeftBorder.appendChild(btnClose);
 			sourceBoxLeftBorder.appendChild(btnCopy);
@@ -911,6 +912,33 @@
 		sourceBox.style.top = point.top + "px";
 
 		sourceBoxPre.focus();
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onMouseDownSourceBoxBorder(event) {
+
+		if(event.target.className.includes(CLS_DRAGGABLE_ELEMENT)) {
+			window.addEventListener('mousemove', onMoveSourceBox, true);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onMouseUpSourceBoxBorder(event) {
+		window.removeEventListener('mousemove', onMoveSourceBox, true);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onMoveSourceBox(event) {
+
+		let sourceBox = document.getElementById(ID_LIZARD_SOURCE_BOX);
+
+		if (sourceBox) {
+			sourceBox.style.top = parseInt(sourceBox.style.top) + event.movementY + "px";
+			sourceBox.style.left = parseInt(sourceBox.style.left) + event.movementX + "px";
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -970,31 +998,6 @@
 
 				sel.removeAllRanges();
 			}
-		}
-	}
-
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function onMouseDownSourceBoxBorder(event) {
-		window.addEventListener('mousemove', onMoveSourceBox, true);
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function onMouseUpSourceBoxBorder(event) {
-		window.removeEventListener('mousemove', onMoveSourceBox, true);
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function onMoveSourceBox(event) {
-
-		let sourceBox = document.getElementById(ID_LIZARD_SOURCE_BOX);
-
-		if (sourceBox) {
-			sourceBox.style.top = event.clientY + 'px';
-			sourceBox.style.left = event.clientX + 'px';
 		}
 	}
 
@@ -1100,7 +1103,7 @@
 			el = document.getElementById(ID_LIZARD_SOURCE_BOX_LEFT_BORDER);
 			el.removeEventListener("mousedown", onMouseDownSourceBoxBorder, false);
 
-			window.removeEventListener("mouse", onMouseUpSourceBoxBorder, false);
+			window.removeEventListener("mouseup", onMouseUpSourceBoxBorder, false);
 
 			elm.parentNode.removeChild(elm);
 		}
