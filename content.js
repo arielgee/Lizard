@@ -426,7 +426,7 @@
 	//
 	function getLabelContent(elm) {
 
-		let labelInnerHTML = "<b>" + elm.nodeName.toLowerCase() + "</b>";
+		let labelInnerHTML = "<b class=" + CLS_LIZARD_ELEMENT + ">" + elm.nodeName.toLowerCase() + "</b>";
 
 		if (elm.id !== "") {
 			labelInnerHTML += ", id: " + elm.id;
@@ -1203,27 +1203,12 @@
 	//
 	function sanitizeHtmlFromLizardElements(source) {
 
-		let parser = new DOMParser();
+		let re = new RegExp("\<[^<]+\ class=\"[^\"]*" + CLS_LIZARD_ELEMENT + "[^>]+\>[^<]*\<\/[^>]+\>", "g");
 
-		let doc = parser.parseFromString(source, "text/html");
-
-		let lizardElements = doc.getElementsByClassName(CLS_LIZARD_ELEMENT);
-
-		// When removing an element, it also shrinks the elements array.
-		// If removing an element with it's children also in array, children will be removed in same iteration.
-		while (lizardElements.length > 0) {
-			lizardElements[0].parentNode.removeChild(lizardElements[0]);
+		while (source.search(re) >= 0) {
+			source = source.replace(re, "");
 		}
-		
-		let matchs = source.match(/^\<(html|body)(\s|\>)/i);
-
-		if (matchs === null) {
-			return (doc.body.innerHTML);
-		} else if (matchs[1] === "body") {
-			return (doc.body.outerHTML);
-		} else if (matchs[1] === "html") {
-			return (doc.documentElement.outerHTML);
-		}
+		return source;
 	}
 
 	//////////////////////////////////////////////////////////////////////
