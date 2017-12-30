@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 (function () {
 
@@ -136,21 +136,6 @@
 				narrower();
 			}
 			event.preventDefault();
-
-		} else {
-
-			if (!lizardState.bSelectionLocked) {
-				lizardState.strolledElements =[];
-				removeSelectionBox();
-				unselectElement();
-			}
-
-			// scroll some pixels so the UX will fill responsive
-			window.scrollBy({
-				top : (20 * event.deltaY),
-				left: 0,
-				behavior: 'smooth',
-			});
 		}
 	}
 
@@ -260,6 +245,8 @@
 		document.addEventListener("mousemove", onMouseMove, true);
 		document.addEventListener("mouseleave", onMouseLeave, true);
 		document.addEventListener("wheel", onWheel, true);
+		document.addEventListener("scroll", onScroll, false);
+		window.addEventListener("resize", onResize, false);	
 		document.addEventListener("pagehide", onPageHide, true);
 		document.addEventListener("visibilitychange", onVisibilityChange, false);
 
@@ -295,6 +282,8 @@
 		document.removeEventListener("mousemove", onMouseMove, true);
 		document.removeEventListener("mouseleave", onMouseLeave, true);
 		document.removeEventListener("wheel", onWheel, true);
+		document.removeEventListener("scroll", onScroll, false);
+		window.removeEventListener("resize", onResize, false);
 		document.removeEventListener("pagehide", onPageHide, true);
 		document.removeEventListener("visibilitychange", onVisibilityChange, false);
 
@@ -322,7 +311,7 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function createSelectionBox() {
-
+ 
 		if (!lizardState.currentElement) {
 			return;
 		}
@@ -477,10 +466,8 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function repositionSelectionBox() {
-		if(lizardState.bSelectionLocked) {
-			removeSelectionBox();
-			createSelectionBox();
-		}
+		removeSelectionBox();
+		createSelectionBox();
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -748,16 +735,7 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function lockSelection(bLock) {
-
 		lizardState.bSelectionLocked = bLock;
-
-		if(lizardState.bSelectionLocked) {
-			document.addEventListener("scroll", onScroll, false);
-			window.addEventListener("resize", onResize, false);
-		} else {
-			document.removeEventListener("scroll", onScroll, false);
-			window.removeEventListener("resize", onResize, false);
-		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -767,7 +745,7 @@
 		let elm = lizardState.currentElement;
 
 		if (elm) {
-			_blinkElement(elm, elm.style.visibility, 200, 3000);
+				_blinkElement(elm, elm.style.visibility, 200, 3000);
 		} else {
 			displayNotification("No element is selected.");
 		}
