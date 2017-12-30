@@ -56,7 +56,7 @@
 	};
 
 	let lizardState = {
-		bSelectionStarted: false,
+		bSessionStarted: false,
 		currentElement: null,
 		bSelectionLocked: false,
 
@@ -79,10 +79,10 @@
 		sendResponse({ message : "injected" });
 
 		if (request.message === msgs.MSG_TOGGLE_SESSION_STATE) {
-			if (lizardState.bSelectionStarted) {
-				stopSelection();
+			if (lizardState.bSessionStarted) {
+				stopSession();
 			} else {
-				startSelection();
+				startSession();
 			}
 		}
 	});
@@ -139,7 +139,7 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onPageHide(event) {
-		stopSelection();
+		stopSession();
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -200,7 +200,7 @@
 				viewSource();
 				break;
 			case "q":
-				stopSelection();
+				stopSession();
 				break;
 			case "f1":
 				showHelp();
@@ -230,7 +230,7 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function startSelection() {
+	function startSession() {
 
 		if (!document || !document.body) {
 			alert("\tWhoops!\n\n\tSorry, this is not a valid html document with a <body>.\t");
@@ -264,13 +264,13 @@
 			}
 		});
 		
-		lizardState.bSelectionStarted = true;
-		notifyToolbarButtonStatus(lizardState.bSelectionStarted);
+		lizardState.bSessionStarted = true;
+		notifyToolbarButtonStatus(lizardState.bSessionStarted);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function stopSelection() {
+	function stopSession() {
 
 		lockSelection(false);
 		removeSelectionBox();
@@ -289,14 +289,14 @@
 		document.removeEventListener("click", onClick, true);
 		document.removeEventListener("keydown", onKeyDown, false);
 
-		lizardState.bSelectionStarted = false;
-		notifyToolbarButtonStatus(lizardState.bSelectionStarted);
+		lizardState.bSessionStarted = false;
+		notifyToolbarButtonStatus(lizardState.bSessionStarted);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
 	function selectElement(elm) {
-		if (elm && ((typeof elm.className !== "string") || !(elm.className.includes(CLS_LIZARD_ELEMENT)))) {
+		if (elm && !(elm.className.includes(CLS_LIZARD_ELEMENT))) {
 			lizardState.currentElement = elm;
 		}
 	}
@@ -873,8 +873,8 @@
 			btnClose.addEventListener("click", onCloseSourceBox, false);
 			btnCopy.addEventListener("click", onClickHtmlCopy, false);
 
-			sourceBoxLeftBorder.addEventListener("mousedown", onMouseDownSourceBoxBorder, false);
-			window.addEventListener("mouseup", onMouseUpSourceBoxBorder, false);
+			sourceBoxLeftBorder.addEventListener("mousedown", onMouseDown_SourceBox, false);
+			window.addEventListener("mouseup", onMouseUp_SourceBox, false);
 
 		} else {
 			// querySelector is slower but i'm looking just in the ID_LIZARD_SOURCE_BOX's element
@@ -896,22 +896,22 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function onMouseDownSourceBoxBorder(event) {
+	function onMouseDown_SourceBox(event) {
 
 		if(event.target.className.includes(CLS_DRAGGABLE_ELEMENT)) {
-			window.addEventListener('mousemove', onMoveSourceBox, true);
+			window.addEventListener('mousemove', onMouseMove_SourceBox, true);
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function onMouseUpSourceBoxBorder(event) {
-		window.removeEventListener('mousemove', onMoveSourceBox, true);
+	function onMouseUp_SourceBox(event) {
+		window.removeEventListener('mousemove', onMouseMove_SourceBox, true);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function onMoveSourceBox(event) {
+	function onMouseMove_SourceBox(event) {
 
 		let sourceBox = document.getElementById(ID_LIZARD_SOURCE_BOX);
 
@@ -1062,6 +1062,18 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
+	function onLizardOptionsPage(event) {
+
+		let msg = BROWSER_MESSAGE(msgs.MSG_OPEN_OPTIONS_PAGE);
+
+		browser.runtime.sendMessage(msg);
+
+		event.stopPropagation();
+		return false;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
 	function removeInfoBoxes() {
 		onCloseSourceBox();
 		onCloseHelpBox();
@@ -1081,24 +1093,12 @@
 			el.removeEventListener("click", onClickHtmlCopy, false);
 
 			el = document.getElementById(ID_LIZARD_SOURCE_BOX_LEFT_BORDER);
-			el.removeEventListener("mousedown", onMouseDownSourceBoxBorder, false);
+			el.removeEventListener("mousedown", onMouseDown_SourceBox, false);
 
-			window.removeEventListener("mouseup", onMouseUpSourceBoxBorder, false);
+			window.removeEventListener("mouseup", onMouseUp_SourceBox, false);
 
 			elm.parentNode.removeChild(elm);
 		}
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function onLizardOptionsPage(event) {
-
-		let msg = BROWSER_MESSAGE(msgs.MSG_OPEN_OPTIONS_PAGE);
-
-		browser.runtime.sendMessage(msg);
-
-		event.stopPropagation();
-		return false;
 	}
 
 	//////////////////////////////////////////////////////////////////////
