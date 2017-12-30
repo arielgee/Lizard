@@ -64,8 +64,6 @@
 		strolledElements: [],
 
 		scrollbarWidth: -1,
-
-		useWheelToWiderNarrower: false,
 	};
 
 	
@@ -126,17 +124,16 @@
 	//
 	function onWheel(event) {
 
-		if (lizardState.useWheelToWiderNarrower) {
+		// this listener is added only when pref_wheelToWiderNarrower is checked
 
-			let elm = document.elementFromPoint(event.clientX, event.clientY);
+		let elm = document.elementFromPoint(event.clientX, event.clientY);
 
-			if (event.deltaY < 0) {
-				wider();
-			} else if (event.deltaY > 0) {
-				narrower();
-			}
-			event.preventDefault();
+		if (event.deltaY < 0) {
+			wider();
+		} else if (event.deltaY > 0) {
+			narrower();
 		}
+		event.preventDefault();
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -244,12 +241,17 @@
 
 		document.addEventListener("mousemove", onMouseMove, true);
 		document.addEventListener("mouseleave", onMouseLeave, true);
-		document.addEventListener("wheel", onWheel, true);
 		document.addEventListener("scroll", onScroll, false);
 		window.addEventListener("resize", onResize, false);	
 		document.addEventListener("pagehide", onPageHide, true);
 		document.addEventListener("visibilitychange", onVisibilityChange, false);
 
+		prefs.getWheelToWiderNarrower().then((checked) => {
+			if(checked) {
+				document.addEventListener("wheel", onWheel, true);
+			}
+		});
+		
 		document.addEventListener("click", onClick, true);
 		document.addEventListener("keydown", onKeyDown, false);
 
@@ -262,10 +264,6 @@
 			}
 		});
 		
-		prefs.getWheelToWiderNarrower().then((checked) => {
-			lizardState.useWheelToWiderNarrower = checked;
-		});
-
 		lizardState.bSelectionStarted = true;
 		notifyToolbarButtonStatus(lizardState.bSelectionStarted);
 	}
@@ -281,12 +279,13 @@
 
 		document.removeEventListener("mousemove", onMouseMove, true);
 		document.removeEventListener("mouseleave", onMouseLeave, true);
-		document.removeEventListener("wheel", onWheel, true);
 		document.removeEventListener("scroll", onScroll, false);
 		window.removeEventListener("resize", onResize, false);
 		document.removeEventListener("pagehide", onPageHide, true);
 		document.removeEventListener("visibilitychange", onVisibilityChange, false);
 
+		document.removeEventListener("wheel", onWheel, true);
+		
 		document.removeEventListener("click", onClick, true);
 		document.removeEventListener("keydown", onKeyDown, false);
 
