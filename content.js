@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 (function () {
 
@@ -745,7 +745,10 @@
 		let elm = lizardState.currentElement;
 
 		if (elm) {
+			// blink only none hidden elements
+			if(elm.style.visibility !== "hidden") {
 				_blinkElement(elm, elm.style.visibility, 200, 3000);
+			}
 		} else {
 			displayNotification("No element is selected.");
 		}
