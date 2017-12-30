@@ -25,9 +25,9 @@
 	const ID_LIZARD_SOURCE_BOX_COPY = "lizardSourceBoxCopy";
 	const ID_LIZARD_SOURCE_BOX_SOURCE_TYPE = "lizardSourceBoxSourceType";
 	const ID_LIZARD_ISOLATE_CONTAINER = "lizardIsolateContainer";
+	const ID_LIZARD_HELP_BOX = "lizardHelpBox";
 	const ID_LIZARD_HELP_FOOTER_LINK = "lizardHelpBoxFooterLink";
 
-	const ID_LIZARD_HELP_BOX = "lizardHelpBox";
 
 	const PATH_TO_HELP_IMG = "icons/lizard-32.png";
 	const BOX_BORDER_WIDTH = 2;		// #lizardBoxBorder border width 2px (as in the content.css file)
