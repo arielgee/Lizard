@@ -19,6 +19,7 @@
 	const ID_LIZARD_BOX_BORDER = LIZARD_BOX_PREFIX + "Border";
 	const ID_LIZARD_BOX_LABEL_TAG = LIZARD_BOX_PREFIX + "LabelTag";
 	const ID_LIZARD_SOURCE_BOX = "lizardSourceBox";
+	const ID_LIZARD_SOURCE_BOX_RESIZER = "lizardSourceBoxResizer";
 	const ID_LIZARD_SOURCE_BOX_LEFT_BORDER = "lizardSourceBoxLeftBorder";
 	const ID_LIZARD_SOURCE_BOX_PRE = "lizardSourceBoxPre";
 	const ID_LIZARD_SOURCE_BOX_CLOSE = "lizardSourceBoxClose";
@@ -32,7 +33,7 @@
 	const PATH_TO_HELP_IMG = "icons/lizard-32.png";
 	const BOX_BORDER_WIDTH = 2;		// #lizardBoxBorder border width 2px (as in the content.css file)
 	const DEF_SCROLL_BAR_WIDTH = 16;	
-	const MANDATORY_ROOT_ELEMENTS = ["html", "body"];
+	const MANDATORY_ROOT_ELEMENTS = ["HTML", "BODY"];
 
 	const UNDO_ACTION_HIDE = "undoHide";
 	const UNDO_ACTION_REMOVE = "undoRemove";
@@ -64,9 +65,11 @@
 		strolledElements: [],
 
 		scrollbarWidth: -1,
+
+		pauseSelection: false,
 	};
 
-	
+
 	//////////////////////////////////////////////////////////////////////
 	//
 	browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -114,7 +117,7 @@
 			return;
 		}
 
-		if (event.target.nodeName.toLowerCase() === "html") {
+		if (event.target.nodeName === "HTML") {
 			removeSelectionBox();
 			unselectElement();
 		}
@@ -296,7 +299,8 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function selectElement(elm) {
-		if (elm && !(elm.className.includes(CLS_LIZARD_ELEMENT))) {
+		// check type of className. <SVG> elements are evil.
+		if (elm && ((typeof elm.className !== "string") || !(elm.className.includes(CLS_LIZARD_ELEMENT)))) {
 			lizardState.currentElement = elm;
 		}
 	}
@@ -414,7 +418,7 @@
 	//
 	function getLabelContent(elm) {
 
-		let labelInnerHTML = "<b class=" + CLS_LIZARD_ELEMENT + ">" + elm.nodeName.toLowerCase() + "</b>";
+		let labelInnerHTML = "<span class=" + CLS_LIZARD_ELEMENT + ">" + elm.nodeName.toLowerCase() + "</span>";
 
 		if (elm.id !== "") {
 			labelInnerHTML += ", id: " + elm.id;
@@ -480,8 +484,8 @@
 			return;
 		}		
 		
-		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName.toLowerCase()) !== -1) {
-			displayNotification("The element '<" + elm.nodeName.toLowerCase() + ">' can't be hidden.");
+		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName) !== -1) {
+			displayNotification("The element '<" + elm.nodeName + ">' can't be hidden.");
 			return;
 		}
 		
@@ -510,8 +514,8 @@
 			return;
 		}
 		
-		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName.toLowerCase()) !== -1) {
-			displayNotification("The element '<" + elm.nodeName.toLowerCase() + ">' can't be removed.");
+		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName) !== -1) {
+			displayNotification("The element '<" + elm.nodeName + ">' can't be removed.");
 			return;
 		}
 		
@@ -542,8 +546,8 @@
 			return;
 		}
 
-		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName.toLowerCase()) !== -1) {
-			displayNotification("The element '<" + elm.nodeName.toLowerCase() + ">' can't be isolated.");
+		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName) !== -1) {
+			displayNotification("The element '<" + elm.nodeName + ">' can't be isolated.");
 			return;
 		}
 
@@ -574,9 +578,9 @@
 		prefs.getColorizeColors().then((colors) => {
 			prefs.getColorizeChildren().then((colorizeChildren) => {
 				if(invertColors) {
-					colorElement(colors[1], colors[0], colorizeChildren);
+					colorElement(colors[1], colors[0], colorizeChildren, false);
 				} else {
-					colorElement(colors[0], colors[1], colorizeChildren);
+					colorElement(colors[0], colors[1], colorizeChildren, false);
 				}
 			});
 		});
@@ -588,18 +592,20 @@
 
 		prefs.getDecolorizeColors().then((colors) => {
 			prefs.getColorizeChildren().then((colorizeChildren) => {
-				if(invertColors) {
-					colorElement(colors[1], colors[0], colorizeChildren);
-				} else {
-					colorElement(colors[0], colors[1], colorizeChildren);
-				}
+				prefs.getDecolorizeGrayImages().then((grayImages) => {
+					if(invertColors) {
+						colorElement(colors[1], colors[0], colorizeChildren, grayImages);
+					} else {
+						colorElement(colors[0], colors[1], colorizeChildren, grayImages);
+					}
+				});
 			});
 		});
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function colorElement(foreground, background, colorizeChildren) {
+	function colorElement(foreground, background, colorizeChildren, grayImages) {
 
 		let elm = lizardState.currentElement;
 
@@ -612,32 +618,40 @@
 
 		ua.data["coloureditems"] = [];
 
-		_colorElement(elm, foreground, background, ua.data.coloureditems, colorizeChildren);
+		_colorElement(elm, foreground, background, ua.data.coloureditems, colorizeChildren, grayImages);
 
 		lizardState.undoActions.push(ua);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function _colorElement(elm, foreground, background, uaItems, deep) {
+	function _colorElement(elm, foreground, background, uaItems, deep, grayImages) {
+
+		let doGrayImages = (grayImages && ((elm.nodeName === "IMG") || isSVGObject(elm)));
 
 		uaItems.push({
 			element:  elm,
 			prev_color: elm.style.color,
 			prev_borderColor: elm.style.borderColor,
 			prev_backgroundColor: elm.style.backgroundColor,
+			prev_filter: elm.style.filter,
+			undoFilter: doGrayImages,
 		});
 		
 		elm.style.color = foreground;
 		elm.style.borderColor = foreground;
 		elm.style.backgroundColor = background;
+		if (doGrayImages) {
+			elm.style.filter += " grayscale(100%)";
+		}
 
 		for(let i=0; i<elm.children.length && deep; i++) {
 			
 			let c = elm.children[i];
 			
-			if(c.nodeType === Node.ELEMENT_NODE && !c.className.includes(CLS_LIZARD_ELEMENT)) { 
-				_colorElement(c, foreground, background, uaItems, true);
+			// check type of className. <SVG> elements are evil.
+			if(c.nodeType === Node.ELEMENT_NODE && ((typeof c.className !== "string") || !(c.className.includes(CLS_LIZARD_ELEMENT)))) { 
+				_colorElement(c, foreground, background, uaItems, true, grayImages);
 			}
 		}
 	}
@@ -673,6 +687,7 @@
 				document.body = ua.data.prev_body;
 				document.documentElement.scrollTop = ua.data.prev_scrollTop;
 				document.documentElement.scrollLeft = ua.data.prev_scrollLeft;
+				document.documentElement.focus();
 				break;
 				//////////////////////////////////////////////////////////////
 
@@ -682,6 +697,9 @@
 					e.element.style.color = e.prev_color;
 					e.element.style.borderColor = e.prev_borderColor;
 					e.element.style.backgroundColor = e.prev_backgroundColor;
+					if (e.undoFilter) {
+						e.element.style.filter = e.prev_filter;
+					}
 				}
 				break;
 				//////////////////////////////////////////////////////////////
@@ -823,7 +841,8 @@
 	function viewSourceInPage(type, source) {
 
 		let sourceBox;
-		let sourceBoxLeftBorder;
+		let divResizer;
+		let divLeftBorder;
 		let sourceBoxPre;
 		let btnClose;
 		let btnCopy;
@@ -837,9 +856,13 @@
 			sourceBox.id = ID_LIZARD_SOURCE_BOX;
 			sourceBox.className = CLS_LIZARD_ELEMENT;
 
-			sourceBoxLeftBorder = document.createElement("div");
-			sourceBoxLeftBorder.id = ID_LIZARD_SOURCE_BOX_LEFT_BORDER;
-			sourceBoxLeftBorder.className = CLS_LIZARD_ELEMENT + " " + CLS_DRAGGABLE_ELEMENT;
+			divResizer = document.createElement("div");
+			divResizer.id = ID_LIZARD_SOURCE_BOX_RESIZER;
+			divResizer.className = CLS_LIZARD_ELEMENT;
+
+			divLeftBorder = document.createElement("div");
+			divLeftBorder.id = ID_LIZARD_SOURCE_BOX_LEFT_BORDER;
+			divLeftBorder.className = CLS_LIZARD_ELEMENT + " " + CLS_DRAGGABLE_ELEMENT;
 
 			sourceBoxPre = document.createElement("pre");
 			sourceBoxPre.id = ID_LIZARD_SOURCE_BOX_PRE;
@@ -861,21 +884,20 @@
 			lblType.id = ID_LIZARD_SOURCE_BOX_SOURCE_TYPE;
 			lblType.className = CLS_LIZARD_ELEMENT + " " + CLS_DRAGGABLE_ELEMENT;
 
-			sourceBoxLeftBorder.appendChild(btnClose);
-			sourceBoxLeftBorder.appendChild(btnCopy);
-			sourceBoxLeftBorder.appendChild(lblType);
+			divLeftBorder.appendChild(btnClose);
+			divLeftBorder.appendChild(btnCopy);
+			divLeftBorder.appendChild(lblType);
 
-			sourceBox.appendChild(sourceBoxLeftBorder);
+			sourceBox.appendChild(divResizer);
+			sourceBox.appendChild(divLeftBorder);
 			sourceBox.appendChild(sourceBoxPre);
 
 			document.body.appendChild(sourceBox);
 
-			btnClose.addEventListener("click", onCloseSourceBox, false);
-			btnCopy.addEventListener("click", onClickHtmlCopy, false);
-
-			sourceBoxLeftBorder.addEventListener("mousedown", onMouseDown_SourceBox, false);
-			window.addEventListener("mouseup", onMouseUp_SourceBox, false);
-
+			btnClose.addEventListener("click", onClick_CloseSourceBox, false);
+			btnCopy.addEventListener("click", onClick_CopySourceText, false);
+			divLeftBorder.addEventListener("mousedown", onMouseDown_startSourceBoxDrag, false);
+			divResizer.addEventListener("mousedown", onMouseDown_startSourceBoxResize, false);
 		} else {
 			// querySelector is slower but i'm looking just in the ID_LIZARD_SOURCE_BOX's element
 			sourceBoxPre = sourceBox.querySelector("#" + ID_LIZARD_SOURCE_BOX_PRE);
@@ -896,28 +918,73 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function onMouseDown_SourceBox(event) {
+	function onMouseDown_startSourceBoxDrag(event) {
 
-		if(event.target.className.includes(CLS_DRAGGABLE_ELEMENT)) {
-			window.addEventListener('mousemove', onMouseMove_SourceBox, true);
+		if (event.target.className.includes(CLS_DRAGGABLE_ELEMENT)) {
+			window.addEventListener("mouseup", onMouseUp_stopSourceBoxDrag, false);
+			window.addEventListener('mousemove', onMouseMove_dragSourceBox, true);
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function onMouseUp_SourceBox(event) {
-		window.removeEventListener('mousemove', onMouseMove_SourceBox, true);
+	function onMouseUp_stopSourceBoxDrag(event) {
+		window.removeEventListener('mousemove', onMouseMove_dragSourceBox, true);
+		window.removeEventListener("mouseup", onMouseUp_stopSourceBoxDrag, false);
+
+		//pauseSelection
+		let sourceBox = document.getElementById(ID_LIZARD_SOURCE_BOX);
+
+		if (sourceBox) {
+
+			if (sourceBox.offsetLeft < 0) {
+				sourceBox.style.left = "0";
+			} else if (sourceBox.offsetLeft > window.innerWidth) {
+				sourceBox.style.left = (window.innerWidth - 50) + "px";
+			}
+
+			if (sourceBox.offsetTop < 0) {
+				sourceBox.style.top = "0";
+			} else if (sourceBox.offsetTop > window.innerHeight) {
+				sourceBox.style.top = (window.innerHeight - 100) + "px";
+			}
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function onMouseMove_SourceBox(event) {
+	function onMouseMove_dragSourceBox(event) {
 
 		let sourceBox = document.getElementById(ID_LIZARD_SOURCE_BOX);
 
 		if (sourceBox) {
 			sourceBox.style.top = parseInt(sourceBox.style.top) + event.movementY + "px";
 			sourceBox.style.left = parseInt(sourceBox.style.left) + event.movementX + "px";
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onMouseDown_startSourceBoxResize(event) {
+		window.addEventListener("mouseup", onMouseUp_stopSourceBoxResize, false);
+		window.addEventListener("mousemove", onMouseMove_resizeSourceBox, false);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onMouseUp_stopSourceBoxResize(e) {
+		window.removeEventListener("mousemove", onMouseMove_resizeSourceBox, false);
+		window.removeEventListener("mouseup", onMouseUp_stopSourceBoxResize, false);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onMouseMove_resizeSourceBox(event) {
+		let box = document.getElementById(ID_LIZARD_SOURCE_BOX);
+
+		if (box) {
+			box.style.width = (event.clientX - box.offsetLeft) + "px";
+			box.style.height = (event.clientY - box.offsetTop) + "px";
 		}
 	}
 
@@ -952,7 +1019,7 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function onClickHtmlCopy(event) {
+	function onClick_CopySourceText(event) {
 
 		let sourceBoxPre = document.getElementById(ID_LIZARD_SOURCE_BOX_PRE);
 
@@ -1075,27 +1142,28 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function removeInfoBoxes() {
-		onCloseSourceBox();
+		onClick_CloseSourceBox();
 		onCloseHelpBox();
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function onCloseSourceBox() {
+	function onClick_CloseSourceBox() {
 
 		let elm = document.getElementById(ID_LIZARD_SOURCE_BOX);
 
 		if (elm) {
 			let el = document.getElementById(ID_LIZARD_SOURCE_BOX_CLOSE);
-			el.removeEventListener("click", onCloseSourceBox, false);
+			el.removeEventListener("click", onClick_CloseSourceBox, false);
 
 			el = document.getElementById(ID_LIZARD_SOURCE_BOX_COPY);
-			el.removeEventListener("click", onClickHtmlCopy, false);
+			el.removeEventListener("click", onClick_CopySourceText, false);
 
 			el = document.getElementById(ID_LIZARD_SOURCE_BOX_LEFT_BORDER);
-			el.removeEventListener("mousedown", onMouseDown_SourceBox, false);
+			el.removeEventListener("mousedown", onMouseDown_startSourceBoxDrag, false);
 
-			window.removeEventListener("mouseup", onMouseUp_SourceBox, false);
+			el = document.getElementById(ID_LIZARD_SOURCE_BOX_RESIZER);
+			el.addEventListener("mousedown", onMouseDown_startSourceBoxResize, false);
 
 			elm.parentNode.removeChild(elm);
 		}
@@ -1195,6 +1263,12 @@
 	//
 	function random1to100() {
 		return Math.floor(Math.random() * (100 - 1) + 1).toString();
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function isSVGObject(elm) {
+		return ((typeof elm.className === "object") && (elm.className.toString() === "[object SVGAnimatedString]"));
 	}
 
 })();

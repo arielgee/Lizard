@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let elmDecolorizeColor = document.getElementById("decolorizeColor");
 	let elmDecolorizeBackgroundColor = document.getElementById("decolorizeBackgroundColor");
 	let elmColorizeChildren = document.getElementById("colorizeChildren");
+	let elmDecolorizeGrayImages = document.getElementById("decolorizeGrayImages");
 	let elmBtnRestoreDefaults = document.getElementById("btnDefaults");
 	
 
@@ -62,6 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		elmColorizeChildren.checked = checked;
 	});
 
+	prefs.getDecolorizeGrayImages().then((checked) => {
+		elmDecolorizeGrayImages.checked = checked;
+	});
+
 	/////////////////////////////////////////////////////////////////////////////////
 	// save preferences when changed
 	elmHelpBoxOnStart.addEventListener("change", () => { prefs.setHelpBoxOnStart(elmHelpBoxOnStart.checked); });
@@ -79,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	elmDecolorizeColor.addEventListener("change", () => { prefs.setDecolorizeColors( [elmDecolorizeColor.value, elmDecolorizeBackgroundColor.value] ); });
 	elmDecolorizeBackgroundColor.addEventListener("change", () => { prefs.setDecolorizeColors([elmDecolorizeColor.value, elmDecolorizeBackgroundColor.value]); });
 	elmColorizeChildren.addEventListener("change", () => { prefs.setColorizeChildren(elmColorizeChildren.checked); });
+	elmDecolorizeGrayImages.addEventListener("change", () => { prefs.setDecolorizeGrayImages(elmDecolorizeGrayImages.checked); });
 
 	// restore defaults when requestes
 	elmBtnRestoreDefaults.addEventListener("click", () => {
@@ -95,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		elmDecolorizeColor.value = defPrefs.decolorizeColors[0];
 		elmDecolorizeBackgroundColor.value = defPrefs.decolorizeColors[1];
 		elmColorizeChildren.checked = defPrefs.colorizeChildren;
+		elmDecolorizeGrayImages.checked = defPrefs.decolorizeGrayImages;
 	});
 	
 });

@@ -76,6 +76,10 @@ input[type="color"] {
   height: 30px;
 }
 
+  #btnDefaults:active {
+    padding-top: 1px;
+  }
+
 .annotation {
   font-family: "Segoe UI";
   font-size: 9pt;

@@ -39,6 +39,7 @@ let prefs = (function () {
 	const PREF_DEF_COLORIZE_COLORS_VALUE = ["#FF0000", "#FFFF00"];			// default red on yellow
 	const PREF_DEF_DECOLORIZE_COLORS_VALUE = ["#000000", "#FFFFFF"];		// default black on white
 	const PREF_DEF_COLORIZE_CHILDREN = false;
+	const PREF_DEF_DECOLORIZE_GRAY_IMAGES = true;
 
 	const PREF_HELP_BOX_ON_START = "pref_helpBoxOnStart";
 	const PREF_WHEEL_TO_WIDER_NARROWER = "pref_wheelToWiderNarrower";
@@ -47,6 +48,7 @@ let prefs = (function () {
 	const PREF_COLORIZE_COLORS = "pref_colorizeColors";
 	const PREF_DECOLORIZE_COLORS = "pref_decolorizeColors";
 	const PREF_COLORIZE_CHILDREN = "pref_colorizeChildren";
+	const PREF_DECOLORIZE_GRAY_IMAGES = "pref_decolorizeGrayImages";
 
 	const PREF_COLOR_SEPARATOR_CHAR = "/";
 
@@ -203,14 +205,35 @@ let prefs = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
+	let getDecolorizeGrayImages = function () {
+
+		return new Promise((resolve) => {
+
+			browser.storage.local.get(PREF_DECOLORIZE_GRAY_IMAGES).then((result) => {
+				resolve(result[PREF_DECOLORIZE_GRAY_IMAGES] === false ? false : PREF_DEF_DECOLORIZE_GRAY_IMAGES);
+			});
+		});
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let setDecolorizeGrayImages = function (value) {
+
+		let obj = {};
+		obj[PREF_DECOLORIZE_GRAY_IMAGES] = value;
+		browser.storage.local.set(obj);
+	};
+
+
+	//////////////////////////////////////////////////////////////////////
 	let restoreDefaults = function () {
 		this.setHelpBoxOnStart(PREF_DEF_HELP_BOX_ON_START_VALUE);
-		this, setWheelToWiderNarrower(PREF_DEF_WHEEL_TO_WIDER_NARROWER);
+		this.setWheelToWiderNarrower(PREF_DEF_WHEEL_TO_WIDER_NARROWER);
 		this.setViewSourceType(PREF_DEF_VIEW_SOURCE_TYPE_VALUE);
 		this.setOpenViewSourceIn(PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE);
 		this.setColorizeColors(PREF_DEF_COLORIZE_COLORS_VALUE);
 		this.setDecolorizeColors(PREF_DEF_DECOLORIZE_COLORS_VALUE);
 		this.setColorizeChildren(PREF_DEF_COLORIZE_CHILDREN);
+		this.setDecolorizeGrayImages(PREF_DEF_DECOLORIZE_GRAY_IMAGES);
 
 		return {
 			helpBoxOnStart: PREF_DEF_HELP_BOX_ON_START_VALUE,
@@ -220,6 +243,7 @@ let prefs = (function () {
 			colorizeColors: PREF_DEF_COLORIZE_COLORS_VALUE,
 			decolorizeColors: PREF_DEF_DECOLORIZE_COLORS_VALUE,
 			colorizeChildren: PREF_DEF_COLORIZE_CHILDREN,
+			decolorizeGrayImages: PREF_DEF_DECOLORIZE_GRAY_IMAGES,
 		};
 	};
 
@@ -250,6 +274,9 @@ let prefs = (function () {
 
 		getColorizeChildren: getColorizeChildren,
 		setColorizeChildren: setColorizeChildren,
+
+		getDecolorizeGrayImages: getDecolorizeGrayImages,
+		setDecolorizeGrayImages: setDecolorizeGrayImages,
 
 		restoreDefaults: restoreDefaults,		
 	};

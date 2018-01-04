@@ -136,12 +136,11 @@
 	//////////////////////////////////////////////////////////////////////
 	// 
 	function sendToggleLizardStateMessage(tab) {
-		
-		if (tab.status !== "complete") {
-			createLizardNotification("Page not ready yet.");
+
+		if( !(tab.url.match(/^(http|https|file|ftp):\/\//)) ) {
+			createLizardNotification("Lizard can't work here.");
 			return;
 		}
-		
 		browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }, (response) => {
 			
 			// This is UGLY but it works. if the user double clicks (2 very fast clicks) on the lizard button (or the keyboard command) the
@@ -173,11 +172,13 @@
 
 		return new Promise((resolve, reject) => {
 
+			let runAt = "document_start";
+
 			// Ordered by file size. The larger one first.
-			let injecting1 = browser.tabs.executeScript(tab.id, { file: "content.js" });
-			let injecting2 = browser.tabs.executeScript(tab.id, { file: "common.js" });
-			let injecting3 = browser.tabs.insertCSS(tab.id, { file: "content.css" });
-			let injecting4 = browser.tabs.executeScript(tab.id, { code: "const ALL_LIZARD_SCRIPTS_INJECTED=true;" });
+			let injecting1 = browser.tabs.executeScript(tab.id, { file: "content.js", runAt: runAt });
+			let injecting2 = browser.tabs.executeScript(tab.id, { file: "common.js", runAt: runAt });
+			let injecting3 = browser.tabs.insertCSS(tab.id, { file: "content.css", runAt: runAt });
+			let injecting4 = browser.tabs.executeScript(tab.id, { code: "const ALL_LIZARD_SCRIPTS_INJECTED=true;", runAt: runAt });
 						
 			injecting1.then(() => {
 				injecting2.then(() => {

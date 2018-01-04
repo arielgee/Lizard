@@ -79,35 +79,54 @@
     margin-left: 2px !important;
   }
 
+#lizardBoxLabelTag > span:first-child {
+  display: inline !important;
+  font-weight: bold !important;
+}
+
+/** Isolate Element **/
+#lizardIsolateContainer {
+  all: initial !important;
+}
+
 /** View Source **/
 #lizardSourceBox {
   position: fixed !important;
   z-index: 2147483642 !important;
+  display: flex !important;
   min-height: 95px !important;
-  max-height: 380px !important;
-  min-width: 600px !important;
+  max-height: 80% !important;
+  min-width: 300px !important;
   max-width: 80% !important;
-  width: auto !important;
-  border: 1px solid green !important;
+  /*width: auto !important;*/
+  border: 4px solid green !important;
   box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
   background-color: #FFFFE1 !important;
   -moz-user-select: auto !important;
   -moz-user-focus: auto !important;
 }
 
-#lizardSourceBoxLeftBorder {
+#lizardSourceBoxResizer {
   position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 26px !important;
-  height: 100% !important;
+  z-index: 2147483643 !important;
+  right: -4px !important;
+  bottom: -4px !important;
+  width: 10px !important;
+  height: 10px !important;
+  background-image: url("icons/resizer.png") !important;
+  background-size: cover !important;
+  cursor: se-resize !important;
+}
+
+#lizardSourceBoxLeftBorder {
+  flex: 0 0 24px !important;      /*shorthand: [don't grow] [don't shrink] [size]*/
   background-color: green !important;
 }
 
 #lizardSourceBoxSourceType {
   position: absolute !important;
-  left: 4px !important;
-  bottom: -10px !important;
+  left: 2px !important;
+  bottom: -14px !important;
   transform: rotate(270deg) !important;
   transform-origin: left top 0 !important;
   color: white !important;
@@ -117,16 +136,13 @@
 }
 
 #lizardSourceBoxPre {
-  margin: 0 0 0 26px !important;
+  margin: 0 0 0 0 !important;
   padding: 8px 16px !important;
-  width: auto !important;
-  height: auto !important;
-  max-height: 360px !important;
-  max-width: 100% !important;
-  overflow: auto !important;
+  flex: 1 1 auto !important;      /*shorthand: [grow] [shrink] [available space]*/
+  overflow: auto !important;  
   word-break: normal !important;
   word-wrap: normal !important;
-  white-space: pre-wrap !important;
+  white-space: pre-wrap !important;  
   font-family: "Courier New", monospace !important;
   font-size: 12px !important;
   font-weight: normal !important;
@@ -139,7 +155,7 @@
 #lizardSourceBoxCopy {
   width: 18px !important;
   height: 18px !important;
-  margin: 3px !important;
+  margin: 0 3px 3px 0 !important;
   border: 1px solid black !important;
   color: black !important;
   background-color: #a3a3a3 !important;
@@ -161,10 +177,6 @@
   #lizardSourceBoxCopy:active {
     background-color: green !important;
   }
-
-#lizardIsolateContainer {
-  all: initial !important;
-}
 
 /** Help **/
 #lizardHelpBox {
