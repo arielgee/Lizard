@@ -60,13 +60,10 @@
 		bSessionStarted: false,
 		currentElement: null,
 		bSelectionLocked: false,
-
+		bSelectionSuspended: false,
 		undoActions: [],
 		strolledElements: [],
-
 		scrollbarWidth: -1,
-
-		pauseSelection: false,
 	};
 
 
@@ -94,7 +91,7 @@
 	//
 	function onMouseMove(event) {
 
-		if (lizardState.bSelectionLocked) {
+		if (lizardState.bSelectionLocked || lizardState.bSelectionSuspended) {
 			return;
 		}
 
@@ -431,30 +428,6 @@
 		}
 
 		return labelInnerHTML;
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function getHScrollWidth() {
-		return (document.body.scrollWidth > (window.innerWidth - getVScrollWidthHScrollIgnored()) ? lizardState.scrollbarWidth : 0);
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function getVScrollWidth() {
-		return (document.body.scrollHeight > (window.innerHeight - getHScrollWidthVScrollIgnored()) ? lizardState.scrollbarWidth : 0);
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function getHScrollWidthVScrollIgnored() {
-		return (document.body.scrollWidth > window.innerWidth ? lizardState.scrollbarWidth : 0);
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function getVScrollWidthHScrollIgnored() {
-		return (document.body.scrollHeight > window.innerHeight ? lizardState.scrollbarWidth : 0);
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -929,24 +902,27 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onMouseUp_stopSourceBoxDrag(event) {
+
 		window.removeEventListener('mousemove', onMouseMove_dragSourceBox, true);
 		window.removeEventListener("mouseup", onMouseUp_stopSourceBoxDrag, false);
 
-		//pauseSelection
 		let sourceBox = document.getElementById(ID_LIZARD_SOURCE_BOX);
 
 		if (sourceBox) {
 
+			let winInnerWidth = window.innerWidth-getVScrollWidth()-28;		// source box left border width + box border 
+			let winInnerHeight = window.innerHeight-getHScrollWidth()-65;	// 2 button height + padding + box border + extra space
+
 			if (sourceBox.offsetLeft < 0) {
 				sourceBox.style.left = "0";
-			} else if (sourceBox.offsetLeft > window.innerWidth) {
-				sourceBox.style.left = (window.innerWidth - 50) + "px";
+			} else if (sourceBox.offsetLeft > winInnerWidth) {
+				sourceBox.style.left = winInnerWidth + "px";
 			}
 
 			if (sourceBox.offsetTop < 0) {
 				sourceBox.style.top = "0";
-			} else if (sourceBox.offsetTop > window.innerHeight) {
-				sourceBox.style.top = (window.innerHeight - 100) + "px";
+			} else if (sourceBox.offsetTop > winInnerHeight) {
+				sourceBox.style.top = winInnerHeight + "px";
 			}
 		}
 	}
@@ -955,17 +931,18 @@
 	//
 	function onMouseMove_dragSourceBox(event) {
 
-		let sourceBox = document.getElementById(ID_LIZARD_SOURCE_BOX);
+		let box = document.getElementById(ID_LIZARD_SOURCE_BOX);
 
-		if (sourceBox) {
-			sourceBox.style.top = parseInt(sourceBox.style.top) + event.movementY + "px";
-			sourceBox.style.left = parseInt(sourceBox.style.left) + event.movementX + "px";
+		if (box) {
+			box.style.top = (box.offsetTop + event.movementY) + "px";
+			box.style.left = (box.offsetLeft + event.movementX) + "px";
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onMouseDown_startSourceBoxResize(event) {
+		lizardState.bSelectionSuspended = true;
 		window.addEventListener("mouseup", onMouseUp_stopSourceBoxResize, false);
 		window.addEventListener("mousemove", onMouseMove_resizeSourceBox, false);
 	}
@@ -973,6 +950,7 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onMouseUp_stopSourceBoxResize(e) {
+		lizardState.bSelectionSuspended = false;
 		window.removeEventListener("mousemove", onMouseMove_resizeSourceBox, false);
 		window.removeEventListener("mouseup", onMouseUp_stopSourceBoxResize, false);
 	}
@@ -980,6 +958,7 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onMouseMove_resizeSourceBox(event) {
+
 		let box = document.getElementById(ID_LIZARD_SOURCE_BOX);
 
 		if (box) {
@@ -1245,6 +1224,30 @@
 		document.body.removeChild(outer);
 
 		lizardState.scrollbarWidth = w1 - w2;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function getHScrollWidth() {
+		return (document.body.scrollWidth > (window.innerWidth - getVScrollWidthHScrollIgnored()) ? lizardState.scrollbarWidth : 0);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function getVScrollWidth() {
+		return (document.body.scrollHeight > (window.innerHeight - getHScrollWidthVScrollIgnored()) ? lizardState.scrollbarWidth : 0);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function getHScrollWidthVScrollIgnored() {
+		return (document.body.scrollWidth > window.innerWidth ? lizardState.scrollbarWidth : 0);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function getVScrollWidthHScrollIgnored() {
+		return (document.body.scrollHeight > window.innerHeight ? lizardState.scrollbarWidth : 0);
 	}
 
 	//////////////////////////////////////////////////////////////////////
