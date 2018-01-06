@@ -53,8 +53,6 @@ body {
   width: auto;
   height: auto;
   overflow: hidden;
-  /*word-break: normal;
-  word-wrap: normal;*/
   white-space: pre-wrap;
   color: black;
   font-family: "Courier New", monospace;
