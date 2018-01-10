@@ -161,10 +161,10 @@
 	//
 	function showEnlargedLabel() {
 
-		const CLS_enlarged = " enlarged";
+		const CLS_enlarged = "enlarged";
 
-		document.getElementById("labelInfo").className += CLS_enlarged;
-		document.getElementById("imgExclamation").className += CLS_enlarged;
+		lzUtil.concatClassName(document.getElementById("labelInfo"), CLS_enlarged);
+		lzUtil.concatClassName(document.getElementById("imgExclamation"), CLS_enlarged);
 	}
 
 	//////////////////////////////////////////////////////////////////////
