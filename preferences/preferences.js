@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// get elements
 	let elmHelpBoxOnStart = document.getElementById("helpBoxOnStart");
 	let elmWheelToWiderNarrower = document.getElementById("wheelToWiderNarrower");
-	let elmLabelRequireRestart = document.getElementById("reqRestart");
+	let elmLabelReqRestartSession = document.getElementById("restartSession");
 	let elmViewSourceHtml = document.getElementById("viewSrcHtml");
 	let elmViewSourceCss = document.getElementById("viewSrcCss");
 	let elmOpenViewSourceInWin = document.getElementById("openViewSrcInWin");
@@ -18,7 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	let elmDecolorizeBackgroundColor = document.getElementById("decolorizeBackgroundColor");
 	let elmColorizeChildren = document.getElementById("colorizeChildren");
 	let elmDecolorizeGrayImages = document.getElementById("decolorizeGrayImages");
-	let elmBtnRestoreDefaults = document.getElementById("btnDefaults");
+	let elmContextMenu = document.getElementById("contextMenu");
+	let elmToolsMenu = document.getElementById("toolsMenu");
+	let elmLabelReqRestartExtension = document.getElementById("reloadExtension");
+
+	let elmBtnReloadExtension = document.getElementById("btnReloadExtension");
+	let elmBtnRestoreDefaults = document.getElementById("btnRestoreDefaults");
 	
 
 	/////////////////////////////////////////////////////////////////////////////////
@@ -67,12 +72,21 @@ document.addEventListener("DOMContentLoaded", () => {
 		elmDecolorizeGrayImages.checked = checked;
 	});
 
+	prefs.getMenuItemContext().then((checked) => {
+		elmContextMenu.checked = checked;
+	});
+
+	prefs.getMenuItemTools().then((checked) => {
+		elmToolsMenu.checked = checked;
+	});
+
+
 	/////////////////////////////////////////////////////////////////////////////////
 	// save preferences when changed
 	elmHelpBoxOnStart.addEventListener("change", () => { prefs.setHelpBoxOnStart(elmHelpBoxOnStart.checked); });
 	elmWheelToWiderNarrower.addEventListener("change", () => {
-		prefs.setWheelToWiderNarrower(elmWheelToWiderNarrower.checked);
-		elmLabelRequireRestart.className += " flash";
+		prefs.setWheelToWiderNarrower(elmWheelToWiderNarrower.checked);		
+		lzUtil.concatClassName(elmLabelReqRestartSession, "flash");
 	});
 	elmViewSourceHtml.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_TYPE.HTML); });
 	elmViewSourceCss.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_TYPE.CSS); });
@@ -85,10 +99,31 @@ document.addEventListener("DOMContentLoaded", () => {
 	elmDecolorizeBackgroundColor.addEventListener("change", () => { prefs.setDecolorizeColors([elmDecolorizeColor.value, elmDecolorizeBackgroundColor.value]); });
 	elmColorizeChildren.addEventListener("change", () => { prefs.setColorizeChildren(elmColorizeChildren.checked); });
 	elmDecolorizeGrayImages.addEventListener("change", () => { prefs.setDecolorizeGrayImages(elmDecolorizeGrayImages.checked); });
+	elmContextMenu.addEventListener("change", () => {
+		prefs.setMenuItemContext(elmContextMenu.checked);
+		lzUtil.concatClassName(elmLabelReqRestartExtension, "flash");
+		lzUtil.concatClassName(elmBtnReloadExtension, "flash");
+	});
+	elmToolsMenu.addEventListener("change", () => {
+		prefs.setMenuItemTools(elmToolsMenu.checked);
+		lzUtil.concatClassName(elmLabelReqRestartExtension, "flash");
+		lzUtil.concatClassName(elmBtnReloadExtension, "flash");
+	});
 
+
+	/////////////////////////////////////////////////////////////////////////////////
 	// restore defaults when requestes
 	elmBtnRestoreDefaults.addEventListener("click", () => {
 		let defPrefs = prefs.restoreDefaults();
+
+		if (elmWheelToWiderNarrower.checked !== defPrefs.wheelToWiderNarrower) {
+			lzUtil.concatClassName(elmLabelReqRestartSession, "flash");
+		}
+		if (elmContextMenu.checked !== defPrefs.menuItemContext || elmToolsMenu.checked !== defPrefs.menuItemTools) {
+			lzUtil.concatClassName(elmLabelReqRestartExtension, "flash");
+			lzUtil.concatClassName(elmBtnReloadExtension, "flash");
+		}
+
 		elmHelpBoxOnStart.checked = defPrefs.helpBoxOnStart;
 		elmWheelToWiderNarrower.checked = defPrefs.wheelToWiderNarrower;
 		elmViewSourceHtml.checked = (defPrefs.viewSourceType === prefs.SOURCE_TYPE.HTML);
@@ -102,6 +137,15 @@ document.addEventListener("DOMContentLoaded", () => {
 		elmDecolorizeBackgroundColor.value = defPrefs.decolorizeColors[1];
 		elmColorizeChildren.checked = defPrefs.colorizeChildren;
 		elmDecolorizeGrayImages.checked = defPrefs.decolorizeGrayImages;
+		elmContextMenu.checked = defPrefs.menuItemContext;
+		elmToolsMenu.checked = defPrefs.menuItemTools;
 	});
-	
+
+
+	/////////////////////////////////////////////////////////////////////////////////
+	// reload web extension
+	elmBtnReloadExtension.addEventListener("click", () => {
+		lzUtil.reloadLizardWebExtensionAndTab();
+	});
+
 });
