@@ -6,6 +6,7 @@
 let msgs = (function () {
 
 	const MSG_TOGGLE_SESSION_STATE = "msgToggleSessionState";
+	const MSG_SHUTDOWN_SESSION = "msgShutdownSession";
 	const MSG_SESSION_STATE_CHANGED = "msgSessionStateChanged";
 	const MSG_DISPLAY_NOTIFICATION = "msgDisplayNotification";
 	const MSG_OPEN_VIEW_SOURCE_WINDOW = "msgOpenViewSourceWindow";
@@ -14,6 +15,7 @@ let msgs = (function () {
 
 	return {
 		MSG_TOGGLE_SESSION_STATE: MSG_TOGGLE_SESSION_STATE,
+		MSG_SHUTDOWN_SESSION: MSG_SHUTDOWN_SESSION,
 		MSG_SESSION_STATE_CHANGED: MSG_SESSION_STATE_CHANGED,
 		MSG_DISPLAY_NOTIFICATION: MSG_DISPLAY_NOTIFICATION,
 		MSG_OPEN_VIEW_SOURCE_WINDOW: MSG_OPEN_VIEW_SOURCE_WINDOW,
@@ -40,6 +42,8 @@ let prefs = (function () {
 	const PREF_DEF_DECOLORIZE_COLORS_VALUE = ["#000000", "#FFFFFF"];		// default black on white
 	const PREF_DEF_COLORIZE_CHILDREN = false;
 	const PREF_DEF_DECOLORIZE_GRAY_IMAGES = true;
+	const PREF_DEF_MENU_ITEM_CONTEXT = true;
+	const PREF_DEF_MENU_ITEM_TOOLS = true;
 
 	const PREF_HELP_BOX_ON_START = "pref_helpBoxOnStart";
 	const PREF_WHEEL_TO_WIDER_NARROWER = "pref_wheelToWiderNarrower";
@@ -49,6 +53,8 @@ let prefs = (function () {
 	const PREF_DECOLORIZE_COLORS = "pref_decolorizeColors";
 	const PREF_COLORIZE_CHILDREN = "pref_colorizeChildren";
 	const PREF_DECOLORIZE_GRAY_IMAGES = "pref_decolorizeGrayImages";
+	const PREF_MENU_ITEM_CONTEXT = "pref_menuItemContext";
+	const PREF_MENU_ITEM_TOOLS = "pref_menuItemTools";
 
 	const PREF_COLOR_SEPARATOR_CHAR = "/";
 
@@ -223,6 +229,44 @@ let prefs = (function () {
 		browser.storage.local.set(obj);
 	};
 
+	//////////////////////////////////////////////////////////////////////
+	let getMenuItemContext = function () {
+
+		return new Promise((resolve) => {
+
+			browser.storage.local.get(PREF_MENU_ITEM_CONTEXT).then((result) => {
+				resolve(result[PREF_MENU_ITEM_CONTEXT] === false ? false : PREF_DEF_MENU_ITEM_CONTEXT);
+			});
+		});
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let setMenuItemContext = function (value) {
+
+		let obj = {};
+		obj[PREF_MENU_ITEM_CONTEXT] = value;
+		browser.storage.local.set(obj);
+	};
+	
+	//////////////////////////////////////////////////////////////////////
+	let getMenuItemTools = function () {
+
+		return new Promise((resolve) => {
+
+			browser.storage.local.get(PREF_MENU_ITEM_TOOLS).then((result) => {
+				resolve(result[PREF_MENU_ITEM_TOOLS] === false ? false : PREF_DEF_MENU_ITEM_TOOLS);
+			});
+		});
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let setMenuItemTools = function (value) {
+
+		let obj = {};
+		obj[PREF_MENU_ITEM_TOOLS] = value;
+		browser.storage.local.set(obj);
+	};
+	
 
 	//////////////////////////////////////////////////////////////////////
 	let restoreDefaults = function () {
@@ -234,16 +278,20 @@ let prefs = (function () {
 		this.setDecolorizeColors(PREF_DEF_DECOLORIZE_COLORS_VALUE);
 		this.setColorizeChildren(PREF_DEF_COLORIZE_CHILDREN);
 		this.setDecolorizeGrayImages(PREF_DEF_DECOLORIZE_GRAY_IMAGES);
+		this.setMenuItemContext(PREF_DEF_MENU_ITEM_CONTEXT);
+		this.setMenuItemTools(PREF_DEF_MENU_ITEM_TOOLS);
 
 		return {
 			helpBoxOnStart: PREF_DEF_HELP_BOX_ON_START_VALUE,
-			WheelToWiderNarrower: PREF_DEF_WHEEL_TO_WIDER_NARROWER,
+			wheelToWiderNarrower: PREF_DEF_WHEEL_TO_WIDER_NARROWER,
 			viewSourceType: PREF_DEF_VIEW_SOURCE_TYPE_VALUE,
 			OpenViewSourceIn: PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE,
 			colorizeColors: PREF_DEF_COLORIZE_COLORS_VALUE,
 			decolorizeColors: PREF_DEF_DECOLORIZE_COLORS_VALUE,
 			colorizeChildren: PREF_DEF_COLORIZE_CHILDREN,
 			decolorizeGrayImages: PREF_DEF_DECOLORIZE_GRAY_IMAGES,
+			menuItemContext: PREF_DEF_MENU_ITEM_CONTEXT,
+			menuItemTools: PREF_DEF_MENU_ITEM_TOOLS,
 		};
 	};
 
@@ -278,7 +326,13 @@ let prefs = (function () {
 		getDecolorizeGrayImages: getDecolorizeGrayImages,
 		setDecolorizeGrayImages: setDecolorizeGrayImages,
 
-		restoreDefaults: restoreDefaults,		
+		getMenuItemContext: getMenuItemContext,
+		setMenuItemContext: setMenuItemContext,
+
+		getMenuItemTools: getMenuItemTools,
+		setMenuItemTools: setMenuItemTools,
+
+		restoreDefaults: restoreDefaults,
 	};
 })();
 
@@ -361,13 +415,77 @@ let lzUtil = (function () {
 	String.prototype.format.regex = new RegExp("{-?[0-9]+}", "g");
 
 	//////////////////////////////////////////////////////////////////////
+	let _shutdownAllLizardSessions = function () {
+
+		return new Promise((resolve) => {
+
+			browser.runtime.getBrowserInfo().then((info) => {
+
+				// Browser compatibility: 'discarded' from Firefox 57
+				let querying = browser.tabs.query((parseFloat(info.version) >= 57.0 ? { discarded: false } : {}));
+
+				querying.then((tabs) => {
+
+					let allPromises = [];
+
+					for (let i = 0; i < tabs.length; i++) {
+						allPromises[i] = browser.tabs.sendMessage(tabs[i].id, { message: msgs.MSG_SHUTDOWN_SESSION });
+					}
+
+					// Promise.all is fail-fast; first rejected reject  immediately so convert catch error to simple regular (success) value.
+					Promise.all(allPromises.map(p => p.catch((e) => { return e; }))).then((results) => {
+						resolve(results);
+					});
+				});
+			});
+		});
+	};
+
+	//////////////////////////////////////////////////////////////////////
 	let log = function (...args) {
 		console.log("[lizard]", ...args);
 	};
 
-	return {
-		log: log,
+	//////////////////////////////////////////////////////////////////////
+	let concatClassName = function (elm, className) {
+		if (!(RegExp("\\b" + className + "\\b").test(elm.className))) {
+			elm.className += " " + className;
+		}
 	};
 
-})();
+	//////////////////////////////////////////////////////////////////////
+	let replaceClassName = function (elm, className, newClassName) {
+		elm.className = elm.className.replace(RegExp("\\b" + className + "\\b"), newClassName);
+	};
 
+	//////////////////////////////////////////////////////////////////////
+	let removeClassName = function (elm, className) {
+		elm.className = elm.className.replace(RegExp("\\b\\s?" + className + "\\b", "g"), "");
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let reloadLizardWebExtension = function () {
+
+		_shutdownAllLizardSessions().then((results) => {
+			setTimeout(() => { browser.runtime.reload(); }, 10);
+		});		
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let reloadLizardWebExtensionAndTab = function () {
+
+		_shutdownAllLizardSessions().then((results) => {
+			setTimeout(() => { browser.runtime.reload(); }, 10);
+			setTimeout(() => { browser.tabs.reload(); }, 9);
+		});
+	};
+
+	return {
+		log: log,
+		concatClassName: concatClassName,
+		replaceClassName: replaceClassName,
+		removeClassName: removeClassName,
+		reloadLizardWebExtension: reloadLizardWebExtension,
+		reloadLizardWebExtensionAndTab: reloadLizardWebExtensionAndTab,
+	};
+})();

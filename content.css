@@ -1,4 +1,3 @@
-
 @namespace url("http://www.w3.org/1999/xhtml");
 
 .lizardWebExtElement {
@@ -80,10 +79,10 @@
     margin-left: 2px !important;
   }
 
-#lizardBoxLabelTag > span:first-child {
-  display: inline !important;
-  font-weight: bold !important;
-}
+  #lizardBoxLabelTag > span:first-child {
+    display: inline !important;
+    font-weight: bold !important;
+  }
 
 /** Isolate Element **/
 #lizardIsolateContainer {
@@ -121,7 +120,7 @@
 }
 
 #lizardSourceBoxLeftBorder {
-  flex: 0 0 24px !important;      /*shorthand: [don't grow] [don't shrink] [size]*/
+  flex: 0 0 24px !important; /*shorthand: [don't grow] [don't shrink] [size]*/
   background-color: green !important;
 }
 
@@ -140,11 +139,11 @@
 #lizardSourceBoxPre {
   margin: 0 0 0 0 !important;
   padding: 8px 16px !important;
-  flex: 1 1 auto !important;      /*shorthand: [grow] [shrink] [available space]*/
-  overflow: auto !important;  
+  flex: 1 1 auto !important; /*shorthand: [grow] [shrink] [available space]*/
+  overflow: auto !important;
   word-break: normal !important;
   word-wrap: normal !important;
-  white-space: pre-wrap !important;  
+  white-space: pre-wrap !important;
   font-family: "Courier New", monospace !important;
   font-size: 12px !important;
   font-weight: normal !important;
@@ -216,7 +215,7 @@
     border: 1px solid black !important;
     border-radius: 0.3em !important;
     box-sizing: content-box !important;
-    background-color: gray !important;
+    background-color: dimgray !important;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
     font-size: 12px !important;
     font-weight: bold !important;

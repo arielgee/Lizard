@@ -31,6 +31,9 @@
 
 	const DEF_NOTIFICATION_TIMEOUT = 4300;
 
+	const PAGE_CONTEXT = ["audio", "editable", "image", "link", "page", "password", "selection", "video"];
+	const TOOLS_MENU_CONTEXT = ["tools_menu"];
+
 	let lizardToggleStateMenuID = -1;
 
 	let lastInjectTime = 0;
@@ -59,11 +62,20 @@
 
 	//////////////////////////////////////////////////////////////////////
 	// Menus
-	lizardToggleStateMenuID = browser.menus.create({
-		id: "mnu-toggle-lizard-state",
-		title: "Start Lizard Session",
-		command: (IS_BUTTON_ON_TOOLBAR ? "_execute_browser_action" : "_execute_page_action"),
-		contexts: ["tools_menu", "page", "link", "image", "selection", "video", "frame"],
+	prefs.getMenuItemContext().then((inContext) => {
+		prefs.getMenuItemTools().then((inTools) => {
+			
+			let menus_contexts = (inContext ? PAGE_CONTEXT : []).concat(inTools ? TOOLS_MENU_CONTEXT : []);
+
+			if(menus_contexts.length > 0) {
+				lizardToggleStateMenuID = browser.menus.create({
+					id: "mnu-toggle-lizard-state",
+					title: "Start Lizard Session",
+					command: (IS_BUTTON_ON_TOOLBAR ? "_execute_browser_action" : "_execute_page_action"),
+					contexts: menus_contexts,
+				});
+			}
+		});
 	});
 
 	browser.menus.create({
@@ -74,7 +86,7 @@
 
 	browser.menus.onClicked.addListener(function (info, tab) {
 		if (info.menuItemId == "mnu-reload-lizard-extension") {
-			reloadLizardWebExtension();
+			lzUtil.reloadLizardWebExtension();
 		}
 	});
 
@@ -92,7 +104,7 @@
 				//////////////////////////////////////////////////////////////
 
 			case "kb-reload-lizard-extension":
-				reloadLizardWebExtension();
+				lzUtil.reloadLizardWebExtension();
 				break;
 				//////////////////////////////////////////////////////////////
 
@@ -141,6 +153,7 @@
 			createLizardNotification("Lizard can't work here.");
 			return;
 		}
+
 		browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }, (response) => {
 			
 			// This is UGLY but it works. if the user double clicks (2 very fast clicks) on the lizard button (or the keyboard command) the
@@ -163,6 +176,7 @@
 	//
 	function onErrorToggleSessionState(err) {
 		lzUtil.log("Toggle session state", err);
+		createLizardNotification("Failed to inject extension's scripts!\nIs this an 'addons.mozilla.org' or 'testpilot.firefox.com' page?", 7000);
 		updateLizardUI("wtf");
 	}
 
@@ -187,10 +201,10 @@
 
 							resolve();
 
-						}, (err) => { reject(new Error("Error injecting code 'const ALL_LIZARD_SCRIPTS_INJECTED=true;', " + err.message)); });
-					}, (err) => { reject(new Error("Error injecting file 'content.css', " + err.message)); });
-				}, (err) => { reject(new Error("Error injecting file 'common.js', " + err.message)); });
-			}, (err) => { reject(new Error("Error injecting file 'content.js', " + err.message)); });
+						}, (err) => { reject(new Error("Inject code 'const ALL_LIZARD_SCRIPTS_INJECTED=true;', " + err.message)); });
+					}, (err) => { reject(new Error("Inject file 'content.css', " + err.message)); });
+				}, (err) => { reject(new Error("Inject file 'common.js', " + err.message)); });
+			}, (err) => { reject(new Error("Inject file 'content.js', " + err.message)); });
 
 		});
 	}	
@@ -272,12 +286,6 @@
 				});
 			});
 		}
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	// 
-	function reloadLizardWebExtension() {
-		browser.runtime.reload();
 	}
 
 })();

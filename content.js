@@ -76,14 +76,26 @@
 			return;
 		}
 
-		sendResponse({ message : "injected" });
+		switch (request.message) {
 
-		if (request.message === msgs.MSG_TOGGLE_SESSION_STATE) {
-			if (lizardState.bSessionStarted) {
-				stopSession();
-			} else {
-				startSession();
-			}
+			case msgs.MSG_TOGGLE_SESSION_STATE:
+				sendResponse({ message: "toggle" });
+				if (lizardState.bSessionStarted) {
+					stopSession();
+				} else {
+					startSession();
+				}
+				break;
+				//////////////////////////////////////////////////////////////
+
+			case msgs.MSG_SHUTDOWN_SESSION:
+				if (lizardState.bSessionStarted) {
+					stopSession();
+				}
+				sendResponse({ message: "shutdown" });
+				break;
+				//////////////////////////////////////////////////////////////
+
 		}
 	});
 	
@@ -209,7 +221,7 @@
 				removeInfoBoxes();
 				break;
 			default:
-				//lzUtil.log("[lizard] Unused key:" + event.key);
+				//lzUtil.log("Unused key:" + event.key);
 				return;
 		}
 
@@ -370,19 +382,14 @@
 
 		// label position	
 		let rect = boxLabelTag.getBoundingClientRect();
-		let isFloater = false;
 
 		if ((rect.left + boxLabelTag.offsetWidth) > innerWidth) {
 			boxLabelTag.style.left = (innerWidth - rect.left - boxLabelTag.offsetWidth) + "px";
-			isFloater = true;
+			lzUtil.concatClassName(boxLabelTag, "floater");
 		}
 		if ((rect.top + boxLabelTag.offsetHeight) > innerHeight) {
 			boxLabelTag.style.top = (innerHeight - rect.top - boxLabelTag.offsetHeight) + "px";
-			isFloater = true;
-		}
-
-		if (isFloater) {
-			boxLabelTag.className += " floater";
+			lzUtil.concatClassName(boxLabelTag, "floater");
 		}
 	}
 
@@ -1088,19 +1095,15 @@
 									colorizeColors[0], colorizeColors[1], decolorizeColors[0], decolorizeColors[1], srcType,
 									CLS_HELP_FOOTER, ID_LIZARD_HELP_FOOTER_LINK, CLS_HELP_FOOTER_LINK]);
 
-		const CLS_justShowedUp = " justShowedUp";
-		const CLS_fadeout = " fadeout";
-		const REGEXP_CLS_fadeout = new RegExp(CLS_fadeout, "g");
+		const CLS_justShowedUp = "justShowedUp";
+		const CLS_fadeout = "fadeout";
 
-		if (!hlp.className.includes(CLS_justShowedUp)) {
-			hlp.className += CLS_justShowedUp;
-		}
-
-		hlp.className = hlp.className.replace(REGEXP_CLS_fadeout, "");
+		lzUtil.concatClassName(hlp, CLS_justShowedUp);
+		lzUtil.removeClassName(hlp, CLS_fadeout);		// remove leftovers if user repeatedly clicks the F1
 
 		setTimeout(() => {
-			hlp.className = hlp.className.replace(CLS_justShowedUp, CLS_fadeout);
-			setTimeout(() => { hlp.className = hlp.className.replace(REGEXP_CLS_fadeout, ""); }, 2100);
+			lzUtil.replaceClassName(hlp, CLS_justShowedUp, CLS_fadeout);
+			setTimeout(() => { lzUtil.removeClassName(hlp, CLS_fadeout); }, 2100);
 		}, 3000);
 
 		document.getElementById(ID_LIZARD_HELP_FOOTER_LINK).addEventListener("click", onLizardOptionsPage, false);
