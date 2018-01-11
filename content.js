@@ -559,11 +559,13 @@
 
 		prefs.getColorizeColors().then((colors) => {
 			prefs.getColorizeChildren().then((colorizeChildren) => {
-				if(invertColors) {
-					colorElement(colors[1], colors[0], colorizeChildren, false);
-				} else {
-					colorElement(colors[0], colors[1], colorizeChildren, false);
-				}
+				prefs.getColorizeGrayImages().then((grayImages) => {
+
+					let fg = (invertColors ? colors[1] : colors[0]);
+					let bg = (invertColors ? colors[0] : colors[1]);
+
+					colorElement(fg, bg, colorizeChildren, (grayImages ? "0%": null));
+				});
 			});
 		});
 	}
@@ -574,12 +576,12 @@
 
 		prefs.getDecolorizeColors().then((colors) => {
 			prefs.getColorizeChildren().then((colorizeChildren) => {
-				prefs.getDecolorizeGrayImages().then((grayImages) => {
-					if(invertColors) {
-						colorElement(colors[1], colors[0], colorizeChildren, grayImages);
-					} else {
-						colorElement(colors[0], colors[1], colorizeChildren, grayImages);
-					}
+				prefs.getColorizeGrayImages().then((grayImages) => {
+
+					let fg = (invertColors ? colors[1] : colors[0]);
+					let bg = (invertColors ? colors[0] : colors[1]);
+
+					colorElement(fg, bg, colorizeChildren, (grayImages ? "100%" : null));
 				});
 			});
 		});
@@ -587,7 +589,7 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function colorElement(foreground, background, colorizeChildren, grayImages) {
+	function colorElement(foreground, background, colorizeChildren, grayAmount) {
 
 		let elm = lizardState.currentElement;
 
@@ -600,16 +602,16 @@
 
 		ua.data["coloureditems"] = [];
 
-		_colorElement(elm, foreground, background, ua.data.coloureditems, colorizeChildren, grayImages);
+		_colorElement(elm, foreground, background, ua.data.coloureditems, colorizeChildren, grayAmount);
 
 		lizardState.undoActions.push(ua);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function _colorElement(elm, foreground, background, uaItems, deep, grayImages) {
+	function _colorElement(elm, foreground, background, uaItems, deep, grayAmount) {
 
-		let doGrayImages = (grayImages && ((elm.nodeName === "IMG") || lzUtil.isSVGObject(elm)));
+		let doGrayImages = (grayAmount && ((elm.nodeName === "IMG") || lzUtil.isSVGObject(elm)));
 
 		uaItems.push({
 			element:  elm,
@@ -624,7 +626,7 @@
 		elm.style.borderColor = foreground;
 		elm.style.backgroundColor = background;
 		if (doGrayImages) {
-			lzUtil.concatStyleFilter(elm, "grayscale(100%)");
+			lzUtil.applyGrayscaleFilter(elm, grayAmount);
 		}
 
 		for(let i=0; i<elm.children.length && deep; i++) {
@@ -633,7 +635,7 @@
 			
 			// check type of className. <SVG> elements are evil.
 			if(c.nodeType === Node.ELEMENT_NODE && ((typeof c.className !== "string") || !(c.className.includes(CLS_LIZARD_ELEMENT)))) { 
-				_colorElement(c, foreground, background, uaItems, true, grayImages);
+				_colorElement(c, foreground, background, uaItems, true, grayAmount);
 			}
 		}
 	}
@@ -644,6 +646,7 @@
 
 		// nothing to undo
 		if (0 === lizardState.undoActions.length) {
+			displayNotification("Undo stack is empty.");
 			return;
 		}
 

@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let elmDecolorizeColor = document.getElementById("decolorizeColor");
 	let elmDecolorizeBackgroundColor = document.getElementById("decolorizeBackgroundColor");
 	let elmColorizeChildren = document.getElementById("colorizeChildren");
-	let elmDecolorizeGrayImages = document.getElementById("decolorizeGrayImages");
+	let elmColorizeGrayImages = document.getElementById("colorizeGrayImages");
 	let elmContextMenu = document.getElementById("contextMenu");
 	let elmToolsMenu = document.getElementById("toolsMenu");
 	let elmLabelReqRestartExtension = document.getElementById("reloadExtension");
@@ -68,8 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		elmColorizeChildren.checked = checked;
 	});
 
-	prefs.getDecolorizeGrayImages().then((checked) => {
-		elmDecolorizeGrayImages.checked = checked;
+	prefs.getColorizeGrayImages().then((checked) => {
+		elmColorizeGrayImages.checked = checked;
 	});
 
 	prefs.getMenuItemContext().then((checked) => {
@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	elmDecolorizeColor.addEventListener("change", () => { prefs.setDecolorizeColors( [elmDecolorizeColor.value, elmDecolorizeBackgroundColor.value] ); });
 	elmDecolorizeBackgroundColor.addEventListener("change", () => { prefs.setDecolorizeColors([elmDecolorizeColor.value, elmDecolorizeBackgroundColor.value]); });
 	elmColorizeChildren.addEventListener("change", () => { prefs.setColorizeChildren(elmColorizeChildren.checked); });
-	elmDecolorizeGrayImages.addEventListener("change", () => { prefs.setDecolorizeGrayImages(elmDecolorizeGrayImages.checked); });
+	elmColorizeGrayImages.addEventListener("change", () => { prefs.setColorizeGrayImages(elmColorizeGrayImages.checked); });
 	elmContextMenu.addEventListener("change", () => {
 		prefs.setMenuItemContext(elmContextMenu.checked);
 		lzUtil.concatClassName(elmLabelReqRestartExtension, "flash");
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		elmDecolorizeColor.value = defPrefs.decolorizeColors[0];
 		elmDecolorizeBackgroundColor.value = defPrefs.decolorizeColors[1];
 		elmColorizeChildren.checked = defPrefs.colorizeChildren;
-		elmDecolorizeGrayImages.checked = defPrefs.decolorizeGrayImages;
+		elmColorizeGrayImages.checked = defPrefs.colorizeGrayImages;
 		elmContextMenu.checked = defPrefs.menuItemContext;
 		elmToolsMenu.checked = defPrefs.menuItemTools;
 	});

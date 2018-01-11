@@ -41,7 +41,7 @@ let prefs = (function () {
 	const PREF_DEF_COLORIZE_COLORS_VALUE = ["#FF0000", "#FFFF00"];			// default red on yellow
 	const PREF_DEF_DECOLORIZE_COLORS_VALUE = ["#000000", "#FFFFFF"];		// default black on white
 	const PREF_DEF_COLORIZE_CHILDREN = false;
-	const PREF_DEF_DECOLORIZE_GRAY_IMAGES = true;
+	const PREF_DEF_COLORIZE_GRAY_IMAGES = true;
 	const PREF_DEF_MENU_ITEM_CONTEXT = true;
 	const PREF_DEF_MENU_ITEM_TOOLS = true;
 
@@ -52,7 +52,7 @@ let prefs = (function () {
 	const PREF_COLORIZE_COLORS = "pref_colorizeColors";
 	const PREF_DECOLORIZE_COLORS = "pref_decolorizeColors";
 	const PREF_COLORIZE_CHILDREN = "pref_colorizeChildren";
-	const PREF_DECOLORIZE_GRAY_IMAGES = "pref_decolorizeGrayImages";
+	const PREF_COLORIZE_GRAY_IMAGES = "pref_colorizeGrayImages";
 	const PREF_MENU_ITEM_CONTEXT = "pref_menuItemContext";
 	const PREF_MENU_ITEM_TOOLS = "pref_menuItemTools";
 
@@ -211,21 +211,21 @@ let prefs = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
-	let getDecolorizeGrayImages = function () {
+	let getColorizeGrayImages = function () {
 
 		return new Promise((resolve) => {
 
-			browser.storage.local.get(PREF_DECOLORIZE_GRAY_IMAGES).then((result) => {
-				resolve(result[PREF_DECOLORIZE_GRAY_IMAGES] === false ? false : PREF_DEF_DECOLORIZE_GRAY_IMAGES);
+			browser.storage.local.get(PREF_COLORIZE_GRAY_IMAGES).then((result) => {
+				resolve(result[PREF_COLORIZE_GRAY_IMAGES] === false ? false : PREF_DEF_COLORIZE_GRAY_IMAGES);
 			});
 		});
 	};
 
 	//////////////////////////////////////////////////////////////////////
-	let setDecolorizeGrayImages = function (value) {
+	let setColorizeGrayImages = function (value) {
 
 		let obj = {};
-		obj[PREF_DECOLORIZE_GRAY_IMAGES] = value;
+		obj[PREF_COLORIZE_GRAY_IMAGES] = value;
 		browser.storage.local.set(obj);
 	};
 
@@ -277,7 +277,7 @@ let prefs = (function () {
 		this.setColorizeColors(PREF_DEF_COLORIZE_COLORS_VALUE);
 		this.setDecolorizeColors(PREF_DEF_DECOLORIZE_COLORS_VALUE);
 		this.setColorizeChildren(PREF_DEF_COLORIZE_CHILDREN);
-		this.setDecolorizeGrayImages(PREF_DEF_DECOLORIZE_GRAY_IMAGES);
+		this.setColorizeGrayImages(PREF_DEF_COLORIZE_GRAY_IMAGES);
 		this.setMenuItemContext(PREF_DEF_MENU_ITEM_CONTEXT);
 		this.setMenuItemTools(PREF_DEF_MENU_ITEM_TOOLS);
 
@@ -289,7 +289,7 @@ let prefs = (function () {
 			colorizeColors: PREF_DEF_COLORIZE_COLORS_VALUE,
 			decolorizeColors: PREF_DEF_DECOLORIZE_COLORS_VALUE,
 			colorizeChildren: PREF_DEF_COLORIZE_CHILDREN,
-			decolorizeGrayImages: PREF_DEF_DECOLORIZE_GRAY_IMAGES,
+			colorizeGrayImages: PREF_DEF_COLORIZE_GRAY_IMAGES,
 			menuItemContext: PREF_DEF_MENU_ITEM_CONTEXT,
 			menuItemTools: PREF_DEF_MENU_ITEM_TOOLS,
 		};
@@ -323,8 +323,8 @@ let prefs = (function () {
 		getColorizeChildren: getColorizeChildren,
 		setColorizeChildren: setColorizeChildren,
 
-		getDecolorizeGrayImages: getDecolorizeGrayImages,
-		setDecolorizeGrayImages: setDecolorizeGrayImages,
+		getColorizeGrayImages: getColorizeGrayImages,
+		setColorizeGrayImages: setColorizeGrayImages,
 
 		getMenuItemContext: getMenuItemContext,
 		setMenuItemContext: setMenuItemContext,
@@ -452,9 +452,19 @@ let lzUtil = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
-	let concatStyleFilter = function (elm, filter) {
-		if (!(RegExp("(\\b|^)" + escapeRegExp(filter) + "(\\b|$)").test(elm.style.filter))) {
-			elm.style.filter += " " + filter;
+	let applyGrayscaleFilter = function (elm, grayAmount) {	// "100%" or "0%"
+
+		let re = new RegExp("\\b(grayscale\\()([^)]+)(\\))");	// match "grayscale([amount])"
+
+		let compStyle = window.getComputedStyle(elm);
+
+		if (re.test(compStyle.filter)) {
+			elm.style.filter = compStyle.filter.replace(re, "$1" + grayAmount + "$3");	// replace amount
+		} else {
+			if (compStyle.filter != "") {
+				elm.style.filter = compStyle.filter;
+			}
+			elm.style.filter += "grayscale(" + grayAmount + ")";
 		}
 	};
 
@@ -511,7 +521,7 @@ let lzUtil = (function () {
 
 	return {
 		log: log,
-		concatStyleFilter: concatStyleFilter,
+		applyGrayscaleFilter: applyGrayscaleFilter,
 		concatClassName: concatClassName,
 		replaceClassName: replaceClassName,
 		removeClassName: removeClassName,
