@@ -415,6 +415,11 @@ let lzUtil = (function () {
 	String.prototype.format.regex = new RegExp("{-?[0-9]+}", "g");
 
 	//////////////////////////////////////////////////////////////////////
+	String.prototype.trunc = function (n) {
+		return (this.length > n) ? this.substr(0, n - 1) + "&hellip;" : this;
+	};
+
+	//////////////////////////////////////////////////////////////////////
 	let _shutdownAllLizardSessions = function () {
 
 		return new Promise((resolve) => {
@@ -432,7 +437,7 @@ let lzUtil = (function () {
 						allPromises[i] = browser.tabs.sendMessage(tabs[i].id, { message: msgs.MSG_SHUTDOWN_SESSION });
 					}
 
-					// Promise.all is fail-fast; first rejected reject  immediately so convert catch error to simple regular (success) value.
+					// Promise.all is fail-fast; first rejected promise will reject all immediately so convert catch error to simple regular (success) value.
 					Promise.all(allPromises.map(p => p.catch((e) => { return e; }))).then((results) => {
 						resolve(results);
 					});
@@ -444,6 +449,13 @@ let lzUtil = (function () {
 	//////////////////////////////////////////////////////////////////////
 	let log = function (...args) {
 		console.log("[lizard]", ...args);
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let concatStyleFilter = function (elm, filter) {
+		if (!(RegExp("(\\b|^)" + escapeRegExp(filter) + "(\\b|$)").test(elm.style.filter))) {
+			elm.style.filter += " " + filter;
+		}
 	};
 
 	//////////////////////////////////////////////////////////////////////
@@ -460,7 +472,7 @@ let lzUtil = (function () {
 
 	//////////////////////////////////////////////////////////////////////
 	let removeClassName = function (elm, className) {
-		elm.className = elm.className.replace(RegExp("\\b\\s?" + className + "\\b", "g"), "");
+		elm.className = elm.className.replace(RegExp("\\b\\s?" + className + "\\b", "g"), "");		// also remove leading space character
 	};
 
 	//////////////////////////////////////////////////////////////////////
@@ -480,12 +492,20 @@ let lzUtil = (function () {
 		});
 	};
 
+
+	//////////////////////////////////////////////////////////////////////
+	let escapeRegExp = function (str) {
+		return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+	};
+
 	return {
 		log: log,
+		concatStyleFilter: concatStyleFilter,
 		concatClassName: concatClassName,
 		replaceClassName: replaceClassName,
 		removeClassName: removeClassName,
 		reloadLizardWebExtension: reloadLizardWebExtension,
 		reloadLizardWebExtensionAndTab: reloadLizardWebExtensionAndTab,
+		escapeRegExp: escapeRegExp,
 	};
 })();

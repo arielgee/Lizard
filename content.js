@@ -383,13 +383,15 @@
 		// label position	
 		let rect = boxLabelTag.getBoundingClientRect();
 
+		const CLS_floater = "floater";
+
 		if ((rect.left + boxLabelTag.offsetWidth) > innerWidth) {
 			boxLabelTag.style.left = (innerWidth - rect.left - boxLabelTag.offsetWidth) + "px";
-			lzUtil.concatClassName(boxLabelTag, "floater");
+			lzUtil.concatClassName(boxLabelTag, CLS_floater);
 		}
 		if ((rect.top + boxLabelTag.offsetHeight) > innerHeight) {
 			boxLabelTag.style.top = (innerHeight - rect.top - boxLabelTag.offsetHeight) + "px";
-			lzUtil.concatClassName(boxLabelTag, "floater");
+			lzUtil.concatClassName(boxLabelTag, CLS_floater);
 		}
 	}
 
@@ -428,10 +430,10 @@
 			labelInnerHTML += ", id: " + elm.id;
 		}
 		if (elm.className !== "") {
-			labelInnerHTML += ", class: " + elm.className;
+			labelInnerHTML += ", class: " + elm.className.toString().trunc(512);
 		}
 		if (elm.style.cssText !== "") {
-			labelInnerHTML += ", style: " + elm.style.cssText;
+			labelInnerHTML += ", style: " + elm.style.cssText.toString().trunc(512);
 		}
 
 		return labelInnerHTML;
@@ -622,7 +624,7 @@
 		elm.style.borderColor = foreground;
 		elm.style.backgroundColor = background;
 		if (doGrayImages) {
-			elm.style.filter += " grayscale(100%)";
+			lzUtil.concatStyleFilter(elm, "grayscale(100%)");
 		}
 
 		for(let i=0; i<elm.children.length && deep; i++) {
