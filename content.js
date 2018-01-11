@@ -609,7 +609,7 @@
 	//
 	function _colorElement(elm, foreground, background, uaItems, deep, grayImages) {
 
-		let doGrayImages = (grayImages && ((elm.nodeName === "IMG") || isSVGObject(elm)));
+		let doGrayImages = (grayImages && ((elm.nodeName === "IMG") || lzUtil.isSVGObject(elm)));
 
 		uaItems.push({
 			element:  elm,
@@ -808,7 +808,7 @@
 	//
 	function viewSourceInNewPage(type, source, newWin) {
 
-		let id = window.btoa(random1to100() + Date.now().toString());
+		let id = window.btoa(lzUtil.random1to100() + Date.now().toString());
 
 		sourceData.setSavedViewSourceData(source, type, id);
 
@@ -1192,14 +1192,6 @@
 		browser.runtime.sendMessage(msg);
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////
-	//////                                                                     //////
-	//////               U T I L S                                             //////
-	//////                                                                     //////
-	/////////////////////////////////////////////////////////////////////////////////
-	/////////////////////////////////////////////////////////////////////////////////
-
 	//////////////////////////////////////////////////////////////////////
 	//
 	function determineScrollbarWidth() {
@@ -1265,18 +1257,6 @@
 			source = source.replace(re, "");
 		}
 		return source;
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function random1to100() {
-		return Math.floor(Math.random() * (100 - 1) + 1).toString();
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	//
-	function isSVGObject(elm) {
-		return ((typeof elm.className === "object") && (elm.className.toString() === "[object SVGAnimatedString]"));
 	}
 
 })();

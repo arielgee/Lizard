@@ -494,10 +494,19 @@ let lzUtil = (function () {
 		});
 	};
 
-
 	//////////////////////////////////////////////////////////////////////
 	let escapeRegExp = function (str) {
 		return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let random1to100 = function () {
+		return Math.floor(Math.random() * (100 - 1) + 1).toString();
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let isSVGObject = function (elm) {
+		return ((typeof elm.className === "object") && (elm.className.toString() === "[object SVGAnimatedString]"));
 	};
 
 	return {
@@ -509,5 +518,7 @@ let lzUtil = (function () {
 		reloadLizardWebExtension: reloadLizardWebExtension,
 		reloadLizardWebExtensionAndTab: reloadLizardWebExtensionAndTab,
 		escapeRegExp: escapeRegExp,
+		random1to100: random1to100,
+		isSVGObject: isSVGObject,
 	};
 })();
