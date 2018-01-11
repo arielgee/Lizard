@@ -487,8 +487,10 @@ let lzUtil = (function () {
 	let reloadLizardWebExtensionAndTab = function () {
 
 		_shutdownAllLizardSessions().then((results) => {
-			setTimeout(() => { browser.runtime.reload(); }, 10);
-			setTimeout(() => { browser.tabs.reload(); }, 9);
+			setTimeout(() => {
+				browser.tabs.reload({ bypassCache: true });
+				browser.runtime.reload();
+			}, 10);
 		});
 	};
 
