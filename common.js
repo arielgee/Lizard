@@ -1,6 +1,5 @@
 "use strict";
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////
 ///
 let msgs = (function () {
@@ -41,7 +40,7 @@ let prefs = (function () {
 	const PREF_DEF_COLORIZE_COLORS_VALUE = ["#FF0000", "#FFFF00"];			// default red on yellow
 	const PREF_DEF_DECOLORIZE_COLORS_VALUE = ["#000000", "#FFFFFF"];		// default black on white
 	const PREF_DEF_COLORIZE_CHILDREN = false;
-	const PREF_DEF_COLORIZE_GRAY_IMAGES = true;
+	const PREF_DEF_COLORIZE_IMAGES = true;
 	const PREF_DEF_MENU_ITEM_CONTEXT = true;
 	const PREF_DEF_MENU_ITEM_TOOLS = true;
 
@@ -52,7 +51,7 @@ let prefs = (function () {
 	const PREF_COLORIZE_COLORS = "pref_colorizeColors";
 	const PREF_DECOLORIZE_COLORS = "pref_decolorizeColors";
 	const PREF_COLORIZE_CHILDREN = "pref_colorizeChildren";
-	const PREF_COLORIZE_GRAY_IMAGES = "pref_colorizeGrayImages";
+	const PREF_COLORIZE_IMAGES = "pref_colorizeImages";
 	const PREF_MENU_ITEM_CONTEXT = "pref_menuItemContext";
 	const PREF_MENU_ITEM_TOOLS = "pref_menuItemTools";
 
@@ -211,21 +210,21 @@ let prefs = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
-	let getColorizeGrayImages = function () {
+	let getColorizeImages = function () {
 
 		return new Promise((resolve) => {
 
-			browser.storage.local.get(PREF_COLORIZE_GRAY_IMAGES).then((result) => {
-				resolve(result[PREF_COLORIZE_GRAY_IMAGES] === false ? false : PREF_DEF_COLORIZE_GRAY_IMAGES);
+			browser.storage.local.get(PREF_COLORIZE_IMAGES).then((result) => {
+				resolve(result[PREF_COLORIZE_IMAGES] === false ? false : PREF_DEF_COLORIZE_IMAGES);
 			});
 		});
 	};
 
 	//////////////////////////////////////////////////////////////////////
-	let setColorizeGrayImages = function (value) {
+	let setColorizeImages = function (value) {
 
 		let obj = {};
-		obj[PREF_COLORIZE_GRAY_IMAGES] = value;
+		obj[PREF_COLORIZE_IMAGES] = value;
 		browser.storage.local.set(obj);
 	};
 
@@ -277,7 +276,7 @@ let prefs = (function () {
 		this.setColorizeColors(PREF_DEF_COLORIZE_COLORS_VALUE);
 		this.setDecolorizeColors(PREF_DEF_DECOLORIZE_COLORS_VALUE);
 		this.setColorizeChildren(PREF_DEF_COLORIZE_CHILDREN);
-		this.setColorizeGrayImages(PREF_DEF_COLORIZE_GRAY_IMAGES);
+		this.setColorizeImages(PREF_DEF_COLORIZE_IMAGES);
 		this.setMenuItemContext(PREF_DEF_MENU_ITEM_CONTEXT);
 		this.setMenuItemTools(PREF_DEF_MENU_ITEM_TOOLS);
 
@@ -289,7 +288,7 @@ let prefs = (function () {
 			colorizeColors: PREF_DEF_COLORIZE_COLORS_VALUE,
 			decolorizeColors: PREF_DEF_DECOLORIZE_COLORS_VALUE,
 			colorizeChildren: PREF_DEF_COLORIZE_CHILDREN,
-			colorizeGrayImages: PREF_DEF_COLORIZE_GRAY_IMAGES,
+			colorizeImages: PREF_DEF_COLORIZE_IMAGES,
 			menuItemContext: PREF_DEF_MENU_ITEM_CONTEXT,
 			menuItemTools: PREF_DEF_MENU_ITEM_TOOLS,
 		};
@@ -323,8 +322,8 @@ let prefs = (function () {
 		getColorizeChildren: getColorizeChildren,
 		setColorizeChildren: setColorizeChildren,
 
-		getColorizeGrayImages: getColorizeGrayImages,
-		setColorizeGrayImages: setColorizeGrayImages,
+		getColorizeImages: getColorizeImages,
+		setColorizeImages: setColorizeImages,
 
 		getMenuItemContext: getMenuItemContext,
 		setMenuItemContext: setMenuItemContext,
@@ -452,19 +451,19 @@ let lzUtil = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
-	let applyGrayscaleFilter = function (elm, grayAmount) {	// "100%" or "0%"
+	let applySaturateFilter = function (elm, saturateAmount) {	// "1000%" or "0%" (colorize, decolorize)
 
-		let re = new RegExp("\\b(grayscale\\()([^)]+)(\\))");	// match "grayscale([amount])"
+		let re = new RegExp("\\b(saturate\\()([^)]+)(\\))");	// match "saturate([amount])"
 
 		let compStyle = window.getComputedStyle(elm);
 
 		if (re.test(compStyle.filter)) {
-			elm.style.filter = compStyle.filter.replace(re, "$1" + grayAmount + "$3");	// replace amount
+			elm.style.filter = compStyle.filter.replace(re, "$1" + saturateAmount + "$3");	// replace amount
 		} else {
-			if (compStyle.filter != "") {
+			if (compStyle.filter != "" && compStyle.filter != "none") {
 				elm.style.filter = compStyle.filter;
 			}
-			elm.style.filter += "grayscale(" + grayAmount + ")";
+			elm.style.filter += "saturate(" + saturateAmount + ")";
 		}
 	};
 
@@ -521,7 +520,7 @@ let lzUtil = (function () {
 
 	return {
 		log: log,
-		applyGrayscaleFilter: applyGrayscaleFilter,
+		applySaturateFilter: applySaturateFilter,
 		concatClassName: concatClassName,
 		replaceClassName: replaceClassName,
 		removeClassName: removeClassName,

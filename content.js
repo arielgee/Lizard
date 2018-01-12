@@ -559,12 +559,12 @@
 
 		prefs.getColorizeColors().then((colors) => {
 			prefs.getColorizeChildren().then((colorizeChildren) => {
-				prefs.getColorizeGrayImages().then((grayImages) => {
+				prefs.getColorizeImages().then((colorImages) => {
 
 					let fg = (invertColors ? colors[1] : colors[0]);
 					let bg = (invertColors ? colors[0] : colors[1]);
 
-					colorElement(fg, bg, colorizeChildren, (grayImages ? "0%": null));
+					colorElement(fg, bg, colorizeChildren, (colorImages ? "1000%": null));
 				});
 			});
 		});
@@ -576,12 +576,12 @@
 
 		prefs.getDecolorizeColors().then((colors) => {
 			prefs.getColorizeChildren().then((colorizeChildren) => {
-				prefs.getColorizeGrayImages().then((grayImages) => {
+				prefs.getColorizeImages().then((colorImages) => {
 
 					let fg = (invertColors ? colors[1] : colors[0]);
 					let bg = (invertColors ? colors[0] : colors[1]);
 
-					colorElement(fg, bg, colorizeChildren, (grayImages ? "100%" : null));
+					colorElement(fg, bg, colorizeChildren, (colorImages ? "0%" : null));
 				});
 			});
 		});
@@ -589,7 +589,7 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function colorElement(foreground, background, colorizeChildren, grayAmount) {
+	function colorElement(foreground, background, colorizeChildren, saturateAmount) {
 
 		let elm = lizardState.currentElement;
 
@@ -602,16 +602,16 @@
 
 		ua.data["coloureditems"] = [];
 
-		_colorElement(elm, foreground, background, ua.data.coloureditems, colorizeChildren, grayAmount);
+		_colorElement(elm, foreground, background, ua.data.coloureditems, colorizeChildren, saturateAmount);
 
 		lizardState.undoActions.push(ua);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function _colorElement(elm, foreground, background, uaItems, deep, grayAmount) {
+	function _colorElement(elm, foreground, background, uaItems, deep, saturateAmount) {
 
-		let doGrayImages = (grayAmount && ((elm.nodeName === "IMG") || lzUtil.isSVGObject(elm)));
+		let colorImages = (saturateAmount && ((elm.nodeName === "IMG") || lzUtil.isSVGObject(elm)));
 
 		uaItems.push({
 			element:  elm,
@@ -619,14 +619,14 @@
 			prev_borderColor: elm.style.borderColor,
 			prev_backgroundColor: elm.style.backgroundColor,
 			prev_filter: elm.style.filter,
-			undoFilter: doGrayImages,
+			undoFilter: colorImages,
 		});
 		
 		elm.style.color = foreground;
 		elm.style.borderColor = foreground;
 		elm.style.backgroundColor = background;
-		if (doGrayImages) {
-			lzUtil.applyGrayscaleFilter(elm, grayAmount);
+		if (colorImages) {
+			lzUtil.applySaturateFilter(elm, saturateAmount);
 		}
 
 		for(let i=0; i<elm.children.length && deep; i++) {
@@ -635,7 +635,7 @@
 			
 			// check type of className. <SVG> elements are evil.
 			if(c.nodeType === Node.ELEMENT_NODE && ((typeof c.className !== "string") || !(c.className.includes(CLS_LIZARD_ELEMENT)))) { 
-				_colorElement(c, foreground, background, uaItems, true, grayAmount);
+				_colorElement(c, foreground, background, uaItems, true, saturateAmount);
 			}
 		}
 	}
