@@ -1,0 +1,14 @@
+Basic Information:
+  Summary:
+    Select and remove annoying or unnecessary elements from a page. Great for printing and readability.
+  Tags:
+    aardvark, blink, colorize, decolorize, element hiding helper for adblock plus, firefox57, hide, isolate, remove, select, view source
+		
+Add-on Details:
+  Description:
+    Quickly removing annoying or unnecessary elements from a page is pretty much the basic idea for this extension. Additional features allow for various manipulation of web elements.
+
+    Pretty similar to the 'Aardvark' and 'Element Hiding Helper for Adblock Plus' extensions.
+
+    Start a Lizard session using the toolbar button or the Ctrl+Shift+L shortcut. The help box that will popup will provide you with all the information you'll need. It can also redirect you to the Options page (bottom link) for some tinkering.
+    
