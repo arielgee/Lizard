@@ -25,7 +25,8 @@
 	const ID_LIZARD_SOURCE_BOX_CLOSE = "lizardSourceBoxClose";
 	const ID_LIZARD_SOURCE_BOX_COPY = "lizardSourceBoxCopy";
 	const ID_LIZARD_SOURCE_BOX_SOURCE_TYPE = "lizardSourceBoxSourceType";
-	const ID_LIZARD_ISOLATE_CONTAINER = "lizardIsolateContainer";
+	const ID_LIZARD_ISOLATE_BODY = "lizardIsolateBody";
+	const ID_LIZARD_ISOLATE_CENTERED = "lizardIsolateCentered";
 	const ID_LIZARD_HELP_BOX = "lizardHelpBox";
 	const ID_LIZARD_HELP_FOOTER_LINK = "lizardHelpBoxFooterLink";
 
@@ -547,10 +548,34 @@
 
 		lizardState.undoActions.push(ua);
 
+		let cloning = cloneIsolatedElement(elm);
+
 		document.documentElement.removeChild(document.body);
 		document.body = document.createElement("body");
-		document.body.id = ID_LIZARD_ISOLATE_CONTAINER;
-		document.body.appendChild(elm.cloneNode(true));
+		document.body.id = ID_LIZARD_ISOLATE_BODY;
+		let centered = document.createElement("div");
+		centered.id = ID_LIZARD_ISOLATE_CENTERED;
+
+		document.body.appendChild(centered);
+		cloning.then((isolated) => { centered.appendChild(isolated); });		
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function cloneIsolatedElement(elm) {
+
+		return new Promise((resolve) => {
+
+			let css = "";
+			let style = window.getComputedStyle(elm);
+			for (let i = 0; i < style.length; i++) {
+				css += style[i] + ":" + style.getPropertyValue(style[i]) + ";";
+			}
+
+			let e = elm.cloneNode(true);
+			e.style.cssText = css;
+			resolve(e)
+		});
 	}
 
 	//////////////////////////////////////////////////////////////////////
