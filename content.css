@@ -87,17 +87,14 @@
 /** Isolate Element **/
 #lizardIsolateBody {
   all: initial !important;
-
   display: table !important;
   margin: auto !important;
+  padding-top: 20px !important;
 }
 
-#lizardIsolateCentered {
-  all: initial !important;
-
+.lizardIsolatedCentered {
   display: table-cell !important;
   vertical-align: middle !important;
-  padding-top: 20px !important;
 }
 
 /** View Source **/

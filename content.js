@@ -3,6 +3,7 @@
 (function () {
 
 	const CLS_LIZARD_ELEMENT = "lizardWebExtElement";
+	const CLS_LIZARD_ISOLATED_CENTERED = "lizardIsolatedCentered";
 
 	const CLS_DRAGGABLE_ELEMENT = "lizardDraggable";
 	const CLS_HELP_IMG = "helpImg";
@@ -26,7 +27,6 @@
 	const ID_LIZARD_SOURCE_BOX_COPY = "lizardSourceBoxCopy";
 	const ID_LIZARD_SOURCE_BOX_SOURCE_TYPE = "lizardSourceBoxSourceType";
 	const ID_LIZARD_ISOLATE_BODY = "lizardIsolateBody";
-	const ID_LIZARD_ISOLATE_CENTERED = "lizardIsolateCentered";
 	const ID_LIZARD_HELP_BOX = "lizardHelpBox";
 	const ID_LIZARD_HELP_FOOTER_LINK = "lizardHelpBoxFooterLink";
 
@@ -534,6 +534,11 @@
 			return;
 		}
 
+		if (elm.className.includes(CLS_LIZARD_ISOLATED_CENTERED)) {
+			displayNotification("The element is already isolated.");
+			return;
+		}
+
 		removeSelectionBox();
 		unselectElement();
 		lockSelection(false);
@@ -553,11 +558,8 @@
 		document.documentElement.removeChild(document.body);
 		document.body = document.createElement("body");
 		document.body.id = ID_LIZARD_ISOLATE_BODY;
-		let centered = document.createElement("div");
-		centered.id = ID_LIZARD_ISOLATE_CENTERED;
 
-		document.body.appendChild(centered);
-		cloning.then((isolated) => { centered.appendChild(isolated); });		
+		cloning.then((isolated) => { document.body.appendChild(isolated); });		
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -566,14 +568,11 @@
 
 		return new Promise((resolve) => {
 
-			let css = "";
-			let style = window.getComputedStyle(elm);
-			for (let i = 0; i < style.length; i++) {
-				css += style[i] + ":" + style.getPropertyValue(style[i]) + ";";
-			}
+			let css = lzUtil.getElementComputedCssText(elm, false);
 
 			let e = elm.cloneNode(true);
 			e.style.cssText = css;
+			lzUtil.concatClassName(e, CLS_LIZARD_ISOLATED_CENTERED);
 			resolve(e)
 		});
 	}
@@ -812,10 +811,7 @@
 			if (type === prefs.SOURCE_TYPE.HTML) {
 				source = sanitizeHtmlFromLizardElements(elm.outerHTML);
 			} else if (type === prefs.SOURCE_TYPE.CSS) {
-				let style = window.getComputedStyle(elm);
-				for (let i = 0; i < style.length; i++) {
-					source += style[i] + ": " +style.getPropertyValue(style[i]) + "\n";
-				}
+				source = lzUtil.getElementComputedCssText(elm, true);
 			} else {
 				source = "wtf?";
 			}

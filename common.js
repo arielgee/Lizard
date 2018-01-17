@@ -504,6 +504,25 @@ let lzUtil = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
+	let getElementComputedCssText = function (elm, bForDisplay) {
+
+		let css;
+		let name;
+		let priority;
+		let colon = (bForDisplay ? ": " : ":");
+		let semicolon = (bForDisplay ? ";\n" : ";");
+
+		let style = window.getComputedStyle(elm);
+
+		for (let i = 0; i < style.length; i++) {
+			name = style[i];
+			priority = style.getPropertyPriority(name);			
+			css += name + colon + style.getPropertyValue(name) + (priority.length > 0 ? " !" : "") + priority + semicolon;
+		}
+		return css;
+	};
+
+	//////////////////////////////////////////////////////////////////////
 	let escapeRegExp = function (str) {
 		return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 	};
@@ -526,6 +545,7 @@ let lzUtil = (function () {
 		removeClassName: removeClassName,
 		reloadLizardWebExtension: reloadLizardWebExtension,
 		reloadLizardWebExtensionAndTab: reloadLizardWebExtensionAndTab,
+		getElementComputedCssText: getElementComputedCssText,
 		escapeRegExp: escapeRegExp,
 		random1to100: random1to100,
 		isSVGObject: isSVGObject,
