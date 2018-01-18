@@ -696,7 +696,6 @@
 				document.body = ua.data.prev_body;
 				document.documentElement.scrollTop = ua.data.prev_scrollTop;
 				document.documentElement.scrollLeft = ua.data.prev_scrollLeft;
-				document.documentElement.focus();
 				break;
 				//////////////////////////////////////////////////////////////
 
