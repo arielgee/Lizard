@@ -3,7 +3,6 @@
 (function () {
 
 	const CLS_LIZARD_ELEMENT = "lizardWebExtElement";
-	const CLS_LIZARD_ISOLATED_CENTERED = "lizardIsolatedCentered";
 
 	const CLS_DRAGGABLE_ELEMENT = "lizardDraggable";
 	const CLS_HELP_IMG = "helpImg";
@@ -14,6 +13,7 @@
 	const CLS_HELP_FOOTER_LINK = "helpFooterLink";
 	const CLS_LETTER_KEY = "letterKey";
 	
+	const ATTRI_LIZARD_ISOLATED_CENTERED = "lizardIsolatedCentered";
 
 	const LIZARD_BOX_PREFIX = "lizardBox";
 	const ID_LIZARD_BOX = LIZARD_BOX_PREFIX + "Container";
@@ -534,7 +534,7 @@
 			return;
 		}
 
-		if (elm.className.includes(CLS_LIZARD_ISOLATED_CENTERED)) {
+		if (elm.hasAttribute(ATTRI_LIZARD_ISOLATED_CENTERED)) {
 			displayNotification("The element is already isolated.");
 			return;
 		}
@@ -572,7 +572,7 @@
 
 			let e = elm.cloneNode(true);
 			e.style.cssText = css;
-			lzUtil.concatClassName(e, CLS_LIZARD_ISOLATED_CENTERED);
+			e.setAttribute(ATTRI_LIZARD_ISOLATED_CENTERED, "");
 			resolve(e)
 		});
 	}

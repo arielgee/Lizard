@@ -469,8 +469,14 @@ let lzUtil = (function () {
 
 	//////////////////////////////////////////////////////////////////////
 	let concatClassName = function (elm, className) {
-		if (!(RegExp("\\b" + className + "\\b").test(elm.className))) {
-			elm.className += " " + className;
+
+		// check type of className. <SVG> elements are evil.
+		if (typeof elm.className === "string") {
+			if (!(RegExp("\\b" + className + "\\b").test(elm.className))) {
+				elm.className += " " + className;
+			}
+		} else {
+			elm.setAttribute("class", className);
 		}
 	};
 
