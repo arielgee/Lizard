@@ -7,7 +7,7 @@
     }
   },
   "name": "Lizard",
-  "version": "1.2",
+  "version": "1.3",
   "description": "Select and remove annoying or unnecessary elements from a page. Great for printing and readability.",
   "author": "arielg",
 
@@ -65,7 +65,7 @@
   },
 
   "background": {
-    "scripts": [ "common.js", "background.js" ]
+    "scripts": ["common.js", "background.js"]
   },
 
   "options_ui": {
