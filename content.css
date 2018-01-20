@@ -6,7 +6,7 @@
   display: block !important;
   float: none !important;
   clear: none !important;
-  z-index: 2147483640 !important; /* max is 2147483647, so i have 7 more z-indexes to maneuver */
+  z-index: 2147483640 !important;   /* max is 2147483647, so i have 7 more z-indexes to maneuver */
   padding: 0px !important;
   margin: 0px !important;
   border: none !important;
@@ -34,7 +34,9 @@
   -moz-user-focus: none !important;
 }
 
+
 /** Box **/
+
 #lizardBoxContainer {
   position: fixed !important;
   z-index: 2147483641 !important;
@@ -72,19 +74,21 @@
   white-space: pre-wrap !important;
 }
 
-  #lizardBoxLabelTag.floater {
-    border-top-width: 1px !important;
-    border-top-left-radius: 0.3em !important;
-    border-top-right-radius: 0.3em !important;
-    margin-left: 2px !important;
-  }
+#lizardBoxLabelTag.floater {
+  border-top-width: 1px !important;
+  border-top-left-radius: 0.3em !important;
+  border-top-right-radius: 0.3em !important;
+  margin-left: 2px !important;
+}
 
-  #lizardBoxLabelTag > span:first-child {
-    display: inline !important;
-    font-weight: bold !important;
-  }
+#lizardBoxLabelTag>span:first-child {
+  display: inline !important;
+  font-weight: bold !important;
+}
+
 
 /** Isolate Element **/
+
 #lizardIsolateBody {
   all: initial !important;
   display: table !important;
@@ -97,7 +101,9 @@
   vertical-align: middle !important;
 }
 
+
 /** View Source **/
+
 #lizardSourceBox {
   --border-width: 4px;
   position: fixed !important;
@@ -128,7 +134,7 @@
 }
 
 #lizardSourceBoxLeftBorder {
-  flex: 0 0 24px !important; /*shorthand: [don't grow] [don't shrink] [size]*/
+  flex: 0 0 24px !important;    /*shorthand: [don't grow] [don't shrink] [size]*/
   background-color: green !important;
 }
 
@@ -147,7 +153,7 @@
 #lizardSourceBoxPre {
   margin: 0 0 0 0 !important;
   padding: 8px 16px !important;
-  flex: 1 1 auto !important; /*shorthand: [grow] [shrink] [available space]*/
+  flex: 1 1 auto !important;    /*shorthand: [grow] [shrink] [available space]*/
   overflow: auto !important;
   word-break: normal !important;
   word-wrap: normal !important;
@@ -168,33 +174,34 @@
   height: var(--button-size) !important;
   margin: 0 3px 3px 0 !important;
   border: 1px solid black !important;
-  color: black !important;
   background-color: #a3a3a3 !important;
-  background-size: calc(var(--button-size) - 4) calc(var(--button-size) - 4) !important;
+  background-size: calc(100% - 4px) !important;
   background-repeat: no-repeat !important;
-  background-position: center !important;  
+  background-position: center !important;
   cursor: pointer !important;
 }
 
-  #lizardSourceBoxClose {
-    background-image: url("icons/close.png") !important;
-  }
+#lizardSourceBoxClose {
+  background-image: url("icons/close.png") !important;
+}
 
-  #lizardSourceBoxCopy {
-    background-image: url("icons/copy.png") !important;
-  }
+#lizardSourceBoxCopy {
+  background-image: url("icons/copy.png") !important;
+}
 
-  #lizardSourceBoxClose:hover,
-  #lizardSourceBoxCopy:hover {
-    background-color: #efefef !important;
-  }
+#lizardSourceBoxClose:hover,
+#lizardSourceBoxCopy:hover {
+  filter: contrast(225%) !important;
+}
 
-  #lizardSourceBoxClose:active,
-  #lizardSourceBoxCopy:active {
-    background-color: initial !important;
-  }
+#lizardSourceBoxClose:active:hover,
+#lizardSourceBoxCopy:active:hover {
+  filter: invert(100%) !important;
+}
+
 
 /** Help **/
+
 #lizardHelpBox {
   position: fixed !important;
   width: auto !important;
@@ -210,78 +217,78 @@
   opacity: 0.5 !important;
 }
 
-  #lizardHelpBox.fadeout {
-    transition: opacity 2s !important;
-    opacity: 0.5 !important;
-  }
+#lizardHelpBox.fadeout {
+  transition: opacity 2s !important;
+  opacity: 0.5 !important;
+}
 
-  #lizardHelpBox:hover,
-  #lizardHelpBox.justShowedUp {
-    transition: opacity 0s !important;
-    opacity: 1 !important;
-  }
+#lizardHelpBox:hover,
+#lizardHelpBox.justShowedUp {
+  transition: opacity 0s !important;
+  opacity: 1 !important;
+}
 
-  #lizardHelpBox .letterKey {
-    letter-spacing: 1px !important;
-    float: left !important;
-    width: 21px !important;
-    height: 21px !important;
-    border: 1px solid black !important;
-    border-radius: 0.3em !important;
-    box-sizing: content-box !important;
-    background-color: dimgray !important;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-    font-size: 12px !important;
-    font-weight: bold !important;
-    color: white !important;
-    text-align: center !important;
-    line-height: 21px !important;
-  }
+#lizardHelpBox .letterKey {
+  letter-spacing: 1px !important;
+  float: left !important;
+  width: 21px !important;
+  height: 21px !important;
+  border: 1px solid black !important;
+  border-radius: 0.3em !important;
+  box-sizing: content-box !important;
+  background-color: dimgray !important;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  color: white !important;
+  text-align: center !important;
+  line-height: 21px !important;
+}
 
-  #lizardHelpBox .helpImg {
-    float: right !important;
-    width: 26px !important;
-    height: 26px !important;
-  }
+#lizardHelpBox .helpImg {
+  float: right !important;
+  width: 26px !important;
+  height: 26px !important;
+}
 
-  #lizardHelpBox .helpRec {
-    font-family: inherit !important;
-  }
+#lizardHelpBox .helpRec {
+  font-family: inherit !important;
+}
 
-    #lizardHelpBox .helpRec:first-child {
-      font-size: 13px !important;
-      font-weight: bold !important;
-      margin-bottom: 10px !important;
-    }
+#lizardHelpBox .helpRec:first-child {
+  font-size: 13px !important;
+  font-weight: bold !important;
+  margin-bottom: 10px !important;
+}
 
-    #lizardHelpBox .helpRec:not(:first-child) {
-      margin: 6px !important;
-      width: auto !important;
-      height: 23px !important;
-    }
+#lizardHelpBox .helpRec:not(:first-child) {
+  margin: 6px !important;
+  width: auto !important;
+  height: 23px !important;
+}
 
-  #lizardHelpBox .helpText {
-    position: relative !important;
-    padding: 5px 10px 0 30px !important;
-    white-space: nowrap !important;
-    font-size: 11px !important;
-  }
+#lizardHelpBox .helpText {
+  position: relative !important;
+  padding: 5px 10px 0 30px !important;
+  white-space: nowrap !important;
+  font-size: 11px !important;
+}
 
-  #lizardHelpBox .helpColor {
-    display: inline !important;
-    border-radius: 50% !important;
-    box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.6) !important;
-    font-size: 80% !important;
-    margin: 0 3px 0 3px !important;
-  }
+#lizardHelpBox .helpColor {
+  display: inline !important;
+  border-radius: 50% !important;
+  box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.6) !important;
+  font-size: 80% !important;
+  margin: 0 3px 0 3px !important;
+}
 
-  #lizardHelpBox .helpFooter {
-    width: auto !important;
-  }
+#lizardHelpBox .helpFooter {
+  width: auto !important;
+}
 
-  #lizardHelpBox .helpFooterLink {
-    display: inline !important;
-    color: blue !important;
-    text-decoration: underline !important;
-    cursor: pointer !important;
-  }
+#lizardHelpBox .helpFooterLink {
+  display: inline !important;
+  color: blue !important;
+  text-decoration: underline !important;
+  cursor: pointer !important;
+}
