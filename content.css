@@ -163,29 +163,35 @@
 
 #lizardSourceBoxClose,
 #lizardSourceBoxCopy {
-  width: 18px !important;
-  height: 18px !important;
+  --button-size: 18px;
+  width: var(--button-size) !important;
+  height: var(--button-size) !important;
   margin: 0 3px 3px 0 !important;
   border: 1px solid black !important;
   color: black !important;
   background-color: #a3a3a3 !important;
-  font-family: "Segoe UI Symbol" !important;
-  font-size: 11px !important;
-  font-weight: bold !important;
-  text-align: center !important;
-  line-height: 17px !important;
+  background-size: calc(var(--button-size) - 4) calc(var(--button-size) - 4) !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;  
   cursor: pointer !important;
 }
 
+  #lizardSourceBoxClose {
+    background-image: url("icons/close.png") !important;
+  }
+
+  #lizardSourceBoxCopy {
+    background-image: url("icons/copy.png") !important;
+  }
+
   #lizardSourceBoxClose:hover,
   #lizardSourceBoxCopy:hover {
-    color: white !important;
-    border-color: white !important;
+    background-color: #efefef !important;
   }
 
   #lizardSourceBoxClose:active,
   #lizardSourceBoxCopy:active {
-    background-color: green !important;
+    background-color: initial !important;
   }
 
 /** Help **/

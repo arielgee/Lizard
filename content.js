@@ -876,13 +876,11 @@
 			btnClose = document.createElement("div");
 			btnClose.id = ID_LIZARD_SOURCE_BOX_CLOSE;
 			btnClose.className = CLS_LIZARD_ELEMENT;
-			btnClose.textContent = "❌";					// Dingbat - CROSS MARK / String.fromCharCode(10060);	
 			btnClose.title = "Close";
 
 			btnCopy = document.createElement("div");
 			btnCopy.id = ID_LIZARD_SOURCE_BOX_COPY;
 			btnCopy.className = CLS_LIZARD_ELEMENT;
-			btnCopy.textContent = "⧉";					// Dingbat - boxbox / String.fromCharCode(10697)
 			btnCopy.title = "Copy to clipboard";
 
 			lblType = document.createElement("span");
