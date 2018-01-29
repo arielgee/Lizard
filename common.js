@@ -468,6 +468,23 @@ let lzUtil = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
+	let applyInvertFilter = function (elm, invertAmount) {	// "100%" or "0%" ((colorize || decolorize) +shift, (colorize || decolorize))
+
+		let re = new RegExp("\\b(invert\\()([^)]+)(\\))");	// match "invert([amount])"
+
+		let compStyle = window.getComputedStyle(elm);
+
+		if (re.test(compStyle.filter)) {
+			elm.style.filter = compStyle.filter.replace(re, "$1" + invertAmount + "$3");	// replace amount
+		} else {
+			if (compStyle.filter != "" && compStyle.filter != "none") {
+				elm.style.filter = compStyle.filter;
+			}
+			elm.style.filter += "invert(" + invertAmount + ")";
+		}
+	};
+
+	//////////////////////////////////////////////////////////////////////
 	let concatClassName = function (elm, className) {
 
 		// check type of className. <SVG> elements are evil.
@@ -543,9 +560,15 @@ let lzUtil = (function () {
 		return ((typeof elm.className === "object") && (elm.className.toString() === "[object SVGAnimatedString]"));
 	};
 
+	//////////////////////////////////////////////////////////////////////
+	let hasBackgroundImage = function (elm) {
+		return (window.getComputedStyle(elm).getPropertyValue("background-image") !== "none");
+	};
+
 	return {
 		log: log,
 		applySaturateFilter: applySaturateFilter,
+		applyInvertFilter: applyInvertFilter,
 		concatClassName: concatClassName,
 		replaceClassName: replaceClassName,
 		removeClassName: removeClassName,
@@ -555,5 +578,6 @@ let lzUtil = (function () {
 		escapeRegExp: escapeRegExp,
 		random1to100: random1to100,
 		isSVGObject: isSVGObject,
+		hasBackgroundImage: hasBackgroundImage,
 	};
 })();

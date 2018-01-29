@@ -587,8 +587,10 @@
 
 					let fg = (invertColors ? colors[1] : colors[0]);
 					let bg = (invertColors ? colors[0] : colors[1]);
+					let saturateAmount = (colorImages ? "1000%" : null);
+					let invertAmount = (invertColors ? "100%" : "0%");
 
-					colorElement(fg, bg, colorizeChildren, (colorImages ? "1000%": null));
+					colorElement(fg, bg, colorizeChildren, saturateAmount, invertAmount);
 				});
 			});
 		});
@@ -604,8 +606,10 @@
 
 					let fg = (invertColors ? colors[1] : colors[0]);
 					let bg = (invertColors ? colors[0] : colors[1]);
+					let saturateAmount = (colorImages ? "0%" : null);
+					let invertAmount = (invertColors ? "100%" : "0%");
 
-					colorElement(fg, bg, colorizeChildren, (colorImages ? "0%" : null));
+					colorElement(fg, bg, colorizeChildren, saturateAmount, invertAmount);
 				});
 			});
 		});
@@ -613,7 +617,7 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function colorElement(foreground, background, colorizeChildren, saturateAmount) {
+	function colorElement(foreground, background, colorizeChildren, saturateAmount, invertAmount) {
 
 		let elm = lizardState.currentElement;
 
@@ -626,16 +630,16 @@
 
 		ua.data["coloureditems"] = [];
 
-		_colorElement(elm, foreground, background, ua.data.coloureditems, colorizeChildren, saturateAmount);
+		_colorElement(elm, foreground, background, ua.data.coloureditems, colorizeChildren, saturateAmount, invertAmount);
 
 		lizardState.undoActions.push(ua);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function _colorElement(elm, foreground, background, uaItems, deep, saturateAmount) {
+	function _colorElement(elm, foreground, background, uaItems, deep, saturateAmount, invertAmount) {
 
-		let colorImages = (saturateAmount && ((elm.nodeName === "IMG") || lzUtil.isSVGObject(elm)));
+		let colorImages = (saturateAmount && ((elm.nodeName === "IMG") || lzUtil.isSVGObject(elm) || lzUtil.hasBackgroundImage(elm)));
 
 		uaItems.push({
 			element:  elm,
@@ -651,6 +655,9 @@
 		elm.style.backgroundColor = background;
 		if (colorImages) {
 			lzUtil.applySaturateFilter(elm, saturateAmount);
+			if (invertAmount) {
+				lzUtil.applyInvertFilter(elm, invertAmount);
+			}
 		}
 
 		for(let i=0; i<elm.children.length && deep; i++) {
@@ -659,7 +666,7 @@
 			
 			// check type of className. <SVG> elements are evil.
 			if(c.nodeType === Node.ELEMENT_NODE && ((typeof c.className !== "string") || !(c.className.includes(CLS_LIZARD_ELEMENT)))) { 
-				_colorElement(c, foreground, background, uaItems, true, saturateAmount);
+				_colorElement(c, foreground, background, uaItems, true, saturateAmount, invertAmount);
 			}
 		}
 	}
