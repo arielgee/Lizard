@@ -191,7 +191,7 @@
 			// Ordered by file size. The larger one first.
 			let injecting1 = browser.tabs.executeScript(tab.id, { file: "content.js", runAt: runAt });
 			let injecting2 = browser.tabs.executeScript(tab.id, { file: "common.js", runAt: runAt });
-			let injecting3 = browser.tabs.executeScript(tab.id, { file: "cssSelectorGenerator/CssSelectorGenerator.js", runAt: runAt });
+			let injecting3 = browser.tabs.executeScript(tab.id, { file: "CssSelectorGenerator/CssSelectorGenerator.js", runAt: runAt });
 			let injecting4 = browser.tabs.insertCSS(tab.id, { file: "content.css", runAt: runAt });
 			let injecting5 = browser.tabs.executeScript(tab.id, { code: "const ALL_LIZARD_SCRIPTS_INJECTED=true;", runAt: runAt });
 						
