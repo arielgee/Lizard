@@ -105,7 +105,7 @@ let prefs = (function () {
 					resolve(PREF_DEF_VIEW_SOURCE_TYPE_VALUE);
 				} else {
 					resolve(result[PREF_VIEW_SOURCE_TYPE]);
-				}					
+				}
 			});
 		});
 	};

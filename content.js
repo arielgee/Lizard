@@ -212,6 +212,9 @@
 			case "v":
 				viewSource();
 				break;
+			case "s":
+				cssSelector();
+				break;
 			case "q":
 				stopSession();
 				break;
@@ -850,7 +853,7 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//	
-	function viewSourceInPage(type, source) {
+	function viewSourceInPage(type, source, altBorderColor) {
 
 		let sourceBox;
 		let divResizer;
@@ -910,8 +913,19 @@
 			divResizer.addEventListener("mousedown", onMouseDown_startSourceBoxResize, false);
 		} else {
 			// querySelector is slower but i'm looking just in the ID_LIZARD_SOURCE_BOX's element
+			divLeftBorder = sourceBox.querySelector("#" + ID_LIZARD_SOURCE_BOX_LEFT_BORDER);
 			sourceBoxPre = sourceBox.querySelector("#" + ID_LIZARD_SOURCE_BOX_PRE);
 			lblType = sourceBox.querySelector("#" + ID_LIZARD_SOURCE_BOX_SOURCE_TYPE);
+		}
+
+		const CLS_altBorderColor = "altBorderColor";
+
+		if (altBorderColor === true) {
+			lzUtil.concatClassName(sourceBox, CLS_altBorderColor);
+			lzUtil.concatClassName(divLeftBorder, CLS_altBorderColor);
+		} else {
+			lzUtil.removeClassName(sourceBox, CLS_altBorderColor);
+			lzUtil.removeClassName(divLeftBorder, CLS_altBorderColor);
 		}
 
 		lblType.textContent = type;
@@ -924,6 +938,20 @@
 		sourceBox.style.top = point.top + "px";
 
 		sourceBoxPre.focus();
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function cssSelector() {
+		
+		let elm = lizardState.currentElement;
+
+		if (elm) {
+			let selector = (new CssSelectorGenerator()).getSelector(elm);
+			viewSourceInPage("CSS Selector", selector, true);
+		} else {
+			displayNotification("No element is selected.");
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1116,6 +1144,7 @@
 			"<div class='{0} {1}'><span class='{0} {2}'>L</span><span class='{0} {3}'>Lock/Unlock</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>B</span><span class='{0} {3}'>Blink</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>V</span><span class='{0} {3}'>View source ({11})</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>S</span><span class='{0} {3}'>CSS Selector</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>Q</span><span class='{0} {3}'>Quit</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>F1</span><span class='{0} {3}'>Show help</span></div>" +
 			"<div class='{0} {12}'><span id='{13}' class='{0} {14}'>Options page</span></div>";

@@ -105,20 +105,20 @@
 /** View Source **/
 
 #lizardSourceBox {
-  --border-width: 4px;
+  --border-width: 3px;
+  --border-color: green;
   position: fixed !important;
   z-index: 2147483642 !important;
   display: flex !important;
-  min-height: 95px !important;
+  min-height: 135px !important;
   max-height: 80% !important;
   min-width: 300px !important;
   max-width: 80% !important;
-  border: var(--border-width) solid green !important;
+  border: var(--border-width) solid var(--border-color) !important;
   box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
   background-color: #FFFFE1 !important;
-  user-select: none !important;
+  user-select: auto !important;
   -moz-user-select: auto !important;
-  -moz-user-focus: auto !important;
 }
 
 #lizardSourceBoxResizer {
@@ -134,8 +134,13 @@
 }
 
 #lizardSourceBoxLeftBorder {
-  flex: 0 0 24px !important;    /*shorthand: [don't grow] [don't shrink] [size]*/
-  background-color: green !important;
+  flex: 0 0 23px !important;    /*shorthand: [don't grow] [don't shrink] [size]*/
+  background-color: var(--border-color) !important;
+}
+
+#lizardSourceBox.altBorderColor,
+#lizardSourceBoxLeftBorder.altBorderColor {
+  --border-color: purple;
 }
 
 #lizardSourceBoxSourceType {
@@ -162,9 +167,8 @@
   font-size: 12px !important;
   font-weight: normal !important;
   color: black !important;
-  user-select: none !important;
+  user-select: auto !important;
   -moz-user-select: auto !important;
-  -moz-user-focus: auto !important;
 }
 
 #lizardSourceBoxClose,
