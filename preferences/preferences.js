@@ -9,9 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
 	let elmLabelReqRestartSession = document.getElementById("restartSession");
 	let elmViewSourceHtml = document.getElementById("viewSrcHtml");
 	let elmViewSourceCss = document.getElementById("viewSrcCss");
+	let elmViewCssMatchRules = document.getElementById("viewCssMatchRules");
+	let elmViewCssCompStyle = document.getElementById("viewCssCompStyle");
 	let elmOpenViewSourceInWin = document.getElementById("openViewSrcInWin");
 	let elmOpenViewSourceInTab = document.getElementById("openViewSrcInTab");
-	let elmOpenViewSourceInPage = document.getElementById("openViewSrcInPage");	
+	let elmOpenViewSourceInPage = document.getElementById("openViewSrcInPage");
 	let elmColorizeColor = document.getElementById("colorizeColor");
 	let elmColorizeBackgroundColor = document.getElementById("colorizeBackgroundColor");
 	let elmDecolorizeColor = document.getElementById("decolorizeColor");
@@ -41,6 +43,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			elmViewSourceHtml.checked = true;
 		} else if (type === prefs.SOURCE_TYPE.CSS) {
 			elmViewSourceCss.checked = true;
+		}
+		lzUtil.disableElementTree(elmViewCssMatchRules.parentElement.parentElement, type === prefs.SOURCE_TYPE.HTML);
+	});
+
+	prefs.getViewCssType().then((type) => {
+		if (type === prefs.CSS_TYPE.MATCH_RULES) {
+			elmViewCssMatchRules.checked = true;
+		} else if (type === prefs.CSS_TYPE.COMP_STYLE) {
+			elmViewCssCompStyle.checked = true;
 		}
 	});
 
@@ -88,8 +99,16 @@ document.addEventListener("DOMContentLoaded", () => {
 		prefs.setWheelToWiderNarrower(elmWheelToWiderNarrower.checked);		
 		lzUtil.concatClassName(elmLabelReqRestartSession, "flash");
 	});
-	elmViewSourceHtml.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_TYPE.HTML); });
-	elmViewSourceCss.addEventListener("click", () => { prefs.setViewSourceType(prefs.SOURCE_TYPE.CSS); });
+	elmViewSourceHtml.addEventListener("click", () => {
+		prefs.setViewSourceType(prefs.SOURCE_TYPE.HTML);
+		lzUtil.disableElementTree(elmViewCssMatchRules.parentElement.parentElement, true);
+	});
+	elmViewSourceCss.addEventListener("click", () => {
+		prefs.setViewSourceType(prefs.SOURCE_TYPE.CSS);
+		lzUtil.disableElementTree(elmViewCssMatchRules.parentElement.parentElement, false);
+	});
+	elmViewCssMatchRules.addEventListener("click", () => { prefs.setViewCssType(prefs.CSS_TYPE.MATCH_RULES); });
+	elmViewCssCompStyle.addEventListener("click", () => { prefs.setViewCssType(prefs.CSS_TYPE.COMP_STYLE); });
 	elmOpenViewSourceInWin.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_TYPE.WINDOW); });
 	elmOpenViewSourceInTab.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_TYPE.TAB); });
 	elmOpenViewSourceInPage.addEventListener("click", () => { prefs.setOpenViewSourceIn(prefs.VIEW_SOURCE_IN_TYPE.PAGE); });
@@ -116,6 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	elmBtnRestoreDefaults.addEventListener("click", () => {
 		let defPrefs = prefs.restoreDefaults();
 
+		lzUtil.disableElementTree(elmViewCssMatchRules.parentElement.parentElement, defPrefs.viewSourceType === prefs.SOURCE_TYPE.HTML);
+
 		if (elmWheelToWiderNarrower.checked !== defPrefs.wheelToWiderNarrower) {
 			lzUtil.concatClassName(elmLabelReqRestartSession, "flash");
 		}
@@ -128,6 +149,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		elmWheelToWiderNarrower.checked = defPrefs.wheelToWiderNarrower;
 		elmViewSourceHtml.checked = (defPrefs.viewSourceType === prefs.SOURCE_TYPE.HTML);
 		elmViewSourceCss.checked = (defPrefs.viewSourceType === prefs.SOURCE_TYPE.CSS);
+		elmViewCssMatchRules.checked = (defPrefs.viewCssType === prefs.CSS_TYPE.MATCH_RULES);
+		elmViewCssCompStyle.checked = (defPrefs.viewCssType === prefs.CSS_TYPE.COMP_STYLE);
 		elmOpenViewSourceInWin.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_TYPE.WINDOW);
 		elmOpenViewSourceInTab.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_TYPE.TAB);
 		elmOpenViewSourceInPage.checked = (defPrefs.OpenViewSourceIn === prefs.VIEW_SOURCE_IN_TYPE.PAGE);

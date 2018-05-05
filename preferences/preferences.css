@@ -107,3 +107,10 @@ input[type="color"] {
 .controlButton.flash {
   background-position: left bottom;
 }
+
+label.disabled,
+input[type="radio"].disabled,
+input[type="checkbox"].disabled {
+  color: darkgray;
+  border-color: darkgray;
+}

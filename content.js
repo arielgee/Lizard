@@ -571,7 +571,7 @@
 
 		return new Promise((resolve) => {
 
-			let css = lzUtil.getElementComputedCssText(elm, false);
+			let css = lzUtil.getElementComputedCssText(elm);
 
 			let e = elm.cloneNode(true);
 			e.style.cssText = css;
@@ -815,14 +815,26 @@
 
 		prefs.getViewSourceType().then((type) => {
 
-			let source = "";
+			let source = "wtf?";
 
 			if (type === prefs.SOURCE_TYPE.HTML) {
-				source = sanitizeHtmlFromLizardElements(elm.outerHTML);
+				source = SourceBeautifier.html(sanitizeHtmlFromLizardElements(elm.outerHTML));
 			} else if (type === prefs.SOURCE_TYPE.CSS) {
-				source = lzUtil.getElementComputedCssText(elm, true);
-			} else {
-				source = "wtf?";
+
+				prefs.getViewCssType().then((cssType) => {
+					if (cssType == prefs.CSS_TYPE.MATCH_RULES) {
+
+						let result = lzUtil.getElementMatchedCSSRules(elm);
+						if (result.remoteStyleSheetDomains.length > 0) {
+							displayNotification("Can't access StyleSheets from different domains (security).\n\n(" + result.remoteStyleSheetDomains.join(", ") + ")");
+						}
+						source = result.cssText.length ? result.cssText : "-none found-";
+
+					} else if (cssType === prefs.CSS_TYPE.COMP_STYLE) {
+						source = lzUtil.getElementComputedCssText(elm);
+					}
+					source = SourceBeautifier.css(source);
+				});
 			}
 
 			prefs.getOpenViewSourceIn().then((value) => {

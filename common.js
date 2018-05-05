@@ -30,12 +30,16 @@ let prefs = (function () {
 	const SOURCE_TYPE = { HTML: "HTML", CSS: "CSS" };
 	const SOURCE_TYPES_ARRAY = [ SOURCE_TYPE.HTML, SOURCE_TYPE.CSS ];
 
+	const CSS_TYPE = { MATCH_RULES: "matchRules", COMP_STYLE: "compStyle" };
+	const CSS_TYPES_ARRAY = [CSS_TYPE.MATCH_RULES, CSS_TYPE.COMP_STYLE];
+
 	const VIEW_SOURCE_IN_TYPE = { WINDOW: "inWindow", TAB: "inTab", PAGE: "inPage" };
 	const VIEW_SOURCE_IN_TYPES_ARRAY = [ VIEW_SOURCE_IN_TYPE.WINDOW, VIEW_SOURCE_IN_TYPE.TAB, VIEW_SOURCE_IN_TYPE.PAGE ];
 
 	const PREF_DEF_HELP_BOX_ON_START_VALUE = true;
 	const PREF_DEF_WHEEL_TO_WIDER_NARROWER = false;
 	const PREF_DEF_VIEW_SOURCE_TYPE_VALUE = SOURCE_TYPE.HTML;
+	const PREF_DEF_VIEW_CSS_TYPE_VALUE = CSS_TYPE.COMP_STYLE;
 	const PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE = VIEW_SOURCE_IN_TYPE.PAGE;
 	const PREF_DEF_COLORIZE_COLORS_VALUE = ["#FF0000", "#FFFF00"];			// default red on yellow
 	const PREF_DEF_DECOLORIZE_COLORS_VALUE = ["#000000", "#FFFFFF"];		// default black on white
@@ -47,6 +51,7 @@ let prefs = (function () {
 	const PREF_HELP_BOX_ON_START = "pref_helpBoxOnStart";
 	const PREF_WHEEL_TO_WIDER_NARROWER = "pref_wheelToWiderNarrower";
 	const PREF_VIEW_SOURCE_TYPE = "pref_viewSourceType";
+	const PREF_VIEW_CSS_TYPE = "pref_viewCssType";
 	const PREF_OPEM_VIEW_SOURCE_IN = "pref_openViewSourceIn";
 	const PREF_COLORIZE_COLORS = "pref_colorizeColors";
 	const PREF_DECOLORIZE_COLORS = "pref_decolorizeColors";
@@ -115,6 +120,29 @@ let prefs = (function () {
 
 		let obj = {};
 		obj[PREF_VIEW_SOURCE_TYPE] = value;
+		browser.storage.local.set(obj);
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let getViewCssType = function () {
+
+		return new Promise((resolve) => {
+
+			browser.storage.local.get(PREF_VIEW_CSS_TYPE).then((result) => {
+				if (CSS_TYPES_ARRAY.indexOf(result[PREF_VIEW_CSS_TYPE]) === -1) {
+					resolve(PREF_DEF_VIEW_CSS_TYPE_VALUE);
+				} else {
+					resolve(result[PREF_VIEW_CSS_TYPE]);
+				}					
+			});
+		});
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let setViewCssType = function (value) {
+
+		let obj = {};
+		obj[PREF_VIEW_CSS_TYPE] = value;
 		browser.storage.local.set(obj);
 	};
 
@@ -272,6 +300,7 @@ let prefs = (function () {
 		this.setHelpBoxOnStart(PREF_DEF_HELP_BOX_ON_START_VALUE);
 		this.setWheelToWiderNarrower(PREF_DEF_WHEEL_TO_WIDER_NARROWER);
 		this.setViewSourceType(PREF_DEF_VIEW_SOURCE_TYPE_VALUE);
+		this.setViewCssType(PREF_DEF_VIEW_CSS_TYPE_VALUE);
 		this.setOpenViewSourceIn(PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE);
 		this.setColorizeColors(PREF_DEF_COLORIZE_COLORS_VALUE);
 		this.setDecolorizeColors(PREF_DEF_DECOLORIZE_COLORS_VALUE);
@@ -284,6 +313,7 @@ let prefs = (function () {
 			helpBoxOnStart: PREF_DEF_HELP_BOX_ON_START_VALUE,
 			wheelToWiderNarrower: PREF_DEF_WHEEL_TO_WIDER_NARROWER,
 			viewSourceType: PREF_DEF_VIEW_SOURCE_TYPE_VALUE,
+			viewCssType: PREF_DEF_VIEW_CSS_TYPE_VALUE,
 			OpenViewSourceIn: PREF_DEF_OPEM_VIEW_SOURCE_IN_VALUE,
 			colorizeColors: PREF_DEF_COLORIZE_COLORS_VALUE,
 			decolorizeColors: PREF_DEF_DECOLORIZE_COLORS_VALUE,
@@ -298,6 +328,9 @@ let prefs = (function () {
 		SOURCE_TYPE: SOURCE_TYPE,
 		SOURCE_TYPES_ARRAY: SOURCE_TYPES_ARRAY,
 
+		CSS_TYPE: CSS_TYPE,
+		CSS_TYPES_ARRAY: CSS_TYPES_ARRAY,
+
 		VIEW_SOURCE_IN_TYPE: VIEW_SOURCE_IN_TYPE,
 		VIEW_SOURCE_IN_TYPES_ARRAY: VIEW_SOURCE_IN_TYPES_ARRAY,
 
@@ -309,6 +342,9 @@ let prefs = (function () {
 
 		getViewSourceType: getViewSourceType,
 		setViewSourceType: setViewSourceType,
+
+		getViewCssType: getViewCssType,
+		setViewCssType: setViewCssType,
 
 		getOpenViewSourceIn: getOpenViewSourceIn,
 		setOpenViewSourceIn: setOpenViewSourceIn,
@@ -527,20 +563,18 @@ let lzUtil = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
-	let getElementComputedCssText = function (elm, bForDisplay) {
+	let getElementComputedCssText = function (elm) {
 
-		let css;
+		let css = "";
 		let name;
 		let priority;
-		let colon = (bForDisplay ? ": " : ":");
-		let semicolon = (bForDisplay ? ";\n" : ";");
 
 		let style = window.getComputedStyle(elm);
 
 		for (let i = 0; i < style.length; i++) {
 			name = style[i];
-			priority = style.getPropertyPriority(name);			
-			css += name + colon + style.getPropertyValue(name) + (priority.length > 0 ? " !" : "") + priority + semicolon;
+			priority = style.getPropertyPriority(name);
+			css += name + ":" + style.getPropertyValue(name) + (priority.length > 0 ? " !" : "") + priority + ";";
 		}
 		return css;
 	};
@@ -564,6 +598,73 @@ let lzUtil = (function () {
 	let hasBackgroundImage = function (elm) {
 		return (window.getComputedStyle(elm).getPropertyValue("background-image") !== "none");
 	};
+	
+	//////////////////////////////////////////////////////////////////////
+	let getElementMatchedCSSRules = function (elm) {
+
+		let ssDomain;
+		let rules;
+		let sheets = document.styleSheets;
+
+		let text = "";
+		let remoteStyleSheetDomains = [];
+		
+		
+		for (let i = 0; i < sheets.length; i++) {
+
+			// security error when accessing a style sheet from a different domain
+			try {
+				rules = sheets[i].cssRules;
+			} catch (e) {
+
+				// href is null for local style sheets
+				if (sheets[i].href !== null) {
+					remoteStyleSheetDomains.push(ssDomain = (new URL(sheets[i].href)).hostname);
+				} else {
+					ssDomain = "";
+				}
+
+				// if any other execption
+				if (e.name !== "SecurityError" || document.domain === ssDomain) {
+					throw e;
+				}
+				rules = [];
+			}
+
+			for (let j = 0; j < rules.length; j++) {
+				if (elm.matches(rules[j].selectorText)) {
+					text += rules[j].cssText;
+				}
+			}
+		}
+
+		return {
+			cssText: text,
+			remoteStyleSheetDomains: remoteStyleSheetDomains,
+		};
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let disableElementTree = function (elm, value) {
+
+		if (elm.nodeType !== Node.ELEMENT_NODE) {
+			return;
+		}
+
+		for (let i in elm.children) {
+			disableElementTree(elm.children[i], value);
+		}
+
+		if (elm.disabled !== undefined) {
+			elm.disabled = value;
+		}
+
+		if (value === true) {
+			lzUtil.concatClassName(elm, "disabled");
+		} else {
+			lzUtil.removeClassName(elm, "disabled");
+		}
+	};
 
 	return {
 		log: log,
@@ -579,5 +680,7 @@ let lzUtil = (function () {
 		random1to100: random1to100,
 		isSVGObject: isSVGObject,
 		hasBackgroundImage: hasBackgroundImage,
+		getElementMatchedCSSRules: getElementMatchedCSSRules,
+		disableElementTree: disableElementTree,
 	};
 })();
