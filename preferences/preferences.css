@@ -1,4 +1,4 @@
-﻿@namespace url("http://www.w3.org/1999/xhtml");
+@namespace url("http://www.w3.org/1999/xhtml");
 
 body {
   font-family: Tahoma, Verdana, Segoe, sans-serif;
@@ -45,9 +45,26 @@ input[type="checkbox"]:checked {
 input[type="color"] {
   width: 40px;
   height: 20px;
-  border: 2px solid #999;
+  border: none;
+  margin: 0 3px;
   padding: 1px;
-  background-color: white;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.6);
+}
+
+input[type="color"]::-moz-focus-inner {
+  padding: 0;
+}
+
+.colorInputDelimiter {
+  margin: 0 7px;
+  vertical-align: top;
 }
 
 .caption {
