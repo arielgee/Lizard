@@ -64,7 +64,7 @@
 	// Menus
 	prefs.getMenuItemContext().then((inContext) => {
 		prefs.getMenuItemTools().then((inTools) => {
-			
+
 			let menus_contexts = (inContext ? PAGE_CONTEXT : []).concat(inTools ? TOOLS_MENU_CONTEXT : []);
 
 			if(menus_contexts.length > 0) {
@@ -93,7 +93,7 @@
 	//////////////////////////////////////////////////////////////////////
 	// firefox commands (keyboard)
 	browser.commands.onCommand.addListener(function (command) {
-	
+
 		switch (command) {
 
 			case "kb-toggle-lizard-state":
@@ -146,7 +146,7 @@
 	});
 
 	//////////////////////////////////////////////////////////////////////
-	// 
+	//
 	function sendToggleLizardStateMessage(tab) {
 
 		if( !(tab.url.match(/^(http|https|file|ftp):\/\//)) ) {
@@ -155,7 +155,7 @@
 		}
 
 		browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }, (response) => {
-			
+
 			// This is UGLY but it works. if the user double clicks (2 very fast clicks) on the lizard button (or the keyboard command) the
 			// injectLizardScripts() is called twice and an error is raised due to the redeclaration and onErrorToggleSessionState() is called.
 			if ( (response === undefined) && ((Date.now() - lastInjectTime) > 500) ) {
@@ -195,7 +195,7 @@
 			let injecting4 = browser.tabs.executeScript(tab.id, { file: "CssSelectorGenerator/CssSelectorGenerator.js", runAt: runAt });
 			let injecting5 = browser.tabs.insertCSS(tab.id, { file: "content.css", runAt: runAt });
 			let injecting6 = browser.tabs.executeScript(tab.id, { code: "const ALL_LIZARD_SCRIPTS_INJECTED=true;", runAt: runAt });
-						
+
 			injecting1.then(() => {
 				injecting2.then(() => {
 					injecting3.then(() => {
@@ -212,10 +212,10 @@
 				}, (err) => { reject(new Error("Inject file 'content.js', " + err.message)); });
 			}, (err) => { reject(new Error("Inject file 'SourceBeautifier.js', " + err.message)); });
 		});
-	}	
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	// 
+	//
 	function updateLizardUI(status) {
 
 		let action = "Start";
@@ -268,11 +268,11 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	// 
+	//
 	function openViewSourcePage(type, id, newWindow) {
 
 		let viewSourceURL = browser.extension.getURL(VIEW_SOURCE_PAGE) + "?id=" + id;
-		
+
 		if (newWindow) {
 			browser.windows.create({
 				url: viewSourceURL,
@@ -282,7 +282,7 @@
 				width: 700,
 			});
 		} else {
-			
+
 			let getting = browser.tabs.query({ active: true, currentWindow: true });
 			getting.then((tabs) => {
 				browser.tabs.create({

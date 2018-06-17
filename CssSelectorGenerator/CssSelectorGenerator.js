@@ -3,7 +3,7 @@
 /*	CSS Selector Generator, v1.0.4
 	by Riki Fridrich <riki@fczbkk.com> (http://fczbkk.com)
 	https://github.com/fczbkk/css-selector-generator/
-	
+
 	bugfix: "doesn't work on NYTimes" #13 - "Compute selectors only when needed" #26
 	by Boris Lykah
 	https://github.com/lykahb/css-selector-generator/

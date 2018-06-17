@@ -177,7 +177,7 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function canDocumentScroll(direction) {
-		
+
 		let docElm = document.documentElement;
 
 		if (((direction === "up") && docElm.scrollTop === 0) || ((direction === "down") && docElm.scrollTop === docElm.scrollTopMax)) {

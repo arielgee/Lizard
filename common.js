@@ -80,7 +80,7 @@ let prefs = (function () {
 		obj[PREF_HELP_BOX_ON_START] = value;
 		browser.storage.local.set(obj);
 	};
-	
+
 	//////////////////////////////////////////////////////////////////////
 	let getWheelToWiderNarrower = function () {
 
@@ -133,7 +133,7 @@ let prefs = (function () {
 					resolve(PREF_DEF_VIEW_CSS_TYPE_VALUE);
 				} else {
 					resolve(result[PREF_VIEW_CSS_TYPE]);
-				}					
+				}
 			});
 		});
 	};
@@ -274,7 +274,7 @@ let prefs = (function () {
 		obj[PREF_MENU_ITEM_CONTEXT] = value;
 		browser.storage.local.set(obj);
 	};
-	
+
 	//////////////////////////////////////////////////////////////////////
 	let getMenuItemTools = function () {
 
@@ -293,7 +293,7 @@ let prefs = (function () {
 		obj[PREF_MENU_ITEM_TOOLS] = value;
 		browser.storage.local.set(obj);
 	};
-	
+
 
 	//////////////////////////////////////////////////////////////////////
 	let restoreDefaults = function () {
@@ -348,7 +348,7 @@ let prefs = (function () {
 
 		getOpenViewSourceIn: getOpenViewSourceIn,
 		setOpenViewSourceIn: setOpenViewSourceIn,
-		
+
 		getColorizeColors: getColorizeColors,
 		setColorizeColors: setColorizeColors,
 
@@ -548,7 +548,7 @@ let lzUtil = (function () {
 
 		_shutdownAllLizardSessions().then((results) => {
 			setTimeout(() => { browser.runtime.reload(); }, 10);
-		});		
+		});
 	};
 
 	//////////////////////////////////////////////////////////////////////
@@ -598,7 +598,7 @@ let lzUtil = (function () {
 	let hasBackgroundImage = function (elm) {
 		return (window.getComputedStyle(elm).getPropertyValue("background-image") !== "none");
 	};
-	
+
 	//////////////////////////////////////////////////////////////////////
 	let getElementMatchedCSSRules = function (elm) {
 
@@ -608,8 +608,8 @@ let lzUtil = (function () {
 
 		let text = "";
 		let remoteStyleSheetDomains = [];
-		
-		
+
+
 		for (let i = 0; i < sheets.length; i++) {
 
 			// security error when accessing a style sheet from a different domain

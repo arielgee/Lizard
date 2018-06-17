@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let elmBtnReloadExtension = document.getElementById("btnReloadExtension");
 	let elmBtnRestoreDefaults = document.getElementById("btnRestoreDefaults");
-	
+
 
 	/////////////////////////////////////////////////////////////////////////////////
 	// get saved preferences
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// save preferences when changed
 	elmHelpBoxOnStart.addEventListener("change", () => { prefs.setHelpBoxOnStart(elmHelpBoxOnStart.checked); });
 	elmWheelToWiderNarrower.addEventListener("change", () => {
-		prefs.setWheelToWiderNarrower(elmWheelToWiderNarrower.checked);		
+		prefs.setWheelToWiderNarrower(elmWheelToWiderNarrower.checked);
 		lzUtil.concatClassName(elmLabelReqRestartSession, "flash");
 	});
 	elmViewSourceHtml.addEventListener("click", () => {

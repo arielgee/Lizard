@@ -12,7 +12,7 @@
 	const CLS_HELP_FOOTER = "helpFooter";
 	const CLS_HELP_FOOTER_LINK = "helpFooterLink";
 	const CLS_LETTER_KEY = "letterKey";
-	
+
 	const ATTRI_LIZARD_ISOLATED_CENTERED = "lizardIsolatedCentered";
 
 	const LIZARD_BOX_PREFIX = "lizardBox";
@@ -33,7 +33,7 @@
 
 	const PATH_TO_HELP_IMG = "icons/lizard-32.png";
 	const BOX_BORDER_WIDTH = 2;		// #lizardBoxBorder border width 2px (as in the content.css file)
-	const DEF_SCROLL_BAR_WIDTH = 16;	
+	const DEF_SCROLL_BAR_WIDTH = 16;
 	const MANDATORY_ROOT_ELEMENTS = ["HTML", "BODY"];
 
 	const UNDO_ACTION_HIDE = "undoHide";
@@ -99,7 +99,7 @@
 
 		}
 	});
-	
+
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onMouseMove(event) {
@@ -258,7 +258,7 @@
 		document.addEventListener("mousemove", onMouseMove, true);
 		document.addEventListener("mouseleave", onMouseLeave, true);
 		document.addEventListener("scroll", onScroll, false);
-		window.addEventListener("resize", onResize, false);	
+		window.addEventListener("resize", onResize, false);
 		document.addEventListener("pagehide", onPageHide, true);
 		document.addEventListener("visibilitychange", onVisibilityChange, false);
 
@@ -267,7 +267,7 @@
 				document.addEventListener("wheel", onWheel, true);
 			}
 		});
-		
+
 		document.addEventListener("click", onClick, true);
 		document.addEventListener("keydown", onKeyDown, false);
 
@@ -279,7 +279,7 @@
 				showHelp();
 			}
 		});
-		
+
 		lizardState.bSessionStarted = true;
 		notifyToolbarButtonStatus(lizardState.bSessionStarted);
 	}
@@ -301,7 +301,7 @@
 		document.removeEventListener("visibilitychange", onVisibilityChange, false);
 
 		document.removeEventListener("wheel", onWheel, true);
-		
+
 		document.removeEventListener("click", onClick, true);
 		document.removeEventListener("keydown", onKeyDown, false);
 
@@ -327,7 +327,7 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function createSelectionBox() {
- 
+
 		if (!lizardState.currentElement) {
 			return;
 		}
@@ -384,7 +384,7 @@
 		// label content
 		boxLabelTag.innerHTML = getLabelContent(lizardState.currentElement);
 
-		// label position	
+		// label position
 		let rect = boxLabelTag.getBoundingClientRect();
 
 		const CLS_floater = "floater";
@@ -468,13 +468,13 @@
 		if (!elm || elm === null) {
 			displayNotification("No element is selected.");
 			return;
-		}		
-		
+		}
+
 		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName) !== -1) {
 			displayNotification("The element '<" + elm.nodeName + ">' can't be hidden.");
 			return;
 		}
-		
+
 		removeSelectionBox();
 		unselectElement();
 		lockSelection(false);
@@ -499,12 +499,12 @@
 			displayNotification("No element is selected.");
 			return;
 		}
-		
+
 		if (MANDATORY_ROOT_ELEMENTS.indexOf(elm.nodeName) !== -1) {
 			displayNotification("The element '<" + elm.nodeName + ">' can't be removed.");
 			return;
 		}
-		
+
 		removeSelectionBox();
 		unselectElement();
 		lockSelection(false);
@@ -562,7 +562,7 @@
 		document.body = document.createElement("body");
 		document.body.id = ID_LIZARD_ISOLATE_BODY;
 
-		cloning.then((isolated) => { document.body.appendChild(isolated); });		
+		cloning.then((isolated) => { document.body.appendChild(isolated); });
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -624,7 +624,7 @@
 
 		let elm = lizardState.currentElement;
 
-		if (!elm || elm === null) { 
+		if (!elm || elm === null) {
 			displayNotification("No element is selected.");
 			return;
 		}
@@ -652,7 +652,7 @@
 			prev_filter: elm.style.filter,
 			undoFilter: colorImages,
 		});
-		
+
 		elm.style.color = foreground;
 		elm.style.borderColor = foreground;
 		elm.style.backgroundColor = background;
@@ -664,16 +664,16 @@
 		}
 
 		for(let i=0; i<elm.children.length && deep; i++) {
-			
+
 			let c = elm.children[i];
-			
+
 			// check type of className. <SVG> elements are evil.
-			if(c.nodeType === Node.ELEMENT_NODE && ((typeof c.className !== "string") || !(c.className.includes(CLS_LIZARD_ELEMENT)))) { 
+			if(c.nodeType === Node.ELEMENT_NODE && ((typeof c.className !== "string") || !(c.className.includes(CLS_LIZARD_ELEMENT)))) {
 				_colorElement(c, foreground, background, uaItems, true, saturateAmount, invertAmount);
 			}
 		}
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////
 	//
 	function undoLastAction() {
@@ -803,7 +803,7 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//	
+	//
 	function viewSource() {
 
 		let elm = lizardState.currentElement;
@@ -864,7 +864,7 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//	
+	//
 	function viewSourceInPage(type, source, altBorderColor) {
 
 		let sourceBox;
@@ -955,7 +955,7 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function cssSelector() {
-		
+
 		let elm = lizardState.currentElement;
 
 		if (elm) {
@@ -987,7 +987,7 @@
 
 		if (sourceBox) {
 
-			let winInnerWidth = window.innerWidth-getVScrollWidth()-28;		// source box left border width + box border 
+			let winInnerWidth = window.innerWidth-getVScrollWidth()-28;		// source box left border width + box border
 			let winInnerHeight = window.innerHeight-getHScrollWidth()-65;	// 2 button height + padding + box border + extra space
 
 			if (sourceBox.offsetLeft < 0) {
