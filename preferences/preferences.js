@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// get elements
 	let elmHelpBoxOnStart = document.getElementById("helpBoxOnStart");
 	let elmWheelToWiderNarrower = document.getElementById("wheelToWiderNarrower");
-	let elmLabelReqRestartSession = document.getElementById("restartSession");
+	let elmLabelReqRestartSessionMw = document.getElementById("restartSessionMw");
 	let elmViewSourceHtml = document.getElementById("viewSrcHtml");
 	let elmViewSourceCss = document.getElementById("viewSrcCss");
 	let elmViewCssMatchRules = document.getElementById("viewCssMatchRules");
@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	let elmColorizeImages = document.getElementById("colorizeImages");
 	let elmContextMenu = document.getElementById("contextMenu");
 	let elmToolsMenu = document.getElementById("toolsMenu");
+	let elmExpertMode = document.getElementById("expertMode");
+	let elmLabelReqRestartSessionXp = document.getElementById("restartSessionXp");
 	let elmLabelReqRestartExtension = document.getElementById("reloadExtension");
 
 	let elmBtnReloadExtension = document.getElementById("btnReloadExtension");
@@ -91,13 +93,17 @@ document.addEventListener("DOMContentLoaded", () => {
 		elmToolsMenu.checked = checked;
 	});
 
+	prefs.getExpertMode().then((checked) => {
+		elmExpertMode.checked = checked;
+	});
+
 
 	/////////////////////////////////////////////////////////////////////////////////
 	// save preferences when changed
 	elmHelpBoxOnStart.addEventListener("change", () => { prefs.setHelpBoxOnStart(elmHelpBoxOnStart.checked); });
 	elmWheelToWiderNarrower.addEventListener("change", () => {
 		prefs.setWheelToWiderNarrower(elmWheelToWiderNarrower.checked);
-		lzUtil.concatClassName(elmLabelReqRestartSession, "flash");
+		lzUtil.concatClassName(elmLabelReqRestartSessionMw, "flash");
 	});
 	elmViewSourceHtml.addEventListener("click", () => {
 		prefs.setViewSourceType(prefs.SOURCE_TYPE.HTML);
@@ -128,6 +134,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		lzUtil.concatClassName(elmLabelReqRestartExtension, "flash");
 		lzUtil.concatClassName(elmBtnReloadExtension, "flash");
 	});
+	elmExpertMode.addEventListener("change", () => {
+		prefs.setExpertMode(elmExpertMode.checked);
+		lzUtil.concatClassName(elmLabelReqRestartSessionXp, "flash");
+	});
 
 
 	/////////////////////////////////////////////////////////////////////////////////
@@ -138,11 +148,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		lzUtil.disableElementTree(elmViewCssMatchRules.parentElement.parentElement, defPrefs.viewSourceType === prefs.SOURCE_TYPE.HTML);
 
 		if (elmWheelToWiderNarrower.checked !== defPrefs.wheelToWiderNarrower) {
-			lzUtil.concatClassName(elmLabelReqRestartSession, "flash");
+			lzUtil.concatClassName(elmLabelReqRestartSessionMw, "flash");
 		}
 		if (elmContextMenu.checked !== defPrefs.menuItemContext || elmToolsMenu.checked !== defPrefs.menuItemTools) {
 			lzUtil.concatClassName(elmLabelReqRestartExtension, "flash");
 			lzUtil.concatClassName(elmBtnReloadExtension, "flash");
+		}
+		if (elmExpertMode.checked !== defPrefs.expertMode) {
+			lzUtil.concatClassName(elmLabelReqRestartSessionXp, "flash");
 		}
 
 		elmHelpBoxOnStart.checked = defPrefs.helpBoxOnStart;
@@ -162,6 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		elmColorizeImages.checked = defPrefs.colorizeImages;
 		elmContextMenu.checked = defPrefs.menuItemContext;
 		elmToolsMenu.checked = defPrefs.menuItemTools;
+		elmExpertMode.checked = defPrefs.expertMode;
 	});
 
 

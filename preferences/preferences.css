@@ -69,16 +69,15 @@ input[type="color"]::-moz-focus-inner {
 
 .caption {
   font-size: 22.5px;
+  margin-bottom: 35px;
 }
 
 .prefSeperator {
-  height: 13px;
   border-bottom: 1px solid lightgray;
-  margin-bottom: 13px;
 }
 
-.caption+.prefSeperator {
-  height: 36px;
+.preference {
+  padding: 12px 3px;
 }
 
 .preferenceControl {
@@ -102,6 +101,27 @@ input[type="color"]::-moz-focus-inner {
 .annotation.flash {
   background-position: left bottom;
   color: black;
+}
+
+.helpInfo {
+	display: inline-block;
+	border-radius: 50%;
+	height: 18px;
+	width: 18px;
+	background-color: #bbbbbb;
+	color: #ffffff;
+	font-family: "Open Sans",X-LocaleSpecific,sans-serif;
+	font-size: 14px;
+	font-weight: 700;
+	text-align: center;
+	line-height: 1.3em;
+	vertical-align: top;
+	cursor: help;
+	margin-top: 2px;
+}
+
+.helpInfo:hover {
+	background-color: #2a4364;
 }
 
 .controlButton {
@@ -130,4 +150,8 @@ input[type="radio"].disabled,
 input[type="checkbox"].disabled {
   color: darkgray;
   border-color: darkgray;
+}
+
+.xpModeBg {
+  background-image: url("../icons/xpModeBg.png") !important;
 }

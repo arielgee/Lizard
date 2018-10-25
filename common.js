@@ -47,6 +47,7 @@ let prefs = (function () {
 	const PREF_DEF_COLORIZE_IMAGES = true;
 	const PREF_DEF_MENU_ITEM_CONTEXT = true;
 	const PREF_DEF_MENU_ITEM_TOOLS = true;
+	const PREF_DEF_EXPERT_MODE = false;
 
 	const PREF_HELP_BOX_ON_START = "pref_helpBoxOnStart";
 	const PREF_WHEEL_TO_WIDER_NARROWER = "pref_wheelToWiderNarrower";
@@ -59,6 +60,7 @@ let prefs = (function () {
 	const PREF_COLORIZE_IMAGES = "pref_colorizeImages";
 	const PREF_MENU_ITEM_CONTEXT = "pref_menuItemContext";
 	const PREF_MENU_ITEM_TOOLS = "pref_menuItemTools";
+	const PREF_EXPERT_MODE = "pref_expertMode";
 
 	const PREF_COLOR_SEPARATOR_CHAR = "/";
 
@@ -294,6 +296,25 @@ let prefs = (function () {
 		browser.storage.local.set(obj);
 	};
 
+	//////////////////////////////////////////////////////////////////////
+	let getExpertMode = function () {
+
+		return new Promise((resolve) => {
+
+			browser.storage.local.get(PREF_EXPERT_MODE).then((result) => {
+				resolve(result[PREF_EXPERT_MODE] === true ? true : PREF_DEF_EXPERT_MODE);
+			});
+		});
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let setExpertMode = function (value) {
+
+		let obj = {};
+		obj[PREF_EXPERT_MODE] = value;
+		browser.storage.local.set(obj);
+	};
+
 
 	//////////////////////////////////////////////////////////////////////
 	let restoreDefaults = function () {
@@ -308,6 +329,7 @@ let prefs = (function () {
 		this.setColorizeImages(PREF_DEF_COLORIZE_IMAGES);
 		this.setMenuItemContext(PREF_DEF_MENU_ITEM_CONTEXT);
 		this.setMenuItemTools(PREF_DEF_MENU_ITEM_TOOLS);
+		this.setExpertMode(PREF_DEF_EXPERT_MODE);
 
 		return {
 			helpBoxOnStart: PREF_DEF_HELP_BOX_ON_START_VALUE,
@@ -321,6 +343,7 @@ let prefs = (function () {
 			colorizeImages: PREF_DEF_COLORIZE_IMAGES,
 			menuItemContext: PREF_DEF_MENU_ITEM_CONTEXT,
 			menuItemTools: PREF_DEF_MENU_ITEM_TOOLS,
+			expertMode: PREF_DEF_EXPERT_MODE,
 		};
 	};
 
@@ -366,6 +389,9 @@ let prefs = (function () {
 
 		getMenuItemTools: getMenuItemTools,
 		setMenuItemTools: setMenuItemTools,
+
+		getExpertMode: getExpertMode,
+		setExpertMode: setExpertMode,
 
 		restoreDefaults: restoreDefaults,
 	};

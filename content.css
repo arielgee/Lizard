@@ -232,9 +232,72 @@
   opacity: 1 !important;
 }
 
+#lizardHelpBox .helpImg {
+  width: 26px !important;
+  height: 26px !important;
+}
+
+#lizardHelpBox .helpCap {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: bold !important;
+  margin-bottom: 12px !important;
+}
+
+#lizardHelpBox .helpRec {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  font-family: inherit !important;
+  margin: 6px !important;
+  width: auto !important;
+  height: 23px !important;
+}
+
+/* two by two layout */
+#lizardHelpBox .helpRec.xpMode {
+  flex-wrap: wrap !important;
+  justify-content: space-evenly !important;
+  height: auto !important;
+  padding: 5px 0 2px 0 !important;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 0.2em  !important;
+  background-image: url("icons/xpModeBg.png") !important;
+}
+
+#lizardHelpBox .helpRec.xpMode > span {
+  display: flex !important;
+  flex-basis: calc(50% - 20px) !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+#lizardHelpBox .mouseButton {
+  width: 21px !important;
+  height: 21px !important;
+  padding: 1px !important;
+}
+
+#lizardHelpBox .mouseButton img {
+  width: 21px !important;
+  height: 21px !important;
+}
+
+#lizardHelpBox .mouseButton img.flip {
+  transform: scaleX(-1) !important;
+}
+
+#lizardHelpBox .helpRec.xpMode.hidden {
+  display: none !important;
+}
+
 #lizardHelpBox .letterKey {
   letter-spacing: 1px !important;
-  float: left !important;
   width: 21px !important;
   height: 21px !important;
   border: 1px solid black !important;
@@ -247,33 +310,11 @@
   color: white !important;
   text-align: center !important;
   line-height: 21px !important;
-}
-
-#lizardHelpBox .helpImg {
-  float: right !important;
-  width: 26px !important;
-  height: 26px !important;
-}
-
-#lizardHelpBox .helpRec {
-  font-family: inherit !important;
-}
-
-#lizardHelpBox .helpRec:first-child {
-  font-size: 13px !important;
-  font-weight: bold !important;
-  margin-bottom: 10px !important;
-}
-
-#lizardHelpBox .helpRec:not(:first-child) {
-  margin: 6px !important;
-  width: auto !important;
-  height: 23px !important;
+  margin-right: 7px !important;
 }
 
 #lizardHelpBox .helpText {
-  position: relative !important;
-  padding: 5px 10px 0 30px !important;
+  padding-top: 1px !important;
   white-space: nowrap !important;
   font-size: 11px !important;
 }

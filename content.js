@@ -6,12 +6,15 @@
 
 	const CLS_DRAGGABLE_ELEMENT = "lizardDraggable";
 	const CLS_HELP_IMG = "helpImg";
+	const CLS_HELP_CAPTION = "helpCap";
 	const CLS_HELP_RECORD = "helpRec";
 	const CLS_HELP_TEXT = "helpText";
+	const CLS_HELP_XP_MODE = "xpMode";
 	const CLS_HELP_COLOR = "helpColor";
 	const CLS_HELP_FOOTER = "helpFooter";
 	const CLS_HELP_FOOTER_LINK = "helpFooterLink";
 	const CLS_LETTER_KEY = "letterKey";
+	const CLS_MOUSE_BUTTON = "mouseButton";
 
 	const ATTRI_LIZARD_ISOLATED_CENTERED = "lizardIsolatedCentered";
 
@@ -32,6 +35,7 @@
 
 
 	const PATH_TO_HELP_IMG = "icons/lizard-32.png";
+	const PATH_TO_LEFT_CLICK_IMG = "icons/leftClick.png";
 	const BOX_BORDER_WIDTH = 2;		// #lizardBoxBorder border width 2px (as in the content.css file)
 	const DEF_SCROLL_BAR_WIDTH = 16;
 	const MANDATORY_ROOT_ELEMENTS = ["HTML", "BODY"];
@@ -173,8 +177,29 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onClick(event) {
-		if (event.shiftKey) {
+
+		if (lizardState.currentElement && event.shiftKey) {
 			hideElement();
+			event.preventDefault();
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onClick_XpMode(event) {
+
+		if(!lizardState.currentElement) {
+			return;
+		}
+
+		if (event.button === 2) {
+			undoLastAction();
+		} else if(event.button === 0) {
+			if (event.shiftKey) {
+				hideElement();
+			} else {
+				removeElement();
+			}
 			event.preventDefault();
 		}
 	}
@@ -243,6 +268,13 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
+	function onContextMenu(event) {
+		event.preventDefault();
+		return false;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
 	function onScroll(event) {
 		repositionSelectionBox();
 	}
@@ -270,6 +302,7 @@
 		window.addEventListener("resize", onResize, false);
 		document.addEventListener("pagehide", onPageHide, true);
 		document.addEventListener("visibilitychange", onVisibilityChange, false);
+		document.addEventListener("keydown", onKeyDown, false);
 
 		prefs.getWheelToWiderNarrower().then((checked) => {
 			if(checked) {
@@ -277,8 +310,14 @@
 			}
 		});
 
-		document.addEventListener("click", onClick, true);
-		document.addEventListener("keydown", onKeyDown, false);
+		prefs.getExpertMode().then((checked) => {
+			if(checked) {
+				document.addEventListener("click", onClick_XpMode, true);
+				document.addEventListener("contextmenu", onContextMenu, true);
+			} else {
+				document.addEventListener("click", onClick, true);
+			}
+		});
 
 		// select something
 		onMouseMove({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
@@ -308,11 +347,11 @@
 		window.removeEventListener("resize", onResize, false);
 		document.removeEventListener("pagehide", onPageHide, true);
 		document.removeEventListener("visibilitychange", onVisibilityChange, false);
-
-		document.removeEventListener("wheel", onWheel, true);
-
-		document.removeEventListener("click", onClick, true);
 		document.removeEventListener("keydown", onKeyDown, false);
+		document.removeEventListener("wheel", onWheel, true);
+		document.removeEventListener("click", onClick, true);
+		document.removeEventListener("click", onClick_XpMode, true);
+		document.removeEventListener("contextmenu", onContextMenu, true);
 
 		lizardState.bSessionStarted = false;
 		notifyToolbarButtonStatus(lizardState.bSessionStarted);
@@ -490,6 +529,8 @@
 			return;
 		}
 
+		let cursorPos = Object.assign({}, lizardState.lastCursorPosition);
+
 		removeSelectionBox();
 		unselectElement();
 		lockSelection(false);
@@ -562,8 +603,6 @@
 			displayNotification("The element is already isolated.");
 			return;
 		}
-
-		let cursorPos = Object.assign({}, lizardState.lastCursorPosition);
 
 		removeSelectionBox();
 		unselectElement();
@@ -1135,11 +1174,14 @@
 		let srcGetting = prefs.getViewSourceType();
 		let colGetting = prefs.getColorizeColors();
 		let decolGetting = prefs.getDecolorizeColors();
+		let xpModeGetting = prefs.getExpertMode();
 
 		srcGetting.then((srcType) => {
 			colGetting.then((colorize) => {
 				decolGetting.then((decolorize) => {
-					_showHelp(srcType, colorize, decolorize);
+					xpModeGetting.then((xpMode) => {
+						_showHelp(srcType, colorize, decolorize, xpMode ? "" : "hidden");
+					});
 				});
 			});
 		});
@@ -1147,7 +1189,7 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function _showHelp(srcType, colorizeColors, decolorizeColors) {
+	function _showHelp(srcType, colorizeColors, decolorizeColors, xpModeState) {
 
 		let hlp = document.getElementById(ID_LIZARD_HELP_BOX);
 
@@ -1164,7 +1206,13 @@
 			hlp.addEventListener("click", onCloseHelpBox, false);
 		}
 
-		const fmt = "<p class='{0} {1}'>Lizard Hotkeys<img class='{0} {4}' src={5}></img></p>" +
+		const fmt = "<p class='{0} {15}'><span>Lizard Hotkeys</span><img class='{0} {4}' src={5}></p>" +
+			"<div class='{0} {1} {16} {19}'>" +
+				"<span class='{0} {17}'><img class='{0}' src={18}></span>" +
+				"<span class='{0} {17}'><img class='{0} flip' src={18}></span>" +
+				"<span class='{0} {3}'>Remove</span>" +
+				"<span class='{0} {3}'>Undo</span>" +
+			"</div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>H</span><span class='{0} {3}'>Hide (or: shift+click)</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>R</span><span class='{0} {3}'>Remove (collapse element)</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>I</span><span class='{0} {3}'>Isolate</span></div>" +
@@ -1188,7 +1236,9 @@
 		hlp.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, CLS_HELP_RECORD, CLS_LETTER_KEY,
 									CLS_HELP_TEXT, CLS_HELP_IMG, browser.extension.getURL(PATH_TO_HELP_IMG), CLS_HELP_COLOR,
 									colorizeColors[0], colorizeColors[1], decolorizeColors[0], decolorizeColors[1], srcType,
-									CLS_HELP_FOOTER, ID_LIZARD_HELP_FOOTER_LINK, CLS_HELP_FOOTER_LINK]);
+									CLS_HELP_FOOTER, ID_LIZARD_HELP_FOOTER_LINK, CLS_HELP_FOOTER_LINK, CLS_HELP_CAPTION,
+									CLS_HELP_XP_MODE, CLS_MOUSE_BUTTON, browser.extension.getURL(PATH_TO_LEFT_CLICK_IMG),
+									xpModeState]);
 
 		const CLS_justShowedUp = "justShowedUp";
 		const CLS_fadeout = "fadeout";
