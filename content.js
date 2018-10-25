@@ -60,6 +60,7 @@
 	let lizardState = {
 		bSessionStarted: false,
 		currentElement: null,
+		lastCursorPosition: {x: -1, y: -1},
 		bSelectionLocked: false,
 		bSelectionSuspended: false,
 		undoActions: [],
@@ -114,7 +115,7 @@
 		removeSelectionBox();
 
 		unselectElement();
-		selectElement(document.elementFromPoint(event.clientX, event.clientY));
+		selectElement(document.elementFromPoint(event.clientX, event.clientY), event.clientX, event.clientY);
 
 		createSelectionBox();
 	}
@@ -280,7 +281,7 @@
 		document.addEventListener("keydown", onKeyDown, false);
 
 		// select something
-		onMouseMove({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2, screenX: -1, screenY: -1, target: null });
+		onMouseMove({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
 
 		prefs.getHelpBoxOnStart().then((checked) => {
 			if (checked) {
@@ -319,10 +320,15 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function selectElement(elm) {
+	function selectElement(elm, clientX, clientY) {
 		// check type of className. <SVG> elements are evil.
 		if (elm && ((typeof elm.className !== "string") || !(elm.className.includes(CLS_LIZARD_ELEMENT)))) {
 			lizardState.currentElement = elm;
+
+			if(clientX !== undefined && clientY !== undefined) {
+				lizardState.lastCursorPosition.x = clientX;
+				lizardState.lastCursorPosition.y = clientY;
+			}
 		}
 	}
 
@@ -330,6 +336,7 @@
 	//
 	function unselectElement() {
 		lizardState.currentElement = null;
+		lizardState.lastCursorPosition.x = lizardState.lastCursorPosition.y = -1;
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -495,6 +502,8 @@
 		lizardState.undoActions.push(ua);
 
 		elm.style.visibility = "hidden";
+
+		onMouseMove({ clientX: cursorPos.x, clientY: cursorPos.y });
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -513,6 +522,8 @@
 			return;
 		}
 
+		let cursorPos = Object.assign({}, lizardState.lastCursorPosition);
+
 		removeSelectionBox();
 		unselectElement();
 		lockSelection(false);
@@ -527,6 +538,8 @@
 		lizardState.undoActions.push(ua);
 
 		elm.parentNode.removeChild(elm);
+
+		onMouseMove({ clientX: cursorPos.x, clientY: cursorPos.y });
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -549,6 +562,8 @@
 			displayNotification("The element is already isolated.");
 			return;
 		}
+
+		let cursorPos = Object.assign({}, lizardState.lastCursorPosition);
 
 		removeSelectionBox();
 		unselectElement();
@@ -735,6 +750,7 @@
 				break;
 				//////////////////////////////////////////////////////////////
 		}
+		repositionSelectionBox();
 		ua = null;
 	}
 
