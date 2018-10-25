@@ -158,7 +158,15 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onVisibilityChange(event) {
-		notifyToolbarButtonStatus(!document.hidden);
+		if(document.hidden) {
+			notifyToolbarButtonStatus(false);
+		} else {
+			// When switching from one tab to another the first event fired is for the now visible tab and
+			// the second event is fired for the now hidden tab.
+			// When switching between 2 Lizard sessions the LAST event must be for the now visible tab so
+			// the toolbar button will reflect the state correctly
+			setTimeout(() => notifyToolbarButtonStatus(true), 450);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
