@@ -39,6 +39,17 @@
 	let lastInjectTime = 0;
 
 	//////////////////////////////////////////////////////////////////////
+	// Lizard version update
+	browser.runtime.onInstalled.addListener((details) => {
+
+		let thisVersion = browser.runtime.getManifest().version;
+
+		if(details.reason === "update" && thisVersion > details.previousVersion) {
+			prefs.setVersionNotice(thisVersion);
+		}
+	});
+
+	//////////////////////////////////////////////////////////////////////
 	// Lizard button
 	if (IS_BUTTON_ON_TOOLBAR === true) {
 

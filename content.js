@@ -330,6 +330,8 @@
 
 		lizardState.bSessionStarted = true;
 		notifyToolbarButtonStatus(lizardState.bSessionStarted);
+
+		showVersionNotice(prefs.getVersionNotice());
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1397,6 +1399,26 @@
 			source = source.replace(re, "");
 		}
 		return source;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function showVersionNotice(verNotice) {
+
+		let fmt;
+
+		switch (verNotice) {
+			case "1.9":
+				fmt = "<img class='{0} noticeImg' src='{1}'>" +
+					  "<span class='{0} noticeText'>Check out the new <b class='{0}'>Expert Mode</b> in the <span class='{0} noticeLink'>Options page</span>!</span>";
+				break;
+		}
+
+		let noticeBox = document.createElement("div");
+		noticeBox.id = "ID_LIZARD_VERSION_NOTICE_BOX";
+		noticeBox.className = CLS_LIZARD_ELEMENT;
+		noticeBox.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, browser.extension.getURL(PATH_TO_HELP_IMG)]);
+		document.body.appendChild(noticeBox);
 	}
 
 })();
