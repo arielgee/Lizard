@@ -208,6 +208,8 @@
 
 #lizardHelpBox {
   position: fixed !important;
+  top: 20px !important;
+  left: 15px !important;
   width: auto !important;
   z-index: 2147483643 !important;
   background-color: #FFFFE1 !important;

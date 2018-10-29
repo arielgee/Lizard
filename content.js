@@ -1200,9 +1200,6 @@
 			hlp.className = CLS_LIZARD_ELEMENT;
 			document.body.appendChild(hlp);
 
-			hlp.style.top = "20px";
-			hlp.style.left = "15px";
-
 			hlp.addEventListener("click", onCloseHelpBox, false);
 		}
 
