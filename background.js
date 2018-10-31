@@ -203,8 +203,8 @@
 			let injecting1 = browser.tabs.executeScript(tab.id, { file: "SourceBeautifier/SourceBeautifier.js", runAt: runAt });
 			let injecting2 = browser.tabs.executeScript(tab.id, { file: "content.js", runAt: runAt });
 			let injecting3 = browser.tabs.executeScript(tab.id, { file: "common.js", runAt: runAt });
-			let injecting4 = browser.tabs.executeScript(tab.id, { file: "CssSelectorGenerator/CssSelectorGenerator.js", runAt: runAt });
-			let injecting5 = browser.tabs.insertCSS(tab.id, { file: "content.css", runAt: runAt });
+			let injecting4 = browser.tabs.insertCSS(tab.id, { file: "content.css", runAt: runAt });
+			let injecting5 = browser.tabs.executeScript(tab.id, { file: "CssSelectorGenerator/CssSelectorGenerator.js", runAt: runAt });
 			let injecting6 = browser.tabs.executeScript(tab.id, { code: "const ALL_LIZARD_SCRIPTS_INJECTED=true;", runAt: runAt });
 
 			injecting1.then(() => {
@@ -217,8 +217,8 @@
 									resolve();
 
 								}, (err) => { reject(new Error("Inject code 'const ALL_LIZARD_SCRIPTS_INJECTED=true;', " + err.message)); });
-							}, (err) => { reject(new Error("Inject file 'content.css', " + err.message)); });
-						}, (err) => { reject(new Error("Inject file 'CssSelectorGenerator.js', " + err.message)); });
+							}, (err) => { reject(new Error("Inject file 'CssSelectorGenerator.js', " + err.message)); });
+						}, (err) => { reject(new Error("Inject file 'content.css', " + err.message)); });
 					}, (err) => { reject(new Error("Inject file 'common.js', " + err.message)); });
 				}, (err) => { reject(new Error("Inject file 'content.js', " + err.message)); });
 			}, (err) => { reject(new Error("Inject file 'SourceBeautifier.js', " + err.message)); });
