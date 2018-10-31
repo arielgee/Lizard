@@ -1212,7 +1212,7 @@
 			hlp.addEventListener("click", onCloseHelpBox, false);
 		}
 
-		const fmt = "<p class='{0} {15}'><span>Lizard Hotkeys</span><img class='{0} {4}' src={5}></p>" +
+		const fmt = "<div class='{0} {15}'><span>Lizard Hotkeys</span><img class='{0} {4}' src={5}></div>" +
 			"<div class='{0} {1} {16} {19}'>" +
 				"<span class='{0} {17}'><img class='{0}' src={18}></span>" +
 				"<span class='{0} {17}'><img class='{0} flip' src={18}></span>" +
