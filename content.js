@@ -261,7 +261,7 @@
 				removeInfoBoxes();
 				break;
 			default:
-				//lzUtil.log("Unused key:" + event.key);
+				//console.log("[lizard]", "Unused key:" + event.key);
 				return;
 		}
 
@@ -436,7 +436,7 @@
 		boxBorder.style.width = (vpRect.width <= BOX_BORDER_WIDTH ? 0 : vpRect.width) + "px";
 		boxBorder.style.height = (vpRect.height <= BOX_BORDER_WIDTH ? 0 : vpRect.height) + "px";
 
-		/*lzUtil.log("Node: ", lizardState.currentElement.nodeName,
+		/*console.log("[lizard]", "Node: ", lizardState.currentElement.nodeName,
 			"\nVScrollWidth/HScrollHeight", getVScrollWidth(), "/", getHScrollWidth(),
 			"\ninnerWidth/Height", innerWidth, "/", innerHeight,
 			"\nrect: ", lizardState.currentElement.getBoundingClientRect(),
@@ -794,7 +794,7 @@
 				//////////////////////////////////////////////////////////////
 
 			default:
-				lzUtil.log("Unknown undo type. This is not right.", ua.type, ua.data);
+				console.log("[lizard]", "Unknown undo type. This is not right.", ua.type, ua.data);
 				break;
 				//////////////////////////////////////////////////////////////
 		}

@@ -176,7 +176,7 @@
 				lastInjectTime = Date.now();
 
 				injectLizardScripts(tab).then(() => {
-					lzUtil.log("Injection time(millisec):", Date.now()-lastInjectTime);
+					console.log("[lizard]", "Injection time(millisec):", Date.now()-lastInjectTime);
 					browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }).catch(onErrorToggleSessionState);
 				}, onErrorToggleSessionState);
 			}
@@ -186,7 +186,7 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onErrorToggleSessionState(err) {
-		lzUtil.log("Toggle session state", err);
+		console.log("[lizard]", "Toggle session state", err);
 		createLizardNotification("Failed to inject extension's scripts!\nIs this an 'addons.mozilla.org' or 'testpilot.firefox.com' page?", 7000);
 		updateLizardUI("wtf");
 	}
