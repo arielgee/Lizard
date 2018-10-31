@@ -64,7 +64,6 @@
   border-color: black !important;
   border-bottom-left-radius: 0.3em !important;
   border-bottom-right-radius: 0.3em !important;
-  white-space: nowrap !important;
   width: auto !important;
   height: auto !important;
   -moz-user-input: none !important;
@@ -335,6 +334,47 @@
 
 #lizardHelpBox .helpFooterLink {
   display: inline !important;
+  color: blue !important;
+  text-decoration: underline !important;
+  cursor: pointer !important;
+}
+
+/** version notice **/
+
+#lizardVersionNoticeBox {
+  position: fixed !important;
+  top: 50px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: auto !important;
+  z-index: 2147483645 !important;
+  background-color: #d9f3e7 !important;
+  border: 2px solid #0c7e46 !important;
+  box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
+  padding: 6px 6px !important;
+  font-family: Calibri, Tahoma, Sans !important;
+  color: black !important;
+}
+
+#lizardVersionNoticeBox h1 {
+  padding: 6px !important;
+  text-align: center !important;
+  color: #0c7e46 !important;
+}
+
+#lizardVersionNoticeBox .noticeText {
+  margin: 4px 9px !important;
+  padding: 4px 9px !important;
+  width: auto !important;
+  font-size: 18px !important;
+  white-space: nowrap !important;
+}
+
+#lizardVersionNoticeBox .noticeText * {
+  display: inline !important;
+}
+
+#lizardVersionNoticeBox .noticeLink {
   color: blue !important;
   text-decoration: underline !important;
   cursor: pointer !important;

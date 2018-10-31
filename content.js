@@ -32,6 +32,8 @@
 	const ID_LIZARD_ISOLATE_BODY = "lizardIsolateBody";
 	const ID_LIZARD_HELP_BOX = "lizardHelpBox";
 	const ID_LIZARD_HELP_FOOTER_LINK = "lizardHelpBoxFooterLink";
+	const ID_LIZARD_VERSION_NOTICE_BOX = "lizardVersionNoticeBox";
+	const ID_LIZARD_VERSION_NOTICE_OPTIONS_LINK = "lizardVersionNoticeOptionsLink";
 
 
 	const PATH_TO_HELP_IMG = "icons/lizard-32.png";
@@ -331,7 +333,12 @@
 		lizardState.bSessionStarted = true;
 		notifyToolbarButtonStatus(lizardState.bSessionStarted);
 
-		showVersionNotice(prefs.getVersionNotice());
+		prefs.getVersionNotice().then((prevVersion) => {
+			if(prevVersion !== "") {
+				prefs.setVersionNotice("");
+				showVersionNotice(prevVersion);
+			}
+		});
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1270,6 +1277,7 @@
 	function removeInfoBoxes() {
 		onClick_CloseSourceBox();
 		onCloseHelpBox();
+		onCloseVersionNoticeBox();
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1403,22 +1411,41 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function showVersionNotice(verNotice) {
+	function showVersionNotice(prevVersion) {
 
-		let fmt;
+		let fmt = "<h1 class='{0}'>Lizard Release Notes</h1>";
 
-		switch (verNotice) {
-			case "1.9":
-				fmt = "<img class='{0} noticeImg' src='{1}'>" +
-					  "<span class='{0} noticeText'>Check out the new <b class='{0}'>Expert Mode</b> in the <span class='{0} noticeLink'>Options page</span>!</span>";
-				break;
+		// make sure there are no versions that end with '.0' so version 1.8.0 must be written as 1.8
+		if(prevVersion < "1.9") {
+			fmt += "<div class='{0} noticeText'>&#x25cf; v1.9: Check out the new <b class='{0}'>Expert Mode</b> in the <span id='{1}' class='{0} noticeLink'>Options page</span>!</div>";
 		}
 
 		let noticeBox = document.createElement("div");
-		noticeBox.id = "ID_LIZARD_VERSION_NOTICE_BOX";
+		noticeBox.id = ID_LIZARD_VERSION_NOTICE_BOX;
 		noticeBox.className = CLS_LIZARD_ELEMENT;
-		noticeBox.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, browser.extension.getURL(PATH_TO_HELP_IMG)]);
+		noticeBox.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, ID_LIZARD_VERSION_NOTICE_OPTIONS_LINK]);
 		document.body.appendChild(noticeBox);
+
+		noticeBox.addEventListener("click", onCloseVersionNoticeBox, false);
+		document.getElementById(ID_LIZARD_VERSION_NOTICE_OPTIONS_LINK).addEventListener("click", onLizardOptionsPage, false);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onCloseVersionNoticeBox() {
+
+		let elm = document.getElementById(ID_LIZARD_VERSION_NOTICE_OPTIONS_LINK);
+
+		if (elm) {
+			elm.removeEventListener("click", onLizardOptionsPage, false);
+		}
+
+		elm = document.getElementById(ID_LIZARD_VERSION_NOTICE_BOX);
+
+		if (elm) {
+			elm.removeEventListener("click", onCloseVersionNoticeBox, false);
+			elm.parentNode.removeChild(elm);
+		}
 	}
 
 })();

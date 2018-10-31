@@ -48,6 +48,7 @@ let prefs = (function () {
 	const PREF_DEF_MENU_ITEM_CONTEXT = true;
 	const PREF_DEF_MENU_ITEM_TOOLS = true;
 	const PREF_DEF_EXPERT_MODE = false;
+	const PREF_DEF_VERSION_NOTICE = "";
 
 	const PREF_HELP_BOX_ON_START = "pref_helpBoxOnStart";
 	const PREF_WHEEL_TO_WIDER_NARROWER = "pref_wheelToWiderNarrower";
@@ -61,6 +62,7 @@ let prefs = (function () {
 	const PREF_MENU_ITEM_CONTEXT = "pref_menuItemContext";
 	const PREF_MENU_ITEM_TOOLS = "pref_menuItemTools";
 	const PREF_EXPERT_MODE = "pref_expertMode";
+	const PREF_VERSION_NOTICE = "pref_versionNotice";
 
 	const PREF_COLOR_SEPARATOR_CHAR = "/";
 
@@ -315,6 +317,25 @@ let prefs = (function () {
 		browser.storage.local.set(obj);
 	};
 
+	//////////////////////////////////////////////////////////////////////
+	let getVersionNotice = function () {
+
+		return new Promise((resolve) => {
+
+			browser.storage.local.get(PREF_VERSION_NOTICE).then((result) => {
+				resolve(result[PREF_VERSION_NOTICE] ? result[PREF_VERSION_NOTICE] : PREF_DEF_VERSION_NOTICE);
+			});
+		});
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let setVersionNotice = function (value) {
+
+		let obj = {};
+		obj[PREF_VERSION_NOTICE] = value;
+		browser.storage.local.set(obj);
+	};
+
 
 	//////////////////////////////////////////////////////////////////////
 	let restoreDefaults = function () {
@@ -392,6 +413,9 @@ let prefs = (function () {
 
 		getExpertMode: getExpertMode,
 		setExpertMode: setExpertMode,
+
+		getVersionNotice: getVersionNotice,
+		setVersionNotice: setVersionNotice,
 
 		restoreDefaults: restoreDefaults,
 	};

@@ -45,7 +45,7 @@
 		let thisVersion = browser.runtime.getManifest().version;
 
 		if(details.reason === "update" && thisVersion > details.previousVersion) {
-			prefs.setVersionNotice(thisVersion);
+			prefs.setVersionNotice(details.previousVersion);
 		}
 	});
 
