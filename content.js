@@ -33,7 +33,8 @@
 	const ID_LIZARD_HELP_BOX = "lizardHelpBox";
 	const ID_LIZARD_HELP_FOOTER_LINK = "lizardHelpBoxFooterLink";
 	const ID_LIZARD_VERSION_NOTICE_BOX = "lizardVersionNoticeBox";
-	const ID_LIZARD_VERSION_NOTICE_OPTIONS_LINK = "lizardVersionNoticeOptionsLink";
+	const ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK = "lizardVersionNotice19OptionsLink";
+	const ID_LIZARD_VERSION_NOTICE_BOX_CLOSE = "lizardVersionNoticeBoxClose";
 
 
 	const PATH_TO_HELP_IMG = "icons/lizard-32.png";
@@ -1413,28 +1414,32 @@
 	//
 	function showVersionNotice(prevVersion) {
 
-		let fmt = "<h1 class='{0}'>Lizard Release Notes</h1>";
+		let fmt = "<div id='{1}' class='{0}'></div><h1 class='{0}'>Lizard Release Notes</h1>";
 
-		// make sure there are no versions that end with '.0' so version 1.8.0 must be written as 1.8
-		if(prevVersion < "1.9") {
-			fmt += "<div class='{0} noticeText'>&#x25cf; v1.9: Check out the new <b class='{0}'>Expert Mode</b> in the <span id='{1}' class='{0} noticeLink'>Options page</span>!</div>";
+		// make sure all versions are numeric
+		if(lzUtil.versionNumericCompare(prevVersion, "1.9") < 0) {
+			fmt += "<div class='{0} noticeText'>&#x25cf; v1.9: Check out the new <b class='{0}'>Expert Mode</b> in the <span id='{2}' class='{0} noticeLink'>Options page</span>!</div>";
 		}
 
 		let noticeBox = document.createElement("div");
 		noticeBox.id = ID_LIZARD_VERSION_NOTICE_BOX;
 		noticeBox.className = CLS_LIZARD_ELEMENT;
-		noticeBox.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, ID_LIZARD_VERSION_NOTICE_OPTIONS_LINK]);
+		noticeBox.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, ID_LIZARD_VERSION_NOTICE_BOX_CLOSE, ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK]);
 		document.body.appendChild(noticeBox);
 
-		noticeBox.addEventListener("click", onCloseVersionNoticeBox, false);
-		document.getElementById(ID_LIZARD_VERSION_NOTICE_OPTIONS_LINK).addEventListener("click", onLizardOptionsPage, false);
+		document.getElementById(ID_LIZARD_VERSION_NOTICE_BOX_CLOSE).addEventListener("click", onCloseVersionNoticeBox, false);
+
+		let elm = document.getElementById(ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK);
+		if (elm) {
+			elm.addEventListener("click", onLizardOptionsPage, false);
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onCloseVersionNoticeBox() {
 
-		let elm = document.getElementById(ID_LIZARD_VERSION_NOTICE_OPTIONS_LINK);
+		let elm = document.getElementById(ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK);
 
 		if (elm) {
 			elm.removeEventListener("click", onLizardOptionsPage, false);

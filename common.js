@@ -716,6 +716,21 @@ let lzUtil = (function () {
 		}
 	};
 
+	//////////////////////////////////////////////////////////////////////
+	let versionNumericCompare = function (ver1, ver2) {
+
+		let v1 = ver1.split(".").map(e => { return parseInt(e); } );
+		let v2 = ver2.split(".").map(e => { return parseInt(e); } );
+		let len = Math.min(v1.length, v2.length);
+
+		for (let i=0; i<len; i++) {
+			if(v1[i] - v2[i]) {
+				return v1[i] - v2[i];
+			}
+		}
+		return (v1.length - v2.length);
+	};
+
 	return {
 		log: log,
 		applySaturateFilter: applySaturateFilter,
@@ -732,5 +747,6 @@ let lzUtil = (function () {
 		hasBackgroundImage: hasBackgroundImage,
 		getElementMatchedCSSRules: getElementMatchedCSSRules,
 		disableElementTree: disableElementTree,
+		versionNumericCompare: versionNumericCompare,
 	};
 })();

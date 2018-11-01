@@ -363,6 +363,16 @@
   color: #0c7e46 !important;
 }
 
+#lizardVersionNoticeBoxClose {
+  float: right !important;
+  width: 16px !important;
+  height: 18px !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-image: url("icons/close.png") !important;
+  cursor: pointer !important;
+}
+
 #lizardVersionNoticeBox .noticeText {
   margin: 4px 9px !important;
   padding: 4px 9px !important;
