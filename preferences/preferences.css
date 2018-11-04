@@ -1,12 +1,13 @@
 @namespace url("http://www.w3.org/1999/xhtml");
 
 body {
-  font-family: Tahoma, Verdana, Segoe, sans-serif;
-  font-size: 16px;
+  font-family: inherit;
+  font-size: 1.273rem;
   font-weight: normal;
-  min-width: 600px;
-  max-width: 650px;
+  min-width: auto;
+  max-width: 700px;
   line-height: 21px;
+  white-space: nowrap;
 }
 
 input[type="radio"],
@@ -15,14 +16,12 @@ input[type="checkbox"] {
   -moz-appearance: none;
   appearance: none;
   padding: 0;
-  margin: 0;
+  margin: 2px 0;
   width: 18px;
   height: 18px;
   border: 2px solid #999;
   transition: 0.2s all linear;
   outline: none;
-  position: relative;
-  top: 2px;
 }
 
 input[type="radio"] {
@@ -40,14 +39,14 @@ input[type="checkbox"]:checked {
 
 .controlLabel:not(:last-child) {
   padding-right: 3px;
-  margin-right: 6px;
+  margin-right: 10px;
 }
 
 input[type="color"] {
   width: 25px;
-  height: 19px;
+  height: 18px;
   border: none;
-  margin: 0 3px;
+  margin: 2px 3px;
   padding: 1px;
   background-color: transparent;
   cursor: pointer;
@@ -69,7 +68,7 @@ input[type="color"]::-moz-focus-inner {
 }
 
 .caption {
-  font-size: 22.5px;
+  font-size: 2rem;
   margin-bottom: 35px;
 }
 
@@ -78,11 +77,13 @@ input[type="color"]::-moz-focus-inner {
 }
 
 .preference {
-  padding: 12px 3px;
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 3px;
 }
 
 .preferenceControl {
-  float: right;
+  display: flex;
 }
 
 .annotation,
