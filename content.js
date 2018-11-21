@@ -211,7 +211,7 @@
 	//
 	function onKeyDown(event) {
 
-		if (event.preventDefaulted || event.altKey || event.ctrlKey || event.metaKey) {
+		if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) {
 			return;
 		}
 
@@ -530,7 +530,7 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
-			displayNotification("No element is selected.");
+			displayNotification("Remove: No element is selected.");
 			return;
 		}
 
@@ -564,7 +564,7 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
-			displayNotification("No element is selected.");
+			displayNotification("Hide: No element is selected.");
 			return;
 		}
 
@@ -600,7 +600,7 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
-			displayNotification("No valid element is selected.");
+			displayNotification("Isolate: No valid element is selected.");
 			return;
 		}
 
@@ -697,7 +697,7 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
-			displayNotification("No element is selected.");
+			displayNotification("Colorize/Decolorize: No element is selected.");
 			return;
 		}
 
@@ -858,7 +858,7 @@
 				_blinkElement(elm, elm.style.visibility, 200, 3000);
 			}
 		} else {
-			displayNotification("No element is selected.");
+			displayNotification("Blink: No element is selected.");
 		}
 	}
 
@@ -882,7 +882,7 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm) {
-			displayNotification("No element is selected.");
+			displayNotification("view Source: No element is selected.");
 			return;
 		}
 
@@ -1035,7 +1035,7 @@
 			let selector = (new CssSelectorGenerator()).getSelector(elm);
 			viewSourceInPage("CSS Selector", selector, true);
 		} else {
-			displayNotification("No element is selected.");
+			displayNotification("CSS Selector: No element is selected.");
 		}
 	}
 
