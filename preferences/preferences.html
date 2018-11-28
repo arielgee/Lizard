@@ -37,9 +37,9 @@
             <input type="radio" id="viewSrcCss" name="viewSrcType" value="css"/><label for="viewSrcCss" class="controlLabel">CSS</label>
         </div>
     </div>
-    <div class="prefSeperator"></div>
+    <!-- <div class="prefSeperator"></div> -->
 
-    <div class="preference">
+    <div class="preference subPref">
         <label class="preferenceLabel">CSS view source display</label>
         <div class="preferenceControl">
             <input type="radio" id="viewCssCompStyle" name="viewCssType" value="compStyle"/><label for="viewCssCompStyle" class="controlLabel">Computed style</label>
@@ -105,10 +105,18 @@
     <div class="prefSeperator"></div>
 
     <div class="preference xpModeBg">
-        <label for="expertMode" class="preferenceLabel">Expert Mode: Use mouse buttons like a boss&nbsp;<span class="helpInfo" title="Use the left and right mouse buttons to activate the Remove and Undo actions, respectively.">?</span>&nbsp;<span id="restartSessionXp" class="annotation">&nbsp;require session restart&nbsp;</span>
+        <label for="expertMode" class="preferenceLabel"><b>Expert Mode:</b> Use mouse clicks like a boss&nbsp;<span class="helpInfo" title="Use the left and right mouse buttons to activate the Remove and Undo actions, respectively.&#10;The right-click can be configured to open the Lizard menu.">?</span>&nbsp;<span id="restartSessionXp" class="annotation">&nbsp;require session restart&nbsp;</span>
         </label>
         <div class="preferenceControl">
             <input type="checkbox" id="expertMode"/>
+        </div>
+    </div>
+    <!-- <div class="prefSeperator"></div> -->
+
+    <div class="preference subPref xpModeBg">
+        <label for="xpModeContextMenu" class="preferenceLabel">Right-click opens Lizard menu</label>
+        <div class="preferenceControl">
+            <input type="checkbox" id="xpModeContextMenu"/>
         </div>
     </div>
     <div class="prefSeperator"></div>

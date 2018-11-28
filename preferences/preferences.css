@@ -1,5 +1,9 @@
 @namespace url("http://www.w3.org/1999/xhtml");
 
+:root {
+  --lizard-preference-height: 40px;
+}
+
 body {
   font-family: inherit;
   font-size: 1.273rem;
@@ -80,6 +84,13 @@ input[type="color"]::-moz-focus-inner {
   display: flex;
   justify-content: space-between;
   padding: 9px 3px;
+  height: var(--lizard-preference-height);
+  min-height: var(--lizard-preference-height);
+  max-height: var(--lizard-preference-height);
+}
+
+.preference.subPref {
+  padding-left: 20px;
 }
 
 .preferenceControl {
@@ -155,5 +166,13 @@ input[type="checkbox"].disabled {
 }
 
 .xpModeBg {
-  background-image: url("../icons/xpModeBg.png") !important;
+  background-image: url("../icons/xpModeBg.png");
+}
+
+.xpModeBg.disabled {
+  filter: saturate(0) invert(0%);
+}
+
+.xpModeBg.subPref {
+  background-position-Y: calc(var(--lizard-preference-height) * -1);
 }

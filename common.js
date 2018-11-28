@@ -48,6 +48,7 @@ let prefs = (function () {
 	const PREF_DEF_MENU_ITEM_CONTEXT = true;
 	const PREF_DEF_MENU_ITEM_TOOLS = true;
 	const PREF_DEF_EXPERT_MODE = false;
+	const PREF_DEF_XP_MODE_CONTEXT_MENU = false;
 	const PREF_DEF_VERSION_NOTICE = "";
 
 	const PREF_HELP_BOX_ON_START = "pref_helpBoxOnStart";
@@ -62,6 +63,7 @@ let prefs = (function () {
 	const PREF_MENU_ITEM_CONTEXT = "pref_menuItemContext";
 	const PREF_MENU_ITEM_TOOLS = "pref_menuItemTools";
 	const PREF_EXPERT_MODE = "pref_expertMode";
+	const PREF_XP_MODE_CONTEXT_MENU = "pref_xpModeContextMenu";
 	const PREF_VERSION_NOTICE = "pref_versionNotice";
 
 	const PREF_COLOR_SEPARATOR_CHAR = "/";
@@ -318,6 +320,25 @@ let prefs = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
+	let getXpModeContextMenu = function () {
+
+		return new Promise((resolve) => {
+
+			browser.storage.local.get(PREF_XP_MODE_CONTEXT_MENU).then((result) => {
+				resolve(result[PREF_XP_MODE_CONTEXT_MENU] === true ? true : PREF_DEF_XP_MODE_CONTEXT_MENU);
+			});
+		});
+	};
+
+	//////////////////////////////////////////////////////////////////////
+	let setXpModeContextMenu = function (value) {
+
+		let obj = {};
+		obj[PREF_XP_MODE_CONTEXT_MENU] = value;
+		browser.storage.local.set(obj);
+	};
+
+	//////////////////////////////////////////////////////////////////////
 	let getVersionNotice = function () {
 
 		return new Promise((resolve) => {
@@ -351,6 +372,7 @@ let prefs = (function () {
 		this.setMenuItemContext(PREF_DEF_MENU_ITEM_CONTEXT);
 		this.setMenuItemTools(PREF_DEF_MENU_ITEM_TOOLS);
 		this.setExpertMode(PREF_DEF_EXPERT_MODE);
+		this.setXpModeContextMenu(PREF_DEF_XP_MODE_CONTEXT_MENU);
 
 		return {
 			helpBoxOnStart: PREF_DEF_HELP_BOX_ON_START_VALUE,
@@ -365,6 +387,7 @@ let prefs = (function () {
 			menuItemContext: PREF_DEF_MENU_ITEM_CONTEXT,
 			menuItemTools: PREF_DEF_MENU_ITEM_TOOLS,
 			expertMode: PREF_DEF_EXPERT_MODE,
+			xpModeContextMenu: PREF_DEF_XP_MODE_CONTEXT_MENU,
 		};
 	};
 
@@ -413,6 +436,9 @@ let prefs = (function () {
 
 		getExpertMode: getExpertMode,
 		setExpertMode: setExpertMode,
+
+		getXpModeContextMenu: getXpModeContextMenu,
+		setXpModeContextMenu: setXpModeContextMenu,
 
 		getVersionNotice: getVersionNotice,
 		setVersionNotice: setVersionNotice,

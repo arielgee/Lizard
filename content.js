@@ -15,6 +15,7 @@
 	const CLS_HELP_FOOTER_LINK = "helpFooterLink";
 	const CLS_LETTER_KEY = "letterKey";
 	const CLS_MOUSE_BUTTON = "mouseButton";
+	const CLS_MOUSE_BUTTON_IMG = "mouseButtonImg";
 
 	const ATTRI_LIZARD_ISOLATED_CENTERED = "lizardIsolatedCentered";
 
@@ -35,10 +36,9 @@
 	const ID_LIZARD_VERSION_NOTICE_BOX = "lizardVersionNoticeBox";
 	const ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK = "lizardVersionNotice19OptionsLink";
 	const ID_LIZARD_VERSION_NOTICE_BOX_CLOSE = "lizardVersionNoticeBoxClose";
+	const ID_LIZARD_CONTEXT_MENU_BOX = "lizardContextMenuBox";
 
 
-	const PATH_TO_HELP_IMG = "icons/lizard-32.png";
-	const PATH_TO_LEFT_CLICK_IMG = "icons/leftClick.png";
 	const BOX_BORDER_WIDTH = 2;		// #lizardBoxBorder border width 2px (as in the content.css file)
 	const DEF_SCROLL_BAR_WIDTH = 16;
 	const MANDATORY_ROOT_ELEMENTS = ["HTML", "BODY"];
@@ -70,6 +70,7 @@
 		lastCursorPosition: {x: -1, y: -1},
 		bSelectionLocked: false,
 		bSelectionSuspended: false,
+		bContextMenuVisible: false,
 		undoActions: [],
 		strolledElements: [],
 		scrollbarWidth: -1,
@@ -195,9 +196,21 @@
 			return;
 		}
 
-		if (event.button === 2) {
-			undoLastAction();
-		} else if(event.button === 0) {
+		const MOUSE_BUTTON_LEFT = 0;
+		const MOUSE_BUTTON_RIGHT = 2;
+
+		if (event.button === MOUSE_BUTTON_RIGHT) {
+
+			prefs.getXpModeContextMenu().then((checked) => {
+				if(checked) {
+					showContextMenu(event.clientX, event.clientY, event.type);
+				} else {
+					undoLastAction();
+				}
+			});
+
+		} else if(event.button === MOUSE_BUTTON_LEFT && !lizardState.bContextMenuVisible) {
+
 			if (event.shiftKey) {
 				hideElement();
 			} else {
@@ -215,7 +228,10 @@
 			return;
 		}
 
-		switch (event.key.toLowerCase()) {
+		let lowerKey = event.key.toLowerCase();
+		let knownKey = true;		//  optimistic
+
+		switch (lowerKey) {
 			case "h":
 				hideElement();
 				break;
@@ -261,12 +277,23 @@
 			case "escape":
 				removeInfoBoxes();
 				break;
+			case "contextmenu":
+				showContextMenu(lizardState.currentElement.offsetLeft+1, lizardState.currentElement.offsetTop+1, event.type);
+				break;
 			default:
 				//console.log("[lizard]", "Unused key:" + event.key);
-				return;
+				if(lowerKey.length === 1 && lowerKey >= 'a' && lowerKey <= 'z') {
+					displayNotification("Hotkeys: Unknown key '" + lowerKey + "'");
+				}
+				knownKey = false;
 		}
 
-		event.preventDefault();
+		if(knownKey === true) {
+			if(lizardState.bContextMenuVisible === true) {
+				onCloseLizardContextMenu();
+			}
+			event.preventDefault();
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -530,7 +557,7 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
-			displayNotification("Remove: No element is selected.");
+			displayNotification("Hide: No element is selected.");
 			return;
 		}
 
@@ -564,7 +591,7 @@
 		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
-			displayNotification("Hide: No element is selected.");
+			displayNotification("Remove: No element is selected.");
 			return;
 		}
 
@@ -1185,12 +1212,15 @@
 		let colGetting = prefs.getColorizeColors();
 		let decolGetting = prefs.getDecolorizeColors();
 		let xpModeGetting = prefs.getExpertMode();
+		let xpModeContextMenuGetting = prefs.getXpModeContextMenu();
 
 		srcGetting.then((srcType) => {
 			colGetting.then((colorize) => {
 				decolGetting.then((decolorize) => {
 					xpModeGetting.then((xpMode) => {
-						_showHelp(srcType, colorize, decolorize, xpMode ? "" : "hidden");
+						xpModeContextMenuGetting.then((xpMenu) => {
+							_showHelp(srcType, colorize, decolorize, xpMode ? "" : "hidden", xpMenu ? "Menu" : "Undo");
+						});
 					});
 				});
 			});
@@ -1199,7 +1229,7 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	function _showHelp(srcType, colorizeColors, decolorizeColors, xpModeState) {
+	function _showHelp(srcType, colorizeColors, decolorizeColors, xpModeState, rightClickAction) {
 
 		let hlp = document.getElementById(ID_LIZARD_HELP_BOX);
 
@@ -1213,39 +1243,39 @@
 			hlp.addEventListener("click", onCloseHelpBox, false);
 		}
 
-		const fmt = "<div class='{0} {15}'><span>Lizard Hotkeys</span><img class='{0} {4}' src={5}></div>" +
-			"<div class='{0} {1} {16} {19}'>" +
-				"<span class='{0} {17}'><img class='{0}' src={18}></span>" +
-				"<span class='{0} {17}'><img class='{0} flip' src={18}></span>" +
+		const FMT = "<div class='{0} {14}'><span>Lizard Hotkeys</span><div class='{0} {4}'></div></div>" +
+			"<div class='{0} {1} {15} {18}'>" +
+				"<span class='{0} {16}'><div class='{0} {17}'></div></span>" +
+				"<span class='{0} {16}'><div class='{0} {17} flip'></div></span>" +
 				"<span class='{0} {3}'>Remove</span>" +
-				"<span class='{0} {3}'>Undo</span>" +
+				"<span class='{0} {3}'>{19}</span>" +
 			"</div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>H</span><span class='{0} {3}'>Hide (or: shift+click)</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>R</span><span class='{0} {3}'>Remove (collapse element)</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>I</span><span class='{0} {3}'>Isolate</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>C</span><span class='{0} {3}'>" +
-				"Colorize (<span class='{0} {6}' style='background-color:{7} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{8} !important;'>&emsp;</span>)</span>" +
+				"Colorize (<span class='{0} {5}' style='background-color:{6} !important;'>&emsp;</span> on <span class='{0} {5}' style='background-color:{7} !important;'>&emsp;</span>)</span>" +
 			"</div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>D</span><span class='{0} {3}'>" +
-				"Decolorize (<span class='{0} {6}' style='background-color:{9} !important;'>&emsp;</span> on <span class='{0} {6}' style='background-color:{10} !important;'>&emsp;</span>)</span>" +
+				"Decolorize (<span class='{0} {5}' style='background-color:{8} !important;'>&emsp;</span> on <span class='{0} {5}' style='background-color:{9} !important;'>&emsp;</span>)</span>" +
 			"</div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>U</span><span class='{0} {3}'>Undo</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>W</span><span class='{0} {3}'>Wider</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>N</span><span class='{0} {3}'>Narrower</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>L</span><span class='{0} {3}'>Lock/Unlock</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>B</span><span class='{0} {3}'>Blink</span></div>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>V</span><span class='{0} {3}'>View source ({11})</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>V</span><span class='{0} {3}'>View source ({10})</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>S</span><span class='{0} {3}'>CSS Selector</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>Q</span><span class='{0} {3}'>Quit</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>F1</span><span class='{0} {3}'>Show help</span></div>" +
-			"<div class='{0} {12}'><span id='{13}' class='{0} {14}'>Options page</span></div>";
+			"<div class='{0} {11}'><span id='{12}' class='{0} {13}'>Options page</span></div>";
 
-		hlp.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, CLS_HELP_RECORD, CLS_LETTER_KEY,
-									CLS_HELP_TEXT, CLS_HELP_IMG, browser.extension.getURL(PATH_TO_HELP_IMG), CLS_HELP_COLOR,
+		hlp.innerHTML = FMT.format([CLS_LIZARD_ELEMENT, CLS_HELP_RECORD, CLS_LETTER_KEY,
+									CLS_HELP_TEXT, CLS_HELP_IMG, CLS_HELP_COLOR,
 									colorizeColors[0], colorizeColors[1], decolorizeColors[0], decolorizeColors[1], srcType,
 									CLS_HELP_FOOTER, ID_LIZARD_HELP_FOOTER_LINK, CLS_HELP_FOOTER_LINK, CLS_HELP_CAPTION,
-									CLS_HELP_XP_MODE, CLS_MOUSE_BUTTON, browser.extension.getURL(PATH_TO_LEFT_CLICK_IMG),
-									xpModeState]);
+									CLS_HELP_XP_MODE, CLS_MOUSE_BUTTON, CLS_MOUSE_BUTTON_IMG,
+									xpModeState, rightClickAction]);
 
 		const CLS_justShowedUp = "justShowedUp";
 		const CLS_fadeout = "fadeout";
@@ -1259,6 +1289,163 @@
 		}, 3000);
 
 		document.getElementById(ID_LIZARD_HELP_FOOTER_LINK).addEventListener("click", onLizardOptionsPage, false);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function showContextMenu(clientX, clientY, eventType) {
+
+		if (!lizardState.currentElement) {
+			return;
+		}
+
+		// when action originate from click make sure element under menu is selected
+		if(eventType === "click") {
+			onMouseMove({ clientX: clientX, clientY: clientY });
+		}
+
+		let mnu = document.getElementById(ID_LIZARD_CONTEXT_MENU_BOX);
+
+		if (!mnu) {
+
+			mnu = document.createElement("div");
+			mnu.id = ID_LIZARD_CONTEXT_MENU_BOX;
+			mnu.className = CLS_LIZARD_ELEMENT;
+			mnu.setAttribute("tabindex", "0");
+			document.body.appendChild(mnu);
+		}
+
+		const EXTRA_SPACE = 25;
+		const FMT = "<div class='{0} mnuItem' data-access-key='h'><span class='{0} mnuTitle mnuAccessKey'>Hide</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='r'><span class='{0} mnuTitle mnuAccessKey'>Remove</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='i'><span class='{0} mnuTitle mnuAccessKey'>Isolate</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='c'><span class='{0} mnuTitle mnuAccessKey'>Colorize</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='d'><span class='{0} mnuTitle mnuAccessKey'>Decolorize</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='u'><span class='{0} mnuTitle mnuAccessKey'>Undo</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='w'><span class='{0} mnuTitle mnuAccessKey'>Wider</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='n'><span class='{0} mnuTitle mnuAccessKey'>Narrower</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='l'><span class='{0} mnuTitle mnuAccessKey'>Lock/Unlock</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='b'><span class='{0} mnuTitle mnuAccessKey'>Blink</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='v'><span class='{0} mnuTitle mnuAccessKey'>View Source</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='s'><span class='{0} mnuTitle'><span>CSS&nbsp;</span><span class='{0} mnuAccessKey'>Selector</span></span></div>" +
+					"<div class='{0} mnuItem' data-access-key='q'><span class='{0} mnuTitle mnuAccessKey'>Quit</span></div>" +
+					"<div class='{0} mnuItem seperator'></div>" +
+					"<div class='{0} mnuItem' data-access-key='f1'><span class='{0} mnuTitle'>Show Help</span><span class='{0} mnuHotkey'>F1</span></div>" +
+					"<div class='{0} mnuItem' data-options-page><span class='{0} mnuTitle'>Options Page</span></div>";
+
+		mnu.innerHTML = FMT.format([CLS_LIZARD_ELEMENT]);
+
+		// real inner size accounting for the scrollbars width if they exist
+		const INNER_WIDTH = window.innerWidth - getVScrollWidth();
+		const INNER_HEIGHT = window.innerHeight - getHScrollWidth();
+
+		if(eventType === "click") {
+
+			if(clientX + mnu.offsetWidth > INNER_WIDTH) {
+				clientX = INNER_WIDTH - mnu.offsetWidth - EXTRA_SPACE;
+			}
+
+			if(clientY + mnu.offsetHeight > INNER_HEIGHT) {
+				clientY = INNER_HEIGHT - mnu.offsetHeight - EXTRA_SPACE;
+			}
+
+		} else if(eventType === "keydown") {
+
+			let vpRect = getElementViewportRect(lizardState.currentElement, INNER_WIDTH, INNER_HEIGHT);
+			clientX = vpRect.left + 1;
+			clientY = vpRect.top + 1;
+		}
+
+		mnu.style.left = clientX + "px";
+		mnu.style.top = clientY + "px";
+
+		lockSelection(true);
+		//lizardState.bContextMenuVisible = true;
+		setTimeout(() => lizardState.bContextMenuVisible = true, 400);
+
+		document.addEventListener("wheel", onWheel_preventScroll, true);
+		document.addEventListener("keydown", onKeyDown_preventScroll, true);
+		mnu.addEventListener("blur", onCloseLizardContextMenu, true);
+
+		mnu.querySelectorAll("#" + ID_LIZARD_CONTEXT_MENU_BOX + " .mnuItem:not(.seperator)").forEach((elm) => {
+			elm.addEventListener("click", onClickLizardContextMenuItem, true);
+		});
+
+		mnu.focus();
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onClickLizardContextMenuItem(event) {
+
+		onCloseLizardContextMenu();
+
+		event.preventDefault();
+		event.stopPropagation();
+
+		let elm = event.target;
+		while (elm && !elm.classList.contains("mnuItem")) {
+			elm = elm.parentElement;
+		}
+
+		if(elm && elm.classList.contains("mnuItem")) {
+
+			if(elm.hasAttribute("data-options-page")) {
+				onLizardOptionsPage();
+			} else {
+				onKeyDown({
+					defaultPrevented: false,
+					altKey: false,
+					ctrlKey: false,
+					metaKey: false,
+					shiftKey: event.shiftKey,
+					key: elm.getAttribute("data-access-key"),
+					preventDefault: () => {},
+				});
+			}
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onCloseLizardContextMenu() {
+
+		let elm = document.getElementById(ID_LIZARD_CONTEXT_MENU_BOX);
+
+		if(elm) {
+
+			document.removeEventListener("wheel", onWheel_preventScroll, true);
+			document.removeEventListener("keydown", onKeyDown_preventScroll, true);
+			elm.removeEventListener("blur", onCloseLizardContextMenu, true);
+
+			elm.querySelectorAll("#" + ID_LIZARD_CONTEXT_MENU_BOX + " .mnuItem:not(.seperator)").forEach((elm) => {
+				elm.removeEventListener("click", onClickLizardContextMenuItem, true);
+			});
+
+			elm.parentNode.removeChild(elm);
+
+			lockSelection(false);
+		}
+
+		//lizardState.bContextMenuVisible = false
+		setTimeout(() => lizardState.bContextMenuVisible = false, 400);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onWheel_preventScroll(event) {
+		event.preventDefault();
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function onKeyDown_preventScroll(event) {
+
+		const SCROLL_KEYS = [ "arrowup", "arrowdown", "arrowleft", "arrowright", "pageup", "pagedown", "home", "end" ];
+
+		if(SCROLL_KEYS.indexOf(event.key.toLowerCase()) !== -1) {
+			event.preventDefault();
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1279,6 +1466,7 @@
 		onClick_CloseSourceBox();
 		onCloseHelpBox();
 		onCloseVersionNoticeBox();
+		onCloseLizardContextMenu();
 	}
 
 	//////////////////////////////////////////////////////////////////////

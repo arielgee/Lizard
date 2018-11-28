@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let elmContextMenu = document.getElementById("contextMenu");
 	let elmToolsMenu = document.getElementById("toolsMenu");
 	let elmExpertMode = document.getElementById("expertMode");
+	let elmXpModeContextMenu = document.getElementById("xpModeContextMenu");
 	let elmLabelReqRestartSessionXp = document.getElementById("restartSessionXp");
 	let elmLabelReqRestartExtension = document.getElementById("reloadExtension");
 
@@ -95,6 +96,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	prefs.getExpertMode().then((checked) => {
 		elmExpertMode.checked = checked;
+		lzUtil.disableElementTree(elmXpModeContextMenu.parentElement.parentElement, !checked);
+	});
+
+	prefs.getXpModeContextMenu().then((checked) => {
+		elmXpModeContextMenu.checked = checked;
 	});
 
 
@@ -137,7 +143,9 @@ document.addEventListener("DOMContentLoaded", () => {
 	elmExpertMode.addEventListener("change", () => {
 		prefs.setExpertMode(elmExpertMode.checked);
 		lzUtil.concatClassName(elmLabelReqRestartSessionXp, "flash");
+		lzUtil.disableElementTree(elmXpModeContextMenu.parentElement.parentElement, !elmExpertMode.checked);
 	});
+	elmXpModeContextMenu.addEventListener("change", () => { prefs.setXpModeContextMenu(elmXpModeContextMenu.checked); });
 
 
 	/////////////////////////////////////////////////////////////////////////////////
@@ -146,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		let defPrefs = prefs.restoreDefaults();
 
 		lzUtil.disableElementTree(elmViewCssMatchRules.parentElement.parentElement, defPrefs.viewSourceType === prefs.SOURCE_TYPE.HTML);
+		lzUtil.disableElementTree(elmXpModeContextMenu.parentElement.parentElement, !defPrefs.xpModeContextMenu);
 
 		if (elmWheelToWiderNarrower.checked !== defPrefs.wheelToWiderNarrower) {
 			lzUtil.concatClassName(elmLabelReqRestartSessionMw, "flash");
@@ -176,6 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		elmContextMenu.checked = defPrefs.menuItemContext;
 		elmToolsMenu.checked = defPrefs.menuItemTools;
 		elmExpertMode.checked = defPrefs.expertMode;
+		elmXpModeContextMenu.checked = defPrefs.xpModeContextMenu;
 	});
 
 

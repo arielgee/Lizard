@@ -236,6 +236,7 @@
 #lizardHelpBox .helpImg {
   width: 17px !important;
   height: 17px !important;
+  background: no-repeat center/100% url("icons/lizard-32.png") !important;
 }
 
 #lizardHelpBox .helpCap {
@@ -285,12 +286,13 @@
   padding: 1px !important;
 }
 
-#lizardHelpBox .mouseButton img {
+#lizardHelpBox .mouseButton .mouseButtonImg {
   width: 21px !important;
   height: 21px !important;
+  background: no-repeat center/100% url("icons/leftClick.png") !important;
 }
 
-#lizardHelpBox .mouseButton img.flip {
+#lizardHelpBox .mouseButton .mouseButtonImg.flip {
   transform: scaleX(-1) !important;
 }
 
@@ -338,6 +340,60 @@
   color: blue !important;
   text-decoration: underline !important;
   cursor: pointer !important;
+}
+
+/** context menu **/
+
+#lizardContextMenuBox {
+  --menu-base-height: 15px;
+  --menu-vertical-spacing: 4px;
+
+  position: fixed !important;
+  border: 1px solid #7f7f7f !important;
+  width: auto !important;
+  background-color: #c0c0c0 !important;
+  z-index: 2147483644 !important;
+  font-family: Tahoma, Sans !important;
+  font-size: 11px !important;
+  line-height: var(--menu-base-height) !important;
+  color: black !important;
+  white-space: nowrap !important;
+}
+
+#lizardContextMenuBox .mnuItem {
+  display: flex !important;
+  justify-content: flex-start !important;
+  box-sizing: content-box !important;
+  padding: var(--menu-vertical-spacing) 9px !important;
+  width: auto !important;
+  height: var(--menu-base-height) !important;
+}
+
+#lizardContextMenuBox .mnuItem:hover {
+  background-color: #A30000 !important;   /*#fe8a00, orangered*/
+  color: white !important;
+}
+
+#lizardContextMenuBox .mnuTitle {
+  width: 100px !important;
+  height: var(--menu-base-height) !important;
+}
+
+#lizardContextMenuBox .mnuTitle:not(.mnuAccessKey) {
+  display: flex !important;
+}
+
+/* Note: The ::first-letter selector can only be used with block-level elements. */
+#lizardContextMenuBox .mnuAccessKey::first-letter {
+  text-decoration: underline !important;
+}
+
+#lizardContextMenuBox .mnuItem.seperator {
+  height: 0 !important;
+  border-top: 1px solid #7f7f7f !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  margin: var(--menu-vertical-spacing) 0 !important;
+  padding: 0 !important;
 }
 
 /** version notice **/
