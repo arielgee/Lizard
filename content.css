@@ -407,6 +407,7 @@
   z-index: 2147483645 !important;
   background-color: #d9f3e7 !important;
   border: 2px solid #0c7e46 !important;
+  border-radius: 1em  !important;
   box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
   padding: 6px 6px !important;
   font-family: Calibri, Tahoma, Sans !important;
@@ -415,6 +416,8 @@
 
 #lizardVersionNoticeBox h1 {
   padding: 6px !important;
+  font-size: 32px !important;
+  font-weight: bold !important;
   text-align: center !important;
   color: #0c7e46 !important;
 }
