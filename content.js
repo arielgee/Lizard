@@ -1360,7 +1360,7 @@
 		mnu.style.top = clientY + "px";
 
 		lockSelection(true);
-		//lizardState.bContextMenuVisible = true;
+
 		setTimeout(() => lizardState.bContextMenuVisible = true, 400);
 
 		document.addEventListener("wheel", onWheel_preventScroll, true);
@@ -1427,7 +1427,6 @@
 			lockSelection(false);
 		}
 
-		//lizardState.bContextMenuVisible = false
 		setTimeout(() => lizardState.bContextMenuVisible = false, 400);
 	}
 
