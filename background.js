@@ -165,11 +165,11 @@
 			return;
 		}
 
-		browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }, (response) => {
+		browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }).catch(() => {
 
 			// This is UGLY but it works. if the user double clicks (2 very fast clicks) on the lizard button (or the keyboard command) the
 			// injectLizardScripts() is called twice and an error is raised due to the redeclaration and onErrorToggleSessionState() is called.
-			if ( (response === undefined) && ((Date.now() - lastInjectTime) > 500) ) {
+			if ((Date.now() - lastInjectTime) > 500) {
 
 				// scripts were not injected
 

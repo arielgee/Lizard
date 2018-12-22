@@ -79,34 +79,42 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
-	browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+	browser.runtime.onMessage.addListener((request, sender) => {
 
-		// accept messages from background only when all scripts are injected
-		if (ALL_LIZARD_SCRIPTS_INJECTED === undefined || ALL_LIZARD_SCRIPTS_INJECTED !== true) {
-			return;
-		}
+		return new Promise((resolve, reject) => {
 
-		switch (request.message) {
+			// accept messages from background only when ALL scripts are injected
+			if (ALL_LIZARD_SCRIPTS_INJECTED === undefined || ALL_LIZARD_SCRIPTS_INJECTED !== true) {
+				reject();
+			} else {
 
-			case msgs.MSG_TOGGLE_SESSION_STATE:
-				sendResponse({ message: "toggle" });
-				if (lizardState.bSessionStarted) {
-					stopSession();
-				} else {
-					startSession();
+				switch (request.message) {
+
+					case msgs.MSG_TOGGLE_SESSION_STATE:
+						resolve({ message: "toggle" });
+						if (lizardState.bSessionStarted) {
+							stopSession();
+						} else {
+							startSession();
+						}
+						break;
+						//////////////////////////////////////////////////////////////
+
+					case msgs.MSG_SHUTDOWN_SESSION:
+						if (lizardState.bSessionStarted) {
+							stopSession();
+						}
+						resolve({ message: "shutdown" });
+						break;
+						//////////////////////////////////////////////////////////////
+
+					default:
+						reject();
+						break;
+						//////////////////////////////////////////////////////////////
 				}
-				break;
-				//////////////////////////////////////////////////////////////
-
-			case msgs.MSG_SHUTDOWN_SESSION:
-				if (lizardState.bSessionStarted) {
-					stopSession();
-				}
-				sendResponse({ message: "shutdown" });
-				break;
-				//////////////////////////////////////////////////////////////
-
-		}
+			}
+		});
 	});
 
 	//////////////////////////////////////////////////////////////////////
