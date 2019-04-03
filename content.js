@@ -45,6 +45,7 @@
 
 	const UNDO_ACTION_HIDE = "undoHide";
 	const UNDO_ACTION_REMOVE = "undoRemove";
+	const UNDO_ACTION_DEWIDTHIFY = "undoDeWidthify";
 	const UNDO_ACTION_ISOLATE = "undoIsolate";
 	const UNDO_ACTION_COLORIZE = "undoColorize";
 
@@ -245,6 +246,9 @@
 				break;
 			case "r":
 				removeElement();
+				break;
+			case "e":
+				deWidthify();
 				break;
 			case "i":
 				isolateElement();
@@ -630,6 +634,52 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
+	function deWidthify() {
+
+		let elm = lizardState.currentElement;
+
+		if (!elm || elm === null) {
+			displayNotification("DeWidthify: No element is selected.");
+			return;
+		}
+
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_DEWIDTHIFY);
+
+		ua.data["dewidthifiedItems"] = [];
+
+		_deWidthify(elm, ua.data.dewidthifiedItems);
+
+		lizardState.undoActions.push(ua);
+
+		repositionSelectionBox();
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
+	function _deWidthify(elm, uaItems) {
+
+		uaItems.push({
+			element: elm,
+			prev_width: elm.style.width,
+			prev_maxWidth: elm.style.maxWidth,
+		});
+
+		elm.style.width = "auto";
+		elm.style.maxWidth = "none";
+
+		for(let i=0, len=elm.children.length; i<len; i++) {
+
+			let c = elm.children[i];
+
+			// check type of className. <SVG> elements are evil.
+			if(c.nodeType === Node.ELEMENT_NODE && ((typeof c.className !== "string") || !(c.className.includes(CLS_LIZARD_ELEMENT)))) {
+				_deWidthify(c, uaItems);
+			}
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
 	function isolateElement() {
 
 		let elm = lizardState.currentElement;
@@ -802,6 +852,15 @@
 
 			case UNDO_ACTION_REMOVE:
 				ua.data.prev_parentNode.insertBefore(ua.data.element, ua.data.prev_nextSibling);
+				break;
+				//////////////////////////////////////////////////////////////
+
+			case UNDO_ACTION_DEWIDTHIFY:
+				for(let i=0, len=ua.data.dewidthifiedItems.length; i<len; i++) {
+					let e = ua.data.dewidthifiedItems[i];
+					e.element.style.width = e.prev_width;
+					e.element.style.maxWidth = e.prev_maxWidth;
+				}
 				break;
 				//////////////////////////////////////////////////////////////
 
@@ -1260,6 +1319,7 @@
 			"</div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>H</span><span class='{0} {3}'>Hide (or: shift+click)</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>R</span><span class='{0} {3}'>Remove (collapse element)</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>E</span><span class='{0} {3}'>DeWidthify</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>I</span><span class='{0} {3}'>Isolate</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>C</span><span class='{0} {3}'>" +
 				"Colorize (<span class='{0} {5}' style='background-color:{6} !important;'>&emsp;</span> on <span class='{0} {5}' style='background-color:{7} !important;'>&emsp;</span>)</span>" +
@@ -1326,6 +1386,7 @@
 		const EXTRA_SPACE = 25;
 		const FMT = "<div class='{0} mnuItem' data-access-key='h'><span class='{0} mnuTitle mnuAccessKey'>Hide</span></div>" +
 					"<div class='{0} mnuItem' data-access-key='r'><span class='{0} mnuTitle mnuAccessKey'>Remove</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='e'><span class='{0} mnuTitle'>D<span class='{0} mnuAccessKey'>eWidthify</span></span></div>" +
 					"<div class='{0} mnuItem' data-access-key='i'><span class='{0} mnuTitle mnuAccessKey'>Isolate</span></div>" +
 					"<div class='{0} mnuItem' data-access-key='c'><span class='{0} mnuTitle mnuAccessKey'>Colorize</span></div>" +
 					"<div class='{0} mnuItem' data-access-key='d'><span class='{0} mnuTitle mnuAccessKey'>Decolorize</span></div>" +
