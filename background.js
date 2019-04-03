@@ -44,9 +44,16 @@
 
 		let thisVersion = browser.runtime.getManifest().version;
 
-		if(details.reason === "update" && thisVersion > details.previousVersion) {
-			prefs.setVersionNotice(details.previousVersion);
-		}
+		prefs.getVersionNotice().then((verNotice) => {
+			if(details.reason === "update" && verNotice === "" && (lzUtil.versionNumericCompare(details.previousVersion, thisVersion) < 0)) {
+
+				// Once a version notice was displayed the pref is set to an empty string.
+				// So set the version notice only if the extension was updated
+				// AND the previous version notice was displayed
+				// AND the new version is bigger then the previous one.
+				prefs.setVersionNotice(details.previousVersion);
+			}
+		});
 	});
 
 	//////////////////////////////////////////////////////////////////////

@@ -1677,6 +1677,10 @@
 			fmt += "<div class='{0} noticeText'>&#x25cf; v1.9: Check out the new <b class='{0}'>Expert Mode</b> in the <span id='{2}' class='{0} noticeLink'>Options page</span>!</div>";
 		}
 
+		if(lzUtil.versionNumericCompare(prevVersion, "1.10") < 0) {
+			fmt += "<div class='{0} noticeText'>&#x25cf; v1.10: Lizard can now <b class='{0}'>DeWidthify</b> an element using the hotkey 'E'.</div>";
+		}
+
 		let noticeBox = document.createElement("div");
 		noticeBox.id = ID_LIZARD_VERSION_NOTICE_BOX;
 		noticeBox.className = CLS_LIZARD_ELEMENT;

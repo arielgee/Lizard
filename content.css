@@ -400,11 +400,11 @@
 /** version notice **/
 
 #lizardVersionNoticeBox {
+  --width-notice-box: 550px;
   position: fixed !important;
   top: 50px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: auto !important;
+  left: calc((100% - var(--width-notice-box)) / 2);
+  width: var(--width-notice-box) !important;
   z-index: 2147483645 !important;
   background-color: #d9f3e7 !important;
   border: 2px solid #0c7e46 !important;
