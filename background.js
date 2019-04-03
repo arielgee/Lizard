@@ -2,9 +2,6 @@
 
 (function () {
 
-	const IS_BUTTON_ON_TOOLBAR = true;				// Determine position of lizard button, address bar or toolbar (page action or browser action).
-													// When shifting we also need to modify the manifest.json
-
 	const BROWSER_ACTION_IMAGE_PATHS = {
 		32: "icons/lizard-32.png",
 		48: "icons/lizard-48.png",
@@ -13,16 +10,6 @@
 	const BROWSER_ACTION_GRAY_IMAGE_PATHS = {
 		32: "icons/lizard-gray-32.png",
 		48: "icons/lizard-gray-48.png",
-	};
-
-	const PAGE_ACTION_IMAGE_PATHS = {
-		19: "icons/lizard-19.png",
-		38: "icons/lizard-38.png",
-	};
-
-	const PAGE_ACTION_GRAY_IMAGE_PATHS = {
-		19: "icons/lizard-gray-19.png",
-		38: "icons/lizard-gray-38.png",
 	};
 
 	const WTF_IMAGE_PATH = { 48: "icons/lizard-wtf-48.png" };
@@ -57,26 +44,10 @@
 	});
 
 	//////////////////////////////////////////////////////////////////////
-	// Lizard button
-	if (IS_BUTTON_ON_TOOLBAR === true) {
-
-		// Toolbar button
-
-		browser.browserAction.onClicked.addListener((tab) => {
-			sendToggleLizardStateMessage(tab);
-		});
-	} else {
-
-		// Page action button
-
-		browser.tabs.onUpdated.addListener(function (id, changeInfo, tab) {
-			browser.pageAction.show(tab.id)
-		});
-
-		browser.pageAction.onClicked.addListener((tab) => {
-			sendToggleLizardStateMessage(tab);
-		});
-	}
+	// Lizard toolbar button
+	browser.browserAction.onClicked.addListener((tab) => {
+		sendToggleLizardStateMessage(tab);
+	});
 
 	//////////////////////////////////////////////////////////////////////
 	// Menus
@@ -89,7 +60,7 @@
 				lizardToggleStateMenuID = browser.menus.create({
 					id: "mnu-toggle-lizard-state",
 					title: "Start Lizard Session",
-					command: (IS_BUTTON_ON_TOOLBAR ? "_execute_browser_action" : "_execute_page_action"),
+					command: "_execute_browser_action",
 					contexts: menus_contexts,
 				});
 			}
@@ -99,7 +70,7 @@
 	browser.menus.create({
 		id: "mnu-reload-lizard-extension",
 		title: "Reload Lizard Extension",
-		contexts: [(IS_BUTTON_ON_TOOLBAR ? "browser_action" : "page_action")],
+		contexts: ["browser_action"],
 	});
 
 	browser.menus.onClicked.addListener(function (info, tab) {
@@ -239,17 +210,15 @@
 		let action = "Start";
 		let title = "Lizard [OFF]";
 		let browserActionImagePaths = BROWSER_ACTION_GRAY_IMAGE_PATHS;
-		let pageActionImagePaths = PAGE_ACTION_GRAY_IMAGE_PATHS;
 
 		if (status === "on") {
 			action = "Stop"
 			title = "Lizard [ON]";
 			browserActionImagePaths = BROWSER_ACTION_IMAGE_PATHS;
-			pageActionImagePaths = PAGE_ACTION_IMAGE_PATHS;
 		} else if (status !== "off") {
 			action = "wtf";
-			title = "Lizard - wtf just happened???\n\nCtrl+Shift+Down to reload WebExtension.";
-			browserActionImagePaths = pageActionImagePaths = WTF_IMAGE_PATH;
+			title = "WTF Just Happened?!\n\nCtrl+Shift+Down to reload Lizard.";
+			browserActionImagePaths = WTF_IMAGE_PATH;
 		}
 
 		browser.menus.update(lizardToggleStateMenuID, { title: action + " Lizard Session" });	// menu item
@@ -257,13 +226,8 @@
 		let getting = browser.tabs.query({ active: true, currentWindow: true });
 		getting.then((tabs) => {
 			let tabId = tabs[0].id;
-			if (IS_BUTTON_ON_TOOLBAR === true) {
-				browser.browserAction.setTitle({ tabId: tabId, title: title });
-				browser.browserAction.setIcon({ tabId: tabId, path: browserActionImagePaths });
-			} else {
-				browser.pageAction.setTitle({ tabId: tabId, title: title });
-				browser.pageAction.setIcon({ tabId: tabId, path: pageActionImagePaths });
-			}
+			browser.browserAction.setTitle({ tabId: tabId, title: title });
+			browser.browserAction.setIcon({ tabId: tabId, path: browserActionImagePaths });
 		});
 	}
 

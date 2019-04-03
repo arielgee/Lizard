@@ -16,4 +16,4 @@ IS_BUTTON_ON_TOOLBAR - option? need ext reload, onVisibilityChange
 
 [V] scroll when menu is on not acting like real menu
 
-[X] remove page action button
+[V] remove page action button

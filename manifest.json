@@ -42,15 +42,6 @@
     }
   },
 
-  //"page_action": {
-  //  "browser_style": true,
-  //  "default_title": "Lizard [OFF]",
-  //  "default_icon": {
-  //    "19": "icons/lizard-gray-19.png",
-  //    "38": "icons/lizard-gray-38.png"
-  //  }
-  //},
-
   "commands": {
     "kb-toggle-lizard-state": {
       "suggested_key": {
