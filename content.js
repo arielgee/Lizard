@@ -820,7 +820,7 @@
 			}
 		}
 
-		for(let i=0; i<elm.children.length && deep; i++) {
+		for(let i=0, len=elm.children.length; i<len && deep; i++) {
 
 			let c = elm.children[i];
 
@@ -876,7 +876,7 @@
 				//////////////////////////////////////////////////////////////
 
 			case UNDO_ACTION_COLORIZE:
-				for(let i=0; i<ua.data.coloureditems.length; i++) {
+				for(let i=0, len=ua.data.coloureditems.length; i<len; i++) {
 					let e = ua.data.coloureditems[i];
 					e.element.style.color = e.prev_color;
 					e.element.style.borderColor = e.prev_borderColor;
