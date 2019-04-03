@@ -1,0 +1,19 @@
+[V] switching between two Lizard session fucks up the toolbar button
+
+[V] notify about new mode
+    + accumulate all version notices from previousVersion to thieVersion
+
+IS_BUTTON_ON_TOOLBAR - option? need ext reload, onVisibilityChange
+
+
+[V] after 2 right (menu) the next left remove the element with the menu-blur
+
+[V] when menu is visible left-click on another element do not changes the current element
+
+[V] menu not in place when window is scroled
+[V] prevent scroll when menu showen
+[V] check addEventListener with once
+
+[V] scroll when menu is on not acting like real menu
+
+[X] remove page action button
