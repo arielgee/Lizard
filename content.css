@@ -358,6 +358,7 @@
   line-height: var(--menu-base-height) !important;
   color: black !important;
   white-space: nowrap !important;
+  box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.75);
 }
 
 #lizardContextMenuBox .mnuItem {
