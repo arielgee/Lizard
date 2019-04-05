@@ -268,6 +268,12 @@
 			case "n":
 				narrower();
 				break;
+			case "p":
+				sibling(true);	// preceding sibling
+				break;
+			case "f":
+				sibling(false);	// following sibling
+				break;
 			case "l":
 				lockSelection(!lizardState.bSelectionLocked);
 				break;
@@ -936,6 +942,31 @@
 
 	//////////////////////////////////////////////////////////////////////
 	//
+	function sibling(bDirection) {
+
+		let elm = lizardState.currentElement;
+
+		let sibling = bDirection ? elm.previousElementSibling : elm.nextElementSibling;
+
+		if(!!sibling && !(sibling.className.includes(CLS_LIZARD_ELEMENT))) {
+
+			if (elm) {
+
+				removeSelectionBox();
+				unselectElement();
+				selectElement(sibling);
+				createSelectionBox();
+
+				sibling.scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"});
+			}
+
+		} else {
+			displayNotification("Sibling: Selected element is the " + (bDirection ? "first " : "last ") + "child.");
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	//
 	function lockSelection(bLock) {
 		lizardState.bSelectionLocked = bLock;
 	}
@@ -1330,6 +1361,8 @@
 			"<div class='{0} {1}'><span class='{0} {2}'>U</span><span class='{0} {3}'>Undo</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>W</span><span class='{0} {3}'>Wider</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>N</span><span class='{0} {3}'>Narrower</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>P</span><span class='{0} {3}'>Preceding</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>F</span><span class='{0} {3}'>Following</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>L</span><span class='{0} {3}'>Lock/Unlock</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>B</span><span class='{0} {3}'>Blink</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>V</span><span class='{0} {3}'>View source ({10})</span></div>" +
@@ -1393,6 +1426,8 @@
 					"<div class='{0} mnuItem' data-access-key='u'><span class='{0} mnuTitle mnuAccessKey'>Undo</span></div>" +
 					"<div class='{0} mnuItem' data-access-key='w'><span class='{0} mnuTitle mnuAccessKey'>Wider</span></div>" +
 					"<div class='{0} mnuItem' data-access-key='n'><span class='{0} mnuTitle mnuAccessKey'>Narrower</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='p'><span class='{0} mnuTitle mnuAccessKey'>Preceding</span></div>" +
+					"<div class='{0} mnuItem' data-access-key='f'><span class='{0} mnuTitle mnuAccessKey'>Following</span></div>" +
 					"<div class='{0} mnuItem' data-access-key='l'><span class='{0} mnuTitle mnuAccessKey'>Lock/Unlock</span></div>" +
 					"<div class='{0} mnuItem' data-access-key='b'><span class='{0} mnuTitle mnuAccessKey'>Blink</span></div>" +
 					"<div class='{0} mnuItem' data-access-key='v'><span class='{0} mnuTitle mnuAccessKey'>View Source</span></div>" +

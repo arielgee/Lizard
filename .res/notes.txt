@@ -18,6 +18,6 @@ IS_BUTTON_ON_TOOLBAR - option? need ext reload, onVisibilityChange
 
 [V] remove page action button
 
-[X] implement select next or previous sibling element (previousElementSibling, nextElementSibling)
+[V] implement select next or previous sibling element (previousElementSibling, nextElementSibling)
 
 [X] try/catch on the keydown event
