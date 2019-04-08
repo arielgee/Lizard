@@ -174,11 +174,18 @@ input[type="color"]::-moz-focus-inner {
 }
 
 /* Disabled elements */
-label.disabled,
+label.disabled {
+  color: darkgray;
+}
+
 input[type="radio"].disabled,
 input[type="checkbox"].disabled {
-  color: darkgray;
-  border-color: darkgray;
+  border-color: #cccccc;
+}
+
+input[type="radio"]:checked.disabled,
+input[type="checkbox"]:checked.disabled {
+  background-color: #7f7f7f;
 }
 
 .colorInputDelimiter {
