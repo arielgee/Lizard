@@ -957,7 +957,7 @@
 				selectElement(sibling);
 				createSelectionBox();
 
-				sibling.scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"});
+				sibling.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
 			}
 
 		} else {
