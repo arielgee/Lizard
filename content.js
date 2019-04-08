@@ -1709,11 +1709,17 @@
 
 		// make sure all versions are numeric
 		if(lzUtil.versionNumericCompare(prevVersion, "1.9") < 0) {
-			fmt += "<div class='{0} noticeText'>&#x25cf; v1.9: Check out the new <b class='{0}'>Expert Mode</b> in the <span id='{2}' class='{0} noticeLink'>Options page</span>!</div>";
+			fmt += "<div class='{0} noticeText'>&#x2756; Version 1.9</div>";
+			fmt += "<div class='{0} noticeText'>&emsp;&#x25cf; Check out the new <b class='{0}'>Expert Mode</b> in the <span id='{2}' class='{0} noticeLink'>Options page</span>!</div>";
+			fmt += "<div class='{0} noticeSep'></div>";
 		}
 
 		if(lzUtil.versionNumericCompare(prevVersion, "1.10") < 0) {
-			fmt += "<div class='{0} noticeText'>&#x25cf; v1.10: Lizard can now <b class='{0}'>DeWidthify</b> an element using the hotkey 'E'.</div>";
+			fmt += "<div class='{0} noticeText'>&#x2756; Version 1.10</div>";
+			fmt += "<div class='{0} noticeText'>&emsp;&#x25cf; <b class='{0}'>DeWidthify</b> an element using the hotkey 'E'.</div>";
+			fmt += "<div class='{0} noticeText'>&emsp;&#x25cf; Select the <b class='{0}'>Preceding</b> sibling element using the hotkey 'P'.</div>";
+			fmt += "<div class='{0} noticeText'>&emsp;&#x25cf; Select the <b class='{0}'>Following</b> sibling element using the hotkey 'F'.</div>";
+			fmt += "<div class='{0} noticeSep'></div>";
 		}
 
 		let noticeBox = document.createElement("div");

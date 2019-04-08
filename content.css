@@ -433,9 +433,13 @@
   cursor: pointer !important;
 }
 
+#lizardVersionNoticeBox .noticeSep {
+  height: 20px !important;
+}
+
 #lizardVersionNoticeBox .noticeText {
-  margin: 4px 9px !important;
-  padding: 4px 9px !important;
+  margin: 0 9px !important;
+  padding: 3px 9px !important;
   width: auto !important;
   font-size: 18px !important;
   white-space: nowrap !important;
