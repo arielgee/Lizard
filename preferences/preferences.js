@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	elmHelpBoxOnStart.addEventListener("change", () => { prefs.setHelpBoxOnStart(elmHelpBoxOnStart.checked); });
 	elmWheelToWiderNarrower.addEventListener("change", () => {
 		prefs.setWheelToWiderNarrower(elmWheelToWiderNarrower.checked);
-		lzUtil.concatClassName(elmLabelReqRestartSessionMw, "flash");
+		elmLabelReqRestartSessionMw.classList.add("flash");
 	});
 	elmViewSourceHtml.addEventListener("click", () => {
 		prefs.setViewSourceType(prefs.SOURCE_TYPE.HTML);
@@ -132,17 +132,17 @@ document.addEventListener("DOMContentLoaded", () => {
 	elmColorizeImages.addEventListener("change", () => { prefs.setColorizeImages(elmColorizeImages.checked); });
 	elmContextMenu.addEventListener("change", () => {
 		prefs.setMenuItemContext(elmContextMenu.checked);
-		lzUtil.concatClassName(elmLabelReqRestartExtension, "flash");
-		lzUtil.concatClassName(elmBtnReloadExtension, "flash");
+		elmLabelReqRestartExtension.classList.add("flash");
+		elmBtnReloadExtension.classList.add("flash");
 	});
 	elmToolsMenu.addEventListener("change", () => {
 		prefs.setMenuItemTools(elmToolsMenu.checked);
-		lzUtil.concatClassName(elmLabelReqRestartExtension, "flash");
-		lzUtil.concatClassName(elmBtnReloadExtension, "flash");
+		elmLabelReqRestartExtension.classList.add("flash");
+		elmBtnReloadExtension.classList.add("flash");
 	});
 	elmExpertMode.addEventListener("change", () => {
 		prefs.setExpertMode(elmExpertMode.checked);
-		lzUtil.concatClassName(elmLabelReqRestartSessionXp, "flash");
+		elmLabelReqRestartSessionXp.classList.add("flash");
 		lzUtil.disableElementTree(elmXpModeContextMenu.parentElement.parentElement, !elmExpertMode.checked);
 	});
 	elmXpModeContextMenu.addEventListener("change", () => { prefs.setXpModeContextMenu(elmXpModeContextMenu.checked); });
@@ -157,14 +157,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		lzUtil.disableElementTree(elmXpModeContextMenu.parentElement.parentElement, !defPrefs.xpModeContextMenu);
 
 		if (elmWheelToWiderNarrower.checked !== defPrefs.wheelToWiderNarrower) {
-			lzUtil.concatClassName(elmLabelReqRestartSessionMw, "flash");
+			elmLabelReqRestartSessionMw.classList.add("flash");
 		}
 		if (elmContextMenu.checked !== defPrefs.menuItemContext || elmToolsMenu.checked !== defPrefs.menuItemTools) {
-			lzUtil.concatClassName(elmLabelReqRestartExtension, "flash");
-			lzUtil.concatClassName(elmBtnReloadExtension, "flash");
+			elmLabelReqRestartExtension.classList.add("flash");
+			elmBtnReloadExtension.classList.add("flash");
 		}
 		if (elmExpertMode.checked !== defPrefs.expertMode) {
-			lzUtil.concatClassName(elmLabelReqRestartSessionXp, "flash");
+			elmLabelReqRestartSessionXp.classList.add("flash");
 		}
 
 		elmHelpBoxOnStart.checked = defPrefs.helpBoxOnStart;

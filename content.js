@@ -415,8 +415,8 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function selectElement(elm, clientX, clientY) {
-		// check type of className. <SVG> elements are evil.
-		if (elm && ((typeof elm.className !== "string") || !(elm.className.includes(CLS_LIZARD_ELEMENT)))) {
+
+		if (elm && !(elm.classList.contains(CLS_LIZARD_ELEMENT))) {
 			lizardState.currentElement = elm;
 
 			if(clientX !== undefined && clientY !== undefined) {
@@ -500,11 +500,11 @@
 
 		if ((rect.left + boxLabelTag.offsetWidth) > innerWidth) {
 			boxLabelTag.style.left = (innerWidth - rect.left - boxLabelTag.offsetWidth) + "px";
-			lzUtil.concatClassName(boxLabelTag, CLS_floater);
+			boxLabelTag.classList.add(CLS_floater);
 		}
 		if ((rect.top + boxLabelTag.offsetHeight) > innerHeight) {
 			boxLabelTag.style.top = (innerHeight - rect.top - boxLabelTag.offsetHeight) + "px";
-			lzUtil.concatClassName(boxLabelTag, CLS_floater);
+			boxLabelTag.classList.add(CLS_floater);
 		}
 	}
 
@@ -677,8 +677,7 @@
 
 			let c = elm.children[i];
 
-			// check type of className. <SVG> elements are evil.
-			if(c.nodeType === Node.ELEMENT_NODE && ((typeof c.className !== "string") || !(c.className.includes(CLS_LIZARD_ELEMENT)))) {
+			if(c.nodeType === Node.ELEMENT_NODE && !(c.classList.contains(CLS_LIZARD_ELEMENT))) {
 				_deWidthify(c, uaItems);
 			}
 		}
@@ -830,8 +829,7 @@
 
 			let c = elm.children[i];
 
-			// check type of className. <SVG> elements are evil.
-			if(c.nodeType === Node.ELEMENT_NODE && ((typeof c.className !== "string") || !(c.className.includes(CLS_LIZARD_ELEMENT)))) {
+			if(c.nodeType === Node.ELEMENT_NODE && !(c.classList.contains(CLS_LIZARD_ELEMENT))) {
 				_colorElement(c, foreground, background, uaItems, true, saturateAmount, invertAmount);
 			}
 		}
@@ -948,7 +946,7 @@
 
 		let sibling = bDirection ? elm.previousElementSibling : elm.nextElementSibling;
 
-		if(!!sibling && !(sibling.className.includes(CLS_LIZARD_ELEMENT))) {
+		if(!!sibling && !(sibling.classList.contains(CLS_LIZARD_ELEMENT))) {
 
 			if (elm) {
 
@@ -1131,11 +1129,11 @@
 		const CLS_altBorderColor = "altBorderColor";
 
 		if (altBorderColor === true) {
-			lzUtil.concatClassName(sourceBox, CLS_altBorderColor);
-			lzUtil.concatClassName(divLeftBorder, CLS_altBorderColor);
+			sourceBox.classList.add(CLS_altBorderColor);
+			divLeftBorder.classList.add(CLS_altBorderColor);
 		} else {
-			lzUtil.removeClassName(sourceBox, CLS_altBorderColor);
-			lzUtil.removeClassName(divLeftBorder, CLS_altBorderColor);
+			sourceBox.classList.remove(CLS_altBorderColor);
+			divLeftBorder.classList.remove(CLS_altBorderColor);
 		}
 
 		lblType.textContent = type;
@@ -1168,7 +1166,7 @@
 	//
 	function onMouseDown_startSourceBoxDrag(event) {
 
-		if (event.target.className.includes(CLS_DRAGGABLE_ELEMENT)) {
+		if (event.target.classList.contains(CLS_DRAGGABLE_ELEMENT)) {
 			window.addEventListener("mouseup", onMouseUp_stopSourceBoxDrag, false);
 			window.addEventListener('mousemove', onMouseMove_dragSourceBox, true);
 		}
@@ -1381,12 +1379,12 @@
 		const CLS_justShowedUp = "justShowedUp";
 		const CLS_fadeout = "fadeout";
 
-		lzUtil.concatClassName(hlp, CLS_justShowedUp);
-		lzUtil.removeClassName(hlp, CLS_fadeout);		// remove leftovers if user repeatedly clicks the F1
+		hlp.classList.add(CLS_justShowedUp);
+		hlp.classList.remove(CLS_fadeout);		// remove leftovers if user repeatedly clicks the F1
 
 		setTimeout(() => {
-			lzUtil.replaceClassName(hlp, CLS_justShowedUp, CLS_fadeout);
-			setTimeout(() => { lzUtil.removeClassName(hlp, CLS_fadeout); }, 2100);
+			hlp.classList.replace(CLS_justShowedUp, CLS_fadeout);
+			setTimeout(() => { hlp.classList.remove(CLS_fadeout); }, 2100);
 		}, 3000);
 
 		document.getElementById(ID_LIZARD_HELP_FOOTER_LINK).addEventListener("click", onLizardOptionsPage, false);

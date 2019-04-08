@@ -596,29 +596,6 @@ let lzUtil = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
-	let concatClassName = function (elm, className) {
-
-		// check type of className. <SVG> elements are evil.
-		if (typeof elm.className === "string") {
-			if (!(RegExp("\\b" + className + "\\b").test(elm.className))) {
-				elm.className += " " + className;
-			}
-		} else {
-			elm.setAttribute("class", className);
-		}
-	};
-
-	//////////////////////////////////////////////////////////////////////
-	let replaceClassName = function (elm, className, newClassName) {
-		elm.className = elm.className.replace(RegExp("\\b" + className + "\\b"), newClassName);
-	};
-
-	//////////////////////////////////////////////////////////////////////
-	let removeClassName = function (elm, className) {
-		elm.className = elm.className.replace(RegExp("\\b\\s?" + className + "\\b", "g"), "");		// also remove leading space character
-	};
-
-	//////////////////////////////////////////////////////////////////////
 	let reloadLizardWebExtension = function () {
 
 		_shutdownAllLizardSessions().then((results) => {
@@ -735,9 +712,9 @@ let lzUtil = (function () {
 		}
 
 		if (value === true) {
-			lzUtil.concatClassName(elm, "disabled");
+			elm.classList.add("disabled");
 		} else {
-			lzUtil.removeClassName(elm, "disabled");
+			elm.classList.remove("disabled");
 		}
 	};
 
@@ -760,9 +737,6 @@ let lzUtil = (function () {
 		log: log,
 		applySaturateFilter: applySaturateFilter,
 		applyInvertFilter: applyInvertFilter,
-		concatClassName: concatClassName,
-		replaceClassName: replaceClassName,
-		removeClassName: removeClassName,
 		reloadLizardWebExtension: reloadLizardWebExtension,
 		reloadLizardWebExtensionAndTab: reloadLizardWebExtensionAndTab,
 		getElementComputedCssText: getElementComputedCssText,

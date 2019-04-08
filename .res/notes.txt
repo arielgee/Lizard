@@ -20,6 +20,8 @@ IS_BUTTON_ON_TOOLBAR - option? need ext reload, onVisibilityChange
 
 [V] implement select next or previous sibling element (previousElementSibling, nextElementSibling)
 
+[V] replace all className.includes() with classList.contains()
+
 [X] try/catch on the keydown event
 
-[X] ? replace all className.includes() with classList.contains()
+

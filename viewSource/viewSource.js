@@ -163,8 +163,8 @@
 
 		const CLS_enlarged = "enlarged";
 
-		lzUtil.concatClassName(document.getElementById("labelInfo"), CLS_enlarged);
-		lzUtil.concatClassName(document.getElementById("imgExclamation"), CLS_enlarged);
+		document.getElementById("labelInfo").classList.add(CLS_enlarged);
+		document.getElementById("imgExclamation").classList.add(CLS_enlarged);
 	}
 
 	//////////////////////////////////////////////////////////////////////
