@@ -959,7 +959,11 @@
 			}
 
 		} else {
-			displayNotification("Sibling: Selected element is the " + (bDirection ? "first " : "last ") + "child.");
+			if (bDirection) {
+				displayNotification("Preceding: Selected element is the first sibling.");
+			} else {
+				displayNotification("Following: Selected element is the last sibling.");
+			}
 		}
 	}
 
