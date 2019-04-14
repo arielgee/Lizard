@@ -2,7 +2,7 @@ Basic Information:
   Summary:
     Select and remove annoying or unnecessary elements from a page. Great for printing and readability.
   Tags:
-    aardvark, blink, colorize, decolorize, element hiding helper for adblock plus, firefox57, hide, isolate, remove, select, view source, deWidthify, sibling, css selector
+    aardvark, blink, click to remove, colorize, css selector, decolorize, dewidthify, element hiding helper for adblock plus, element zapper, greasemonkey, hacktheweb, hide, isolate, platypus, remove, remove it permanently, rip, stylish, tampermonkey, view source
 
 Add-on Details:
   Description:
