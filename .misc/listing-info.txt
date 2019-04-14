@@ -18,8 +18,8 @@ Version Notes:
   <ul>
     <li>Added support to DeWidthify an element.</li>
     <li>Added support for sibling strolling. Select the Preceding or Following sibling element using the 'P' or 'F' hotkeys, respectively.</li>
-    <li>Code cleanup.</li>
-    <li>Bug fixes and improvements.</li>
+    <li>Code improvements and cleanup.</li>
+    <li>Bugs fixed and performance improved.</li>
   </ul>
 
   <b>Unresolved</b>
