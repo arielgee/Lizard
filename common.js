@@ -534,10 +534,10 @@ let lzUtil = (function () {
 
 		return new Promise((resolve) => {
 
-			browser.runtime.getBrowserInfo().then((info) => {
+			getBrowserVersion().then((version) => {
 
 				// Browser compatibility: 'discarded' from Firefox 57
-				let querying = browser.tabs.query((parseFloat(info.version) >= 57.0 ? { discarded: false } : {}));
+				let querying = browser.tabs.query((parseFloat(version) >= 57.0 ? { discarded: false } : {}));
 
 				querying.then((tabs) => {
 
@@ -733,6 +733,15 @@ let lzUtil = (function () {
 		return (v1.length - v2.length);
 	};
 
+	////////////////////////////////////////////////////////////////////////////////////
+	function getBrowserVersion() {
+		return new Promise((resolve) => {
+			browser.runtime.getBrowserInfo().then((result) => {
+				resolve(result.version);
+			});
+		});
+	};
+
 	return {
 		log: log,
 		applySaturateFilter: applySaturateFilter,
@@ -747,5 +756,6 @@ let lzUtil = (function () {
 		getElementMatchedCSSRules: getElementMatchedCSSRules,
 		disableElementTree: disableElementTree,
 		versionNumericCompare: versionNumericCompare,
+		getBrowserVersion: getBrowserVersion,
 	};
 })();

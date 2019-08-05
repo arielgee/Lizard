@@ -7,5 +7,5 @@ Done
 
 To-Do
 --------------
-* handle new preferences layout for new Fx version - remove 'Options' caption and first seperator line
+* Remove the 'Options' caption in preferences for Fx v68 and up. Page layout was changed and the caption is redundent.
 * fix menu outside view port when right click is near buttom window edge
