@@ -145,7 +145,7 @@
 	//
 	function sendToggleLizardStateMessage(tab) {
 
-		if( !(tab.url.match(/^(http|https|file|ftp):\/\//)) ) {
+		if( tab.url === undefined || !(tab.url.match(/^(http|https|file|ftp):\/\//)) ) {
 			createLizardNotification("Lizard can't work here.");
 			return;
 		}
