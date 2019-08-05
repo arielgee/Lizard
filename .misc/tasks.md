@@ -4,10 +4,10 @@
     * https://bugzilla.mozilla.org/show_bug.cgi?id=1379466
     * NOTE: Still checking the button value in onClick to support old versions.
 * Remove the 'Options' caption in preferences for Fx v68 and up. Page layout was changed and the caption is redundent.
+* fix menu outside view port when right click is near buttom window edge
 ---
 
 ## To-Do
 --------------
 * remove the 'Open Options Page' from toolbar menu for Fx vXX and up. Mozilla added the 'Manage Extension'
     * Maybe NOT? in v68 the 'Manage Extension' opens the Details tab
-* fix menu outside view port when right click is near buttom window edge

@@ -1396,8 +1396,8 @@
 			return;
 		}
 
-		// when action originate from click make sure element under menu is selected
-		if(eventType === "click") {
+		// when action originate from context-menu make sure element under menu is selected
+		if(eventType === "contextmenu") {
 			onMouseMove({ clientX: clientX, clientY: clientY });
 		}
 
@@ -1439,7 +1439,7 @@
 		const INNER_WIDTH = window.innerWidth - getVScrollWidth();
 		const INNER_HEIGHT = window.innerHeight - getHScrollWidth();
 
-		if(eventType === "click") {
+		if(eventType === "contextmenu") {
 
 			if(clientX + mnu.offsetWidth > INNER_WIDTH) {
 				clientX = INNER_WIDTH - mnu.offsetWidth - EXTRA_SPACE;
