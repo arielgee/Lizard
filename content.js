@@ -201,24 +201,8 @@
 	//
 	function onClick_XpMode(event) {
 
-		if(!lizardState.currentElement) {
-			return;
-		}
-
-		const MOUSE_BUTTON_LEFT = 0;
-		const MOUSE_BUTTON_RIGHT = 2;
-
-		if (event.button === MOUSE_BUTTON_RIGHT) {
-
-			prefs.getXpModeContextMenu().then((checked) => {
-				if(checked) {
-					showContextMenu(event.clientX, event.clientY, event.type);
-				} else {
-					undoLastAction();
-				}
-			});
-
-		} else if(event.button === MOUSE_BUTTON_LEFT && !lizardState.bContextMenuVisible) {
+		// MOUSE_BUTTON_LEFT = 0
+		if(lizardState.currentElement && event.button === 0 && !lizardState.bContextMenuVisible) {
 
 			if (event.shiftKey) {
 				hideElement();
@@ -317,7 +301,17 @@
 	//////////////////////////////////////////////////////////////////////
 	//
 	function onContextMenu(event) {
+
 		event.preventDefault();
+
+		prefs.getXpModeContextMenu().then((checked) => {
+			if(checked) {
+				showContextMenu(event.clientX, event.clientY, event.type);
+			} else {
+				undoLastAction();
+			}
+		});
+
 		return false;
 	}
 
