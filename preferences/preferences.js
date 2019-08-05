@@ -30,6 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	let elmBtnReloadExtension = document.getElementById("btnReloadExtension");
 	let elmBtnRestoreDefaults = document.getElementById("btnRestoreDefaults");
 
+	lzUtil.getBrowserVersion().then((version) => {
+		if(version >= "68.0") {
+			document.body.classList.add("noCaptionStyleV68");
+		}
+	});
+
 
 	/////////////////////////////////////////////////////////////////////////////////
 	// get saved preferences
