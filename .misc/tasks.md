@@ -10,3 +10,6 @@
 
 ## To-Do
 --------------
+* I Fucked Up: I Forgot about showVersionNotice() in version 1.11 (nothing to do, just a note for next version)
+
+## REMEMBER: Update showVersionNotice() For Each New Version!

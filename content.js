@@ -1701,7 +1701,9 @@
 	//
 	function showVersionNotice(prevVersion) {
 
-		let fmt = "<div id='{1}' class='{0}'></div><h1 class='{0}'>Lizard Release Notes</h1>";
+		const FMT_HEADER = "<div id='{1}' class='{0}'></div><h1 class='{0}'>Lizard Release Notes</h1>";
+
+		let fmt = "";
 
 		// make sure all versions are numeric
 		if(lzUtil.versionNumericCompare(prevVersion, "1.9") < 0) {
@@ -1718,17 +1720,26 @@
 			fmt += "<div class='{0} noticeSep'></div>";
 		}
 
-		let noticeBox = document.createElement("div");
-		noticeBox.id = ID_LIZARD_VERSION_NOTICE_BOX;
-		noticeBox.className = CLS_LIZARD_ELEMENT;
-		noticeBox.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, ID_LIZARD_VERSION_NOTICE_BOX_CLOSE, ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK]);
-		document.body.appendChild(noticeBox);
+		// nothing to write home about
+		//if(lzUtil.versionNumericCompare(prevVersion, "1.11") < 0) {}
 
-		document.getElementById(ID_LIZARD_VERSION_NOTICE_BOX_CLOSE).addEventListener("click", onCloseVersionNoticeBox, false);
+		// Do not display if nothing to display
+		if(fmt.length > 0) {
 
-		let elm = document.getElementById(ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK);
-		if (elm) {
-			elm.addEventListener("click", onLizardOptionsPage, false);
+			fmt = FMT_HEADER + fmt;
+
+			let noticeBox = document.createElement("div");
+			noticeBox.id = ID_LIZARD_VERSION_NOTICE_BOX;
+			noticeBox.className = CLS_LIZARD_ELEMENT;
+			noticeBox.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, ID_LIZARD_VERSION_NOTICE_BOX_CLOSE, ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK]);
+			document.body.appendChild(noticeBox);
+
+			document.getElementById(ID_LIZARD_VERSION_NOTICE_BOX_CLOSE).addEventListener("click", onCloseVersionNoticeBox, false);
+
+			let elm = document.getElementById(ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK);
+			if (elm) {
+				elm.addEventListener("click", onLizardOptionsPage, false);
+			}
 		}
 	}
 

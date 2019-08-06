@@ -23,6 +23,7 @@ Version Notes:
 
   <b>Unresolved</b>
   <ul>
+    <li>Minor issue: The 'Lizard Release Notes' box displayed on the start of the first session after version update appears empty.</li>
     <li>Doesn't play nice with frames.</li>
   </ul>
 
