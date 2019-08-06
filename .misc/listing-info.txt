@@ -16,10 +16,9 @@ Add-on Details:
 Version Notes:
   <b>Changes</b>
   <ul>
-    <li>Added support to DeWidthify an element.</li>
-    <li>Added support for sibling strolling. Select the Preceding or Following sibling element using the 'P' or 'F' hotkeys, respectively.</li>
-    <li>Code improvements and cleanup.</li>
-    <li>Bugs fixed and performance improved.</li>
+    <li>Fixed compatibility issue with Firefox 68.0 regarding bug 1379466 (https://bugzilla.mozilla.org/show_bug.cgi?id=1379466).</li>
+    <li>Changes to the Options page layout. Minor modifications for Firefox 68.0.</li>
+    <li>Bugs fixed.</li>
   </ul>
 
   <b>Unresolved</b>
