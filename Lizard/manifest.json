@@ -1,0 +1,68 @@
+{
+  "manifest_version": 2,
+  "applications": {
+    "gecko": {
+      "id": "lizard@webExtension.arielg.il",
+      "strict_min_version": "56.0"
+    }
+  },
+  "name": "Lizard",
+  "version": "1.11",
+  "description": "Select and remove annoying or unnecessary elements from a page. Great for printing and readability.",
+  "author": "arielg",
+
+  "permissions": [
+    "<all_urls>",
+    "activeTab",
+    "menus",
+    "notifications",
+    "clipboardWrite",
+    "storage"
+  ],
+
+  "icons": {
+    "16": "icons/lizard-16.png",
+    "32": "icons/lizard-32.png",
+    "48": "icons/lizard-48.png"
+  },
+
+  "web_accessible_resources": [
+    "icons/lizard-32.png",
+    "icons/leftClick.png",
+    "icons/xpModeBg.png"
+  ],
+
+  "browser_action": {
+    "browser_style": true,
+    "default_title": "Lizard [OFF]",
+    "default_icon": {
+      "16": "icons/lizard-gray-16.png",
+      "32": "icons/lizard-gray-32.png",
+      "48": "icons/lizard-gray-48.png"
+    }
+  },
+
+  "commands": {
+    "kb-toggle-lizard-state": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L"
+      },
+      "description": "Start Lizard Session"
+    },
+    "kb-reload-lizard-extension": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Down"
+      },
+      "description": "Reload Lizard Extension"
+    }
+  },
+
+  "background": {
+    "scripts": ["common.js", "background.js"]
+  },
+
+  "options_ui": {
+    "browser_style": true,
+    "page": "preferences/preferences.html"
+  }
+}
