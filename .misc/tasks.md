@@ -10,6 +10,11 @@
 
 ## To-Do
 --------------
+* handle return Promise from prefs functions
+* change preference on click anywhere
+* remove the showVersionNotice ???
+* preferences dark mode
+* duplicate 'manage Extension' / 'Open Option page' in left mouse browserAction button
 * Implemented Debouncer to prevent double injectLizardScripts() in sendToggleLizardStateMessage()
 * I Fucked Up: I Forgot about showVersionNotice() in version 1.11 (nothing to do, just a note for next version)
 
