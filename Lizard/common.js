@@ -209,7 +209,7 @@ let prefs = (function () {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	let restoreDefaults = function () {
+	function restoreDefaults() {
 		this.setHelpBoxOnStart(PREF_DEF_HELP_BOX_ON_START_VALUE);
 		this.setWheelToWiderNarrower(PREF_DEF_WHEEL_TO_WIDER_NARROWER);
 		this.setViewSourceType(PREF_DEF_VIEW_SOURCE_TYPE_VALUE);
@@ -382,7 +382,7 @@ let lzUtil = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
-	let _shutdownAllLizardSessions = function () {
+	function _shutdownAllLizardSessions() {
 
 		return new Promise((resolve) => {
 
@@ -406,15 +406,10 @@ let lzUtil = (function () {
 				});
 			});
 		});
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let log = function (...args) {
-		console.log("[lizard]", ...args);
-	};
-
-	//////////////////////////////////////////////////////////////////////
-	let applySaturateFilter = function (elm, saturateAmount) {	// "1000%" or "0%" (colorize, decolorize)
+	function applySaturateFilter(elm, saturateAmount) {	// "1000%" or "0%" (colorize, decolorize)
 
 		let re = new RegExp("\\b(saturate\\()([^)]+)(\\))");	// match "saturate([amount])"
 
@@ -428,10 +423,10 @@ let lzUtil = (function () {
 			}
 			elm.style.filter += "saturate(" + saturateAmount + ")";
 		}
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let applyInvertFilter = function (elm, invertAmount) {	// "100%" or "0%" ((colorize || decolorize) +shift, (colorize || decolorize))
+	function applyInvertFilter(elm, invertAmount) {	// "100%" or "0%" ((colorize || decolorize) +shift, (colorize || decolorize))
 
 		let re = new RegExp("\\b(invert\\()([^)]+)(\\))");	// match "invert([amount])"
 
@@ -445,18 +440,18 @@ let lzUtil = (function () {
 			}
 			elm.style.filter += "invert(" + invertAmount + ")";
 		}
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let reloadLizardWebExtension = function () {
+	function reloadLizardWebExtension() {
 
 		_shutdownAllLizardSessions().then((results) => {
 			setTimeout(() => { browser.runtime.reload(); }, 10);
 		});
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let reloadLizardWebExtensionAndTab = function () {
+	function reloadLizardWebExtensionAndTab() {
 
 		_shutdownAllLizardSessions().then((results) => {
 			setTimeout(() => {
@@ -464,10 +459,10 @@ let lzUtil = (function () {
 				browser.runtime.reload();
 			}, 10);
 		});
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let getElementComputedCssText = function (elm) {
+	function getElementComputedCssText(elm) {
 
 		let css = "";
 		let name;
@@ -481,30 +476,30 @@ let lzUtil = (function () {
 			css += name + ":" + style.getPropertyValue(name) + (priority.length > 0 ? " !" : "") + priority + ";";
 		}
 		return css;
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let escapeRegExp = function (str) {
+	function escapeRegExp(str) {
 		return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let random1to100 = function () {
+	function random1to100() {
 		return Math.floor(Math.random() * (100 - 1) + 1).toString();
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let isSVGObject = function (elm) {
+	function isSVGObject(elm) {
 		return ((typeof elm.className === "object") && (elm.className.toString() === "[object SVGAnimatedString]"));
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let hasBackgroundImage = function (elm) {
+	function hasBackgroundImage(elm) {
 		return (window.getComputedStyle(elm).getPropertyValue("background-image") !== "none");
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let getElementMatchedCSSRules = function (elm) {
+	function getElementMatchedCSSRules(elm) {
 
 		let ssDomain;
 		let rules;
@@ -546,10 +541,10 @@ let lzUtil = (function () {
 			cssText: text,
 			remoteStyleSheetDomains: remoteStyleSheetDomains,
 		};
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let disableElementTree = function (elm, value) {
+	function disableElementTree(elm, value) {
 
 		if (elm.nodeType !== Node.ELEMENT_NODE) {
 			return;
@@ -568,10 +563,10 @@ let lzUtil = (function () {
 		} else {
 			elm.classList.remove("disabled");
 		}
-	};
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	let versionNumericCompare = function (ver1, ver2) {
+	function versionNumericCompare(ver1, ver2) {
 
 		let v1 = ver1.split(".").map(e => { return parseInt(e); } );
 		let v2 = ver2.split(".").map(e => { return parseInt(e); } );
@@ -583,7 +578,7 @@ let lzUtil = (function () {
 			}
 		}
 		return (v1.length - v2.length);
-	};
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function getBrowserVersion() {
@@ -592,10 +587,9 @@ let lzUtil = (function () {
 				resolve(result.version);
 			});
 		});
-	};
+	}
 
 	return {
-		log: log,
 		applySaturateFilter: applySaturateFilter,
 		applyInvertFilter: applyInvertFilter,
 		reloadLizardWebExtension: reloadLizardWebExtension,
@@ -609,5 +603,5 @@ let lzUtil = (function () {
 		disableElementTree: disableElementTree,
 		versionNumericCompare: versionNumericCompare,
 		getBrowserVersion: getBrowserVersion,
-	};
+	}
 })();
