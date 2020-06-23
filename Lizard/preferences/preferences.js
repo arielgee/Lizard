@@ -112,6 +112,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	/////////////////////////////////////////////////////////////////////////////////
 	// save preferences when changed
+
+	document.documentElement.addEventListener("click", (event) => {
+		if( !!event.target && event.target.classList.contains("preference") ) {
+
+			let elmInputs = event.target.querySelectorAll("input[type=checkbox],input[type=text]");
+
+			if(elmInputs.length === 1) {
+				event.stopPropagation();
+
+				if(elmInputs[0].type === "checkbox") {
+					elmInputs[0].click();
+				} else if(elmInputs[0].type === "text") {
+					elmInputs[0].focus();
+					elmInputs[0].select();
+				}
+			}
+		}
+	});
+
 	elmHelpBoxOnStart.addEventListener("change", () => { prefs.setHelpBoxOnStart(elmHelpBoxOnStart.checked); });
 	elmWheelToWiderNarrower.addEventListener("change", () => {
 		prefs.setWheelToWiderNarrower(elmWheelToWiderNarrower.checked);

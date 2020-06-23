@@ -1,17 +1,71 @@
 @namespace url("http://www.w3.org/1999/xhtml");
 
 :root {
-	--lizard-preference-height: 40px;
+	--preference-height: 40px;
+	--max-width-preferences-body: 700px;
+	--bottom-left-radius-last-sub-perf: 15px;
+
+
+	/*******************light theme colors*******************/
+	--foreground-color: rgb(0, 0, 0);
+	--background-color-body: transparent;
+	--border-color-input-checked: rgb(153, 153, 153);
+	--box-shadow-color-swatch: rgba(0, 0, 0, 0.6);
+	--foreground-color-help-info: rgb(255, 255, 255);
+	--background-color-help-info: rgb(187, 187, 187);
+	--background-color-hover-help-info: rgb(42, 67, 100);
+	--background-color-input-control: rgb(255, 255, 255);
+	--foreground-color-disabled-control: rgb(169, 169, 169);
+	--background-color-disabled-control: rgb(211, 211, 211);
+	--background-color-textarea-control: rgb(240, 240, 240);
+
+	--background-color-button: 6, 6, 5;
+	--background-alpha-button: 0.1;
+	--background-alpha-hover-button: 0.15;
+	--background-alpha-hover-active-button: 0.2;
+
+	--color-preference-hover: rgb(242, 242, 242);
+	--color-border-sub-perf: rgb(51, 51, 51);
+	--color-flash: rgb(255, 192, 192);
+}
+
+@media (prefers-color-scheme: dark) {
+
+	:root {
+		/********************dark theme colors*******************/
+		--foreground-color: rgb(249, 249, 250);
+		--background-color-body: rgb(32, 32, 35);
+		--border-color-input-checked: rgb(119, 119, 119);
+		--box-shadow-color-swatch: rgba(255, 255, 255, 0.6);
+		--foreground-color-help-info: rgb(0, 0, 0);
+		--background-color-help-info: rgb(92, 92, 92);
+		--background-color-hover-help-info: rgb(192, 192, 192);
+		--background-color-input-control: rgb(50, 50, 54);
+		--foreground-color-disabled-control: rgb(127, 127, 127);
+		--background-color-disabled-control: rgb(72, 72, 72);
+		--background-color-textarea-control: rgb(50, 50, 50);
+
+		--background-color-button: 249, 249, 250;
+		--background-alpha-button: 0.1;
+		--background-alpha-hover-button: 0.15;
+		--background-alpha-hover-active-button: 0.2;
+
+		--color-preference-hover: rgb(52, 52, 55);
+		--color-border-sub-perf: rgb(221, 221, 221);
+		--color-flash: rgb(255, 97, 97);
+	}
 }
 
 body {
 	font-family: inherit;
 	font-size: 1.273rem;
 	font-weight: normal;
-	min-width: auto;
-	max-width: 700px;
+	min-width: 600px;
+	max-width: var(--max-width-preferences-body);
 	line-height: 21px;
 	white-space: nowrap;
+	color: var(--foreground-color);
+	background-color: var(--background-color-body);
 }
 
 .caption {
@@ -19,26 +73,35 @@ body {
 	margin-bottom: 35px;
 }
 
-.prefSeperator {
-	border-bottom: 1px solid lightgray;
-}
-
-body.noCaptionStyleV68 .caption,
-body.noCaptionStyleV68 .caption + .prefSeperator {
-	display: none;
-}
-
 .preference {
 	display: flex;
 	justify-content: space-between;
 	padding: 9px 3px;
-	height: var(--lizard-preference-height);
-	min-height: var(--lizard-preference-height);
-	max-height: var(--lizard-preference-height);
+	height: var(--preference-height);
+	min-height: var(--preference-height);
+	max-height: var(--preference-height);
+}
+
+.preference:not(.extensionButtons):hover {
+	background-color: var(--color-preference-hover);
 }
 
 .preference.subPref {
-	padding-left: 20px;
+	margin-left: 3px;
+	padding-left: 16px;
+	border-left: 4px solid var(--color-border-sub-perf);
+}
+
+.preference.subPref.last{
+	border-bottom-left-radius: var(--bottom-left-radius-last-sub-perf);
+}
+
+.prefSeperator {
+	border-bottom: 1px solid rgb(211, 211, 211);
+}
+
+.preference.subPref + .prefSeperator {
+	margin-left: var(--bottom-left-radius-last-sub-perf);
 }
 
 .preferenceControl {
@@ -54,8 +117,12 @@ body.noCaptionStyleV68 .caption + .prefSeperator {
 	margin-right: 10px;
 }
 
-select {
-	border: 1px solid #7a7a7a;
+/******************************************************************/
+/**************************** CONTROLS ****************************/
+/******************************************************************/
+input {
+	color: var(--foreground-color);
+	background-color: var(--background-color-input-control);
 }
 
 input[type="radio"],
@@ -79,8 +146,8 @@ input[type="radio"] {
 
 input[type="radio"]:checked,
 input[type="checkbox"]:checked {
-	border: 5px solid #999;
-	background-color: black;
+	border: 5px solid var(--border-color-input-checked);
+	background-color: var(--foreground-color);
 }
 
 input[type="color"] {
@@ -96,7 +163,7 @@ input[type="color"] {
 input[type="color"]::-moz-color-swatch {
 	border: none;
 	border-radius: 50%;
-	box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.6);
+	box-shadow: 0 0 4px 2px var(--box-shadow-color-swatch);
 }
 
 input[type="color"]::-moz-focus-inner {
@@ -110,8 +177,45 @@ input[type="color"]::-moz-focus-inner {
 	width: 50px;
 }
 
-.numericInput:invalid  {
-	box-shadow: 0 0 1.5px 1px rgb(255, 0, 0);
+.numericInput:focus {
+	border-color: var(--color-text-input-focused);
+	box-shadow: 0 0 2.5px 1px var(--color-text-input-focused);
+}
+
+.numericInput:invalid {
+	border-color: var(--color-text-input-invalid);
+	box-shadow: 0 0 2.5px 1px var(--color-text-input-invalid);
+}
+
+.preferenceButton {
+	padding: 1px 3px 2px 3px;
+	color: var(--foreground-color);
+	background-color: rgba(var(--background-color-button), var(--background-alpha-button));
+	border: 1px solid rgb(193, 193, 193);
+	border-radius: 2px;
+	height: 22px;
+	width: 90px;
+	text-align: center;
+	margin-left: 10px;
+	font-family: Tahoma, Verdana, Segoe, sans-serif;
+	font-size: 13.3333px;
+	line-height: 17px;
+	outline-offset: -3px;
+}
+
+.preferenceButton:hover {
+	background-color: rgba(var(--background-color-button), var(--background-alpha-hover-button));
+}
+
+.preferenceButton:active:hover {
+	background-color: rgba(var(--background-color-button), var(--background-alpha-hover-active-button));
+}
+
+.extensionButtons .preferenceButton {
+	padding: 1px 3px;
+	height: 30px;
+	width: 130px;
+	filter: invert(10%);
 }
 
 .helpInfo {
@@ -119,9 +223,9 @@ input[type="color"]::-moz-focus-inner {
 	border-radius: 50%;
 	height: 18px;
 	width: 18px;
-	background-color: #bbbbbb;
-	color: #ffffff;
-	font-family: "Open Sans",X-LocaleSpecific,sans-serif;
+	background-color: var(--background-color-help-info);
+	color: var(--foreground-color-help-info);
+	font-family: "Open Sans", X-LocaleSpecific, sans-serif;
 	font-size: 14px;
 	font-weight: 700;
 	text-align: center;
@@ -132,39 +236,30 @@ input[type="color"]::-moz-focus-inner {
 }
 
 .helpInfo:hover {
-	background-color: #2a4364;
-}
-
-.controlButton {
-	padding: 1px 3px;
-	background-color: rgb(251, 251, 251);
-	border: 1px solid rgb(193, 193, 193);
-	border-radius: 2px;
-	height: 30px;
-	width: 130px;
-	text-align: center;
-	margin-left: 10px;
-}
-
-.controlButton:hover {
-	background-color: rgb(235, 235, 235);
-}
-
-.controlButton:active:hover {
-	background-color: rgb(218, 218, 218);
+	background-color: var(--background-color-hover-help-info);
 }
 
 .annotation {
-	font-family: "Segoe UI";
+	font-family: "Segoe UI", Tahoma, Verdana, sans-serif;
 	font-size: 9pt;
 	color: gray;
 }
 
-/* Elements that will 'flash' */
+/************************************************************************************/
+/**************************** Elements that will 'flash' ****************************/
+/************************************************************************************/
+.preferenceButton {
+	--color1: rgba(var(--background-color-button), var(--background-alpha-button));
+	background: linear-gradient(to left, var(--color1) 52%, var(--color-flash) 50%);
+}
+
+.annotation {
+	background: linear-gradient(to left, transparent 52%, var(--color-flash) 50%);
+}
+
 .annotation,
-.controlButton {
-	background: linear-gradient(to left, transparent 50%, rgb(255, 192, 192) 50%);
-	background-size: 200% 100%;
+.preferenceButton {
+	background-size: 220% 100%;
 	background-position: right bottom;
 	transition: background-position 0.2s ease-in 0s;
 }
@@ -174,23 +269,33 @@ input[type="color"]::-moz-focus-inner {
 	color: black;
 }
 
-.controlButton.flash {
+.preferenceButton.flash {
 	background-position: left bottom;
 }
 
-/* Disabled elements */
-label.disabled {
-	color: darkgray;
+/***************************************************************************/
+/**************************** Disabled elements ****************************/
+/***************************************************************************/
+.disabled {
+	outline: none;
+	pointer-events: none;
+}
+
+label.disabled,
+input[type="radio"].disabled,
+input[type="checkbox"].disabled,
+.preference.subPref.disabled {
+	color: var(--foreground-color-disabled-control);
+	border-color: var(--foreground-color-disabled-control);
 }
 
 input[type="radio"].disabled,
 input[type="checkbox"].disabled {
-	border-color: #cccccc;
+	background-color: var(--background-color-disabled-control);
 }
 
-input[type="radio"]:checked.disabled,
-input[type="checkbox"]:checked.disabled {
-	background-color: #7f7f7f;
+input[type="color"].disabled {
+	filter: contrast(10%);
 }
 
 .colorInputDelimiter {
@@ -207,5 +312,11 @@ input[type="checkbox"]:checked.disabled {
 }
 
 .xpModeBg.subPref {
-	background-position-Y: calc(var(--lizard-preference-height) * -1);
+	background-position-Y: calc(var(--preference-height) * -1);
+	background-position-X: -7px;	/* .preference.subPref.margin-left(3px) + .preference.subPref.border-left(4px) */
+}
+
+body.noCaptionStyleV68 .caption,
+body.noCaptionStyleV68 .caption + .prefSeperator {
+	display: none;
 }
