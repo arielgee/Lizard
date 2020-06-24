@@ -9,14 +9,14 @@
 	css:
 		Written by Harutyun Amirjanyan, (amirjanyan@gmail.com)
 		Based on code initially developed by: Einar Lielmanis, <elfz@laacz.lv>
-        http://jsbeautifier.org/
+		http://jsbeautifier.org/
 
 
 	js:
-		 Written by Einar Lielmanis, (einar@jsbeautifier.org)
-		 http://jsbeautifier.org/
-		 Originally converted to javascript by Vital, <vital76@gmail.com>
-		 "End braces on own line" added by Chris J. Shull, <chrisjshull@gmail.com>
+		Written by Einar Lielmanis, (einar@jsbeautifier.org)
+		http://jsbeautifier.org/
+		Originally converted to javascript by Vital, <vital76@gmail.com>
+		"End braces on own line" added by Chris J. Shull, <chrisjshull@gmail.com>
 */
 
 /////////////////////////////////////////////////////////////////////////////////////////////
