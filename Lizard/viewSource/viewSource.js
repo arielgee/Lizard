@@ -10,11 +10,15 @@
 	let elmScrollDown;
 	let scrollerTimeoutId = -1;
 
-	document.addEventListener("DOMContentLoaded", onDOMContentLoaded);
-	window.addEventListener("beforeunload", onBeforeUnload);
+	initilization();
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function initilization() {
+		document.addEventListener("DOMContentLoaded", onDOMContentLoaded);
+		window.addEventListener("beforeunload", onBeforeUnload);
+	}
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function onDOMContentLoaded() {
 
 		let dataId = getQueryVariable("id");
@@ -60,7 +64,6 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function onBeforeUnload(event) {
 
 		if (IS_POPUP_WINDOW) {
@@ -82,7 +85,6 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function onKeyDown(event) {
 		if (event.key.toLowerCase() === "escape") {
 			window.close();
@@ -90,7 +92,6 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function onMouseDownScrollButton(event) {
 
 		// This function can be called from btnScrollUp/btnScrollDown (via EventListener -> mousedown) or from onWheel.
@@ -117,19 +118,16 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function onMouseUpScrollButton(event) {
 		clearTimeout(scrollerTimeoutId);
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function onMouseLeaveScrollButton(event) {
 		clearTimeout(scrollerTimeoutId);
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function continuousScroll(offsetY, offsetMultiplier) {
 
 		// don't scroll if there is nowhere to scroll
@@ -145,7 +143,6 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function onWheel(event) {
 
 		if (event.deltaY < 0) {
@@ -158,7 +155,6 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function showEnlargedLabel() {
 
 		const CLS_enlarged = "enlarged";
@@ -168,14 +164,12 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function getQueryVariable(name) {
 		let sval = window.location.search.match("[\?\&]" + name + "=([^\&]*)(\&?)");
 		return sval ? sval[1] : sval;
 	};
 
 	//////////////////////////////////////////////////////////////////////
-	//
 	function canDocumentScroll(direction) {
 
 		let docElm = document.documentElement;
