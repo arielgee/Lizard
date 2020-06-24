@@ -1,27 +1,26 @@
 "use strict";
 
-/*	CSS Selector Generator, v1.2.0
+/*	CSS Selector Generator, v1.0.4
 	by Riki Fridrich <riki@fczbkk.com> (http://fczbkk.com)
 	https://github.com/fczbkk/css-selector-generator/
-	commit ff7bf8f on Nov 13, 2018
+
+	bugfix: "doesn't work on NYTimes" #13 - "Compute selectors only when needed" #26
+	by Boris Lykah
+	https://github.com/lykahb/css-selector-generator/
 */
 
 (function () {
 
+	let root;
 	let __indexOf = [].indexOf;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////
+	///
 	let CssSelectorGenerator = (function () {
 
 		//////////////////////////////////////////////////////////////////////
 		CssSelectorGenerator.prototype.default_options = {
-			selectors: ['id', 'class', 'tag', 'nthchild'],
-			prefix_tag: false,
-			attribute_blacklist: [],
-			attribute_whitelist: [],
-			quote_attribute_when_needed: false,
-			id_blacklist: [],
-			class_blacklist: []
+			selectors: ['id', 'class', 'tag', 'nthchild']
 		};
 
 		//////////////////////////////////////////////////////////////////////
@@ -36,20 +35,20 @@
 
 		//////////////////////////////////////////////////////////////////////
 		CssSelectorGenerator.prototype.setOptions = function (options) {
-			let key, results, val;
+			let key, _results, val;
 			if (options == null) {
 				options = {};
 			}
-			results = [];
+			_results = [];
 			for (key in options) {
 				val = options[key];
 				if (this.default_options.hasOwnProperty(key)) {
-					results.push(this.options[key] = val);
+					_results.push(this.options[key] = val);
 				} else {
-					results.push(void 0);
+					_results.push(void 0);
 				}
 			}
-			return results;
+			return _results;
 		};
 
 		//////////////////////////////////////////////////////////////////////
@@ -82,63 +81,21 @@
 			characters = (item.split('')).map(function (character) {
 				if (character === ':') {
 					return "\\" + (':'.charCodeAt(0).toString(16).toUpperCase()) + " ";
-				} else if (/[ !"#$%&'()*+,.\/;<=>?@\[\\\]^`{|}~]/.test(character)) {
+				} else if (/[ !"#$%&'()*+,./;<=>?@\[\\\]^`{|}~]/.test(character)) {
 					return "\\" + character;
 				} else {
 					return escape(character).replace(/\%/g, '\\');
 				}
 			});
-			return characters.join('');
-		};
-
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.sanitizeAttribute = function (item) {
-			let characters;
-			if (this.options.quote_attribute_when_needed) {
-				return this.quoteAttribute(item);
-			}
-			characters = (item.split('')).map(function (character) {
-				if (character === ':') {
-					return "\\" + (':'.charCodeAt(0).toString(16).toUpperCase()) + " ";
-				} else if (/[ !"#$%&'()*+,.\/;<=>?@\[\\\]^`{|}~]/.test(character)) {
-					return "\\" + character;
-				} else {
-					return escape(character).replace(/\%/g, '\\');
-				}
-			});
-			return characters.join('');
-		};
-
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.quoteAttribute = function (item) {
-			let characters, quotesNeeded;
-			quotesNeeded = false;
-			characters = (item.split('')).map(function (character) {
-				if (character === ':') {
-					quotesNeeded = true;
-					return character;
-				} else if (character === "'") {
-					quotesNeeded = true;
-					return "\\" + character;
-				} else {
-					quotesNeeded = quotesNeeded || (escape(character === !character));
-					return character;
-				}
-			});
-			if (quotesNeeded) {
-				return "'" + (characters.join('')) + "'";
-			}
 			return characters.join('');
 		};
 
 		//////////////////////////////////////////////////////////////////////
 		CssSelectorGenerator.prototype.getIdSelector = function (element) {
-			let id, id_blacklist, prefix, sanitized_id;
-			prefix = this.options.prefix_tag ? this.getTagSelector(element) : '';
+			let id, sanitized_id;
 			id = element.getAttribute('id');
-			id_blacklist = this.options.id_blacklist.concat(['', /\s/, /^\d/]);
-			if (id && (id != null) && (id !== '') && this.notInList(id, id_blacklist)) {
-				sanitized_id = prefix + ("#" + (this.sanitizeItem(id)));
+			if ((id != null) && (id !== '') && !(/\s/.exec(id)) && !(/^\d/.exec(id))) {
+				sanitized_id = "#" + (this.sanitizeItem(id));
 				if (element.ownerDocument.querySelectorAll(sanitized_id).length === 1) {
 					return sanitized_id;
 				}
@@ -147,31 +104,24 @@
 		};
 
 		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.notInList = function (item, list) {
-			return !list.find(function (x) {
-				if (typeof x === 'string') {
-					return x === item;
-				}
-				return x.exec(item);
-			});
-		};
-
-		//////////////////////////////////////////////////////////////////////
 		CssSelectorGenerator.prototype.getClassSelectors = function (element) {
-			let class_string, item, k, len, ref, result;
+			let class_string, item, result;
 			result = [];
 			class_string = element.getAttribute('class');
 			if (class_string != null) {
 				class_string = class_string.replace(/\s+/g, ' ');
 				class_string = class_string.replace(/^\s|\s$/g, '');
 				if (class_string !== '') {
-					ref = class_string.split(/\s+/);
-					for (k = 0, len = ref.length; k < len; k++) {
-						item = ref[k];
-						if (this.notInList(item, this.options.class_blacklist)) {
-							result.push("." + (this.sanitizeItem(item)));
+					result = (function () {
+						let _i, _len, _ref, _results;
+						_ref = class_string.split(/\s+/);
+						_results = [];
+						for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+							item = _ref[_i];
+							_results.push("." + (this.sanitizeItem(item)));
 						}
-					}
+						return _results;
+					}).call(this);
 				}
 			}
 			return result;
@@ -179,21 +129,14 @@
 
 		//////////////////////////////////////////////////////////////////////
 		CssSelectorGenerator.prototype.getAttributeSelectors = function (element) {
-			let a, attr, blacklist, k, l, len, len1, ref, ref1, ref2, result, whitelist;
+			let attribute, blacklist, _i, _len, _ref, _ref1, result;
 			result = [];
-			whitelist = this.options.attribute_whitelist;
-			for (k = 0, len = whitelist.length; k < len; k++) {
-				attr = whitelist[k];
-				if (element.hasAttribute(attr)) {
-					result.push("[" + attr + "=" + (this.sanitizeAttribute(element.getAttribute(attr))) + "]");
-				}
-			}
-			blacklist = this.options.attribute_blacklist.concat(['id', 'class']);
-			ref = element.attributes;
-			for (l = 0, len1 = ref.length; l < len1; l++) {
-				a = ref[l];
-				if (!((ref1 = a.nodeName, __indexOf.call(blacklist, ref1) >= 0) || (ref2 = a.nodeName, __indexOf.call(whitelist, ref2) >= 0))) {
-					result.push("[" + a.nodeName + "=" + (this.sanitizeAttribute(a.nodeValue)) + "]");
+			blacklist = ['id', 'class'];
+			_ref = element.attributes;
+			for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+				attribute = _ref[_i];
+				if (_ref1 = attribute.nodeName, __indexOf.call(blacklist, _ref1) < 0) {
+					result.push("[" + attribute.nodeName + "=" + attribute.nodeValue + "]");
 				}
 			}
 			return result;
@@ -201,18 +144,17 @@
 
 		//////////////////////////////////////////////////////////////////////
 		CssSelectorGenerator.prototype.getNthChildSelector = function (element) {
-			let counter, k, len, parent_element, prefix, sibling, siblings;
+			let counter, _i, _len, parent_element, sibling, siblings;
 			parent_element = element.parentNode;
-			prefix = this.options.prefix_tag ? this.getTagSelector(element) : '';
 			if (parent_element != null) {
 				counter = 0;
 				siblings = parent_element.childNodes;
-				for (k = 0, len = siblings.length; k < len; k++) {
-					sibling = siblings[k];
+				for (_i = 0, _len = siblings.length; _i < _len; _i++) {
+					sibling = siblings[_i];
 					if (this.isElement(sibling)) {
 						counter++;
 						if (sibling === element) {
-							return prefix + (":nth-child(" + counter + ")");
+							return ":nth-child(" + counter + ")";
 						}
 					}
 				}
@@ -243,42 +185,23 @@
 
 		//////////////////////////////////////////////////////////////////////
 		CssSelectorGenerator.prototype.testCombinations = function (element, items, tag) {
-			let item, k, l, len, len1, len2, len3, m, n, ref, ref1, ref2, ref3;
-			if (tag == null) {
-				tag = this.getTagSelector(element);
-			}
-			if (!this.options.prefix_tag) {
-				ref = this.getCombinations(items);
-				for (k = 0, len = ref.length; k < len; k++) {
-					item = ref[k];
-					if (this.testSelector(element, item)) {
-						return item;
-					}
+			let item, _i, _j, _len, _len1, _ref, _ref1;
+			_ref = this.getCombinations(items);
+			for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+				item = _ref[_i];
+				if (this.testUniqueness(element, item)) {
+					return item;
 				}
-				ref1 = this.getCombinations(items);
-				for (l = 0, len1 = ref1.length; l < len1; l++) {
-					item = ref1[l];
+			}
+			if (tag != null) {
+				_ref1 = items.map(function (item) {
+					return tag + item;
+				});
+				for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+					item = _ref1[_j];
 					if (this.testUniqueness(element, item)) {
 						return item;
 					}
-				}
-			}
-			ref2 = this.getCombinations(items).map(function (item) {
-				return tag + item;
-			});
-			for (m = 0, len2 = ref2.length; m < len2; m++) {
-				item = ref2[m];
-				if (this.testSelector(element, item)) {
-					return item;
-				}
-			}
-			ref3 = this.getCombinations(items).map(function (item) {
-				return tag + item;
-			});
-			for (n = 0, len3 = ref3.length; n < len3; n++) {
-				item = ref3[n];
-				if (this.testUniqueness(element, item)) {
-					return item;
 				}
 			}
 			return null;
@@ -286,11 +209,11 @@
 
 		//////////////////////////////////////////////////////////////////////
 		CssSelectorGenerator.prototype.getUniqueSelector = function (element) {
-			let k, len, ref, selector, selector_type, selectors, tag_selector;
+			let selector, tag_selector, _i, _len, _ref, selector_type, selectors;
 			tag_selector = this.getTagSelector(element);
-			ref = this.options.selectors;
-			for (k = 0, len = ref.length; k < len; k++) {
-				selector_type = ref[k];
+			_ref = this.options.selectors;
+			for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+				selector_type = _ref[_i];
 				switch (selector_type) {
 					case 'id':
 						selector = this.getIdSelector(element);
@@ -324,11 +247,11 @@
 
 		//////////////////////////////////////////////////////////////////////
 		CssSelectorGenerator.prototype.getSelector = function (element) {
-			let item, k, len, parents, result, selector, selectors;
+			let item, parents, result, selector, selectors, _i, _len;
 			selectors = [];
 			parents = this.getParents(element);
-			for (k = 0, len = parents.length; k < len; k++) {
-				item = parents[k];
+			for (_i = 0, _len = parents.length; _i < _len; _i++) {
+				item = parents[_i];
 				selector = this.getUniqueSelector(item);
 				if (selector != null) {
 					selectors.unshift(selector);
@@ -343,13 +266,13 @@
 
 		//////////////////////////////////////////////////////////////////////
 		CssSelectorGenerator.prototype.getCombinations = function (items) {
-			let i, j, k, l, ref, ref1, result;
+			let i, j, _i, _j, _ref, _ref1, result;
 			if (items == null) {
 				items = [];
 			}
 			result = [[]];
-			for (i = k = 0, ref = items.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
-				for (j = l = 0, ref1 = result.length - 1; 0 <= ref1 ? l <= ref1 : l >= ref1; j = 0 <= ref1 ? ++l : --l) {
+			for (i = _i = 0, _ref = items.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+				for (j = _j = 0, _ref1 = result.length - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; j = 0 <= _ref1 ? ++_j : --_j) {
 					result.push(result[j].concat(items[i]));
 				}
 			}
@@ -367,6 +290,11 @@
 
 	})();
 
-	this.CssSelectorGenerator = CssSelectorGenerator;
+	if (typeof define !== "undefined" && define !== null ? define.amd : void 0) {
+		define([], function () { return CssSelectorGenerator; });
+	} else {
+		root = typeof exports !== "undefined" && exports !== null ? exports : this;
+		root.CssSelectorGenerator = CssSelectorGenerator;
+	}
 
 }).call(this);
