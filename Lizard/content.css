@@ -1,456 +1,456 @@
 @namespace url("http://www.w3.org/1999/xhtml");
 
 .lizardWebExtElement {
-  position: static !important;
-  visibility: visible !important;
-  display: block !important;
-  float: none !important;
-  clear: none !important;
-  z-index: 2147483640 !important;   /* max is 2147483647, so i have 7 more z-indexes to maneuver */
-  padding: 0px !important;
-  margin: 0px !important;
-  border: none !important;
-  border-radius: 0 !important;
-  box-sizing: content-box !important;
-  right: auto !important;
-  bottom: auto !important;
-  max-width: none !important;
-  max-height: none !important;
-  min-width: 0px !important;
-  min-height: 0px !important;
-  background: transparent !important;
-  opacity: 1 !important;
-  clip: auto !important;
-  cursor: auto !important;
-  outline: none !important;
-  text-indent: 0px !important;
-  direction: ltr !important;
-  text-align: left !important;
-  line-height: normal !important;
-  user-select: none !important;
-  -moz-user-select: none !important;
-  -moz-user-input: auto !important;
-  -moz-binding: none !important;
-  -moz-user-focus: none !important;
+	position: static !important;
+	visibility: visible !important;
+	display: block !important;
+	float: none !important;
+	clear: none !important;
+	z-index: 2147483640 !important;   /* max is 2147483647, so i have 7 more z-indexes to maneuver */
+	padding: 0px !important;
+	margin: 0px !important;
+	border: none !important;
+	border-radius: 0 !important;
+	box-sizing: content-box !important;
+	right: auto !important;
+	bottom: auto !important;
+	max-width: none !important;
+	max-height: none !important;
+	min-width: 0px !important;
+	min-height: 0px !important;
+	background: transparent !important;
+	opacity: 1 !important;
+	clip: auto !important;
+	cursor: auto !important;
+	outline: none !important;
+	text-indent: 0px !important;
+	direction: ltr !important;
+	text-align: left !important;
+	line-height: normal !important;
+	user-select: none !important;
+	-moz-user-select: none !important;
+	-moz-user-input: auto !important;
+	-moz-binding: none !important;
+	-moz-user-focus: none !important;
 }
 
 
 /** Box **/
 
 #lizardBoxContainer {
-  position: fixed !important;
-  z-index: 2147483641 !important;
-  width: auto !important;
-  height: auto !important;
-  -moz-user-input: none !important;
+	position: fixed !important;
+	z-index: 2147483641 !important;
+	width: auto !important;
+	height: auto !important;
+	-moz-user-input: none !important;
 }
 
 #lizardBoxBorder {
-  box-sizing: border-box !important;
-  position: static !important;
-  display: block !important;
-  border: 2px solid red !important;
-  box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.6) !important;
-  -moz-user-input: none !important;
+	box-sizing: border-box !important;
+	position: static !important;
+	display: block !important;
+	border: 2px solid red !important;
+	box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.6) !important;
+	-moz-user-input: none !important;
 }
 
 #lizardBoxLabelTag {
-  position: relative !important;
-  float: left !important;
-  padding: 2px 5px !important;
-  background-color: #FFFFCA !important;
-  border-width: 0 1px 1px 1px !important;
-  border-style: solid !important;
-  border-color: black !important;
-  border-bottom-left-radius: 0.3em !important;
-  border-bottom-right-radius: 0.3em !important;
-  width: auto !important;
-  height: auto !important;
-  -moz-user-input: none !important;
-  font-family: Tahoma, Sans !important;
-  font-size: 11px !important;
-  color: black !important;
-  white-space: pre-wrap !important;
+	position: relative !important;
+	float: left !important;
+	padding: 2px 5px !important;
+	background-color: #FFFFCA !important;
+	border-width: 0 1px 1px 1px !important;
+	border-style: solid !important;
+	border-color: black !important;
+	border-bottom-left-radius: 0.3em !important;
+	border-bottom-right-radius: 0.3em !important;
+	width: auto !important;
+	height: auto !important;
+	-moz-user-input: none !important;
+	font-family: Tahoma, Sans !important;
+	font-size: 11px !important;
+	color: black !important;
+	white-space: pre-wrap !important;
 }
 
 #lizardBoxLabelTag.floater {
-  border-top-width: 1px !important;
-  border-top-left-radius: 0.3em !important;
-  border-top-right-radius: 0.3em !important;
-  margin-left: 2px !important;
+	border-top-width: 1px !important;
+	border-top-left-radius: 0.3em !important;
+	border-top-right-radius: 0.3em !important;
+	margin-left: 2px !important;
 }
 
 #lizardBoxLabelTag>span:first-child {
-  display: inline !important;
-  font-weight: bold !important;
+	display: inline !important;
+	font-weight: bold !important;
 }
 
 
 /** Isolate Element **/
 
 #lizardIsolateBody {
-  all: initial !important;
-  display: table !important;
-  margin: auto !important;
-  padding-top: 20px !important;
+	all: initial !important;
+	display: table !important;
+	margin: auto !important;
+	padding-top: 20px !important;
 }
 
 [lizardIsolatedCentered] {
-  display: table-cell !important;
-  vertical-align: middle !important;
+	display: table-cell !important;
+	vertical-align: middle !important;
 }
 
 
 /** View Source **/
 
 #lizardSourceBox {
-  --border-width: 3px;
-  --border-color: green;
-  position: fixed !important;
-  z-index: 2147483642 !important;
-  display: flex !important;
-  min-height: 135px !important;
-  max-height: 80% !important;
-  min-width: 300px !important;
-  max-width: 80% !important;
-  border: var(--border-width) solid var(--border-color) !important;
-  box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
-  background-color: #FFFFE1 !important;
-  user-select: auto !important;
-  -moz-user-select: auto !important;
+	--border-width: 3px;
+	--border-color: green;
+	position: fixed !important;
+	z-index: 2147483642 !important;
+	display: flex !important;
+	min-height: 135px !important;
+	max-height: 80% !important;
+	min-width: 300px !important;
+	max-width: 80% !important;
+	border: var(--border-width) solid var(--border-color) !important;
+	box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
+	background-color: #FFFFE1 !important;
+	user-select: auto !important;
+	-moz-user-select: auto !important;
 }
 
 #lizardSourceBoxResizer {
-  position: absolute !important;
-  z-index: 2147483643 !important;
-  right: calc(var(--border-width) * -1) !important;
-  bottom: calc(var(--border-width) * -1) !important;
-  width: 10px !important;
-  height: 10px !important;
-  background-image: url("icons/resizer.png") !important;
-  background-size: cover !important;
-  cursor: se-resize !important;
+	position: absolute !important;
+	z-index: 2147483643 !important;
+	right: calc(var(--border-width) * -1) !important;
+	bottom: calc(var(--border-width) * -1) !important;
+	width: 10px !important;
+	height: 10px !important;
+	background-image: url("icons/resizer.png") !important;
+	background-size: cover !important;
+	cursor: se-resize !important;
 }
 
 #lizardSourceBoxLeftBorder {
-  flex: 0 0 23px !important;    /*shorthand: [don't grow] [don't shrink] [size]*/
-  background-color: var(--border-color) !important;
+	flex: 0 0 23px !important;    /*shorthand: [don't grow] [don't shrink] [size]*/
+	background-color: var(--border-color) !important;
 }
 
 #lizardSourceBox.altBorderColor,
 #lizardSourceBoxLeftBorder.altBorderColor {
-  --border-color: purple;
+	--border-color: purple;
 }
 
 #lizardSourceBoxSourceType {
-  position: absolute !important;
-  left: 2px !important;
-  bottom: -14px !important;
-  transform: rotate(270deg) !important;
-  transform-origin: left top 0 !important;
-  color: white !important;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-  font-size: 13px !important;
-  font-weight: normal !important;
+	position: absolute !important;
+	left: 2px !important;
+	bottom: -14px !important;
+	transform: rotate(270deg) !important;
+	transform-origin: left top 0 !important;
+	color: white !important;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+	font-size: 13px !important;
+	font-weight: normal !important;
 }
 
 #lizardSourceBoxPre {
-  margin: 0 0 0 0 !important;
-  padding: 8px 16px !important;
-  flex: 1 1 auto !important;    /*shorthand: [grow] [shrink] [available space]*/
-  overflow: auto !important;
-  word-break: normal !important;
-  word-wrap: normal !important;
-  white-space: pre-wrap !important;
-  font-family: "Courier New", monospace !important;
-  font-size: 12px !important;
-  font-weight: normal !important;
-  color: black !important;
-  user-select: auto !important;
-  -moz-user-select: auto !important;
+	margin: 0 0 0 0 !important;
+	padding: 8px 16px !important;
+	flex: 1 1 auto !important;    /*shorthand: [grow] [shrink] [available space]*/
+	overflow: auto !important;
+	word-break: normal !important;
+	word-wrap: normal !important;
+	white-space: pre-wrap !important;
+	font-family: "Courier New", monospace !important;
+	font-size: 12px !important;
+	font-weight: normal !important;
+	color: black !important;
+	user-select: auto !important;
+	-moz-user-select: auto !important;
 }
 
 #lizardSourceBoxClose,
 #lizardSourceBoxCopy {
-  --button-size: 18px;
-  width: var(--button-size) !important;
-  height: var(--button-size) !important;
-  margin: 0 3px 3px 0 !important;
-  border: 1px solid black !important;
-  background-size: calc(100% - 6px) !important;
-  background-color: #a3a3a3 !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  cursor: pointer !important;
+	--button-size: 18px;
+	width: var(--button-size) !important;
+	height: var(--button-size) !important;
+	margin: 0 3px 3px 0 !important;
+	border: 1px solid black !important;
+	background-size: calc(100% - 6px) !important;
+	background-color: #a3a3a3 !important;
+	background-repeat: no-repeat !important;
+	background-position: center !important;
+	cursor: pointer !important;
 }
 
 #lizardSourceBoxClose {
-  background-image: url("icons/close.png") !important;
+	background-image: url("icons/close.png") !important;
 }
 
 #lizardSourceBoxCopy {
-  background-image: url("icons/copy.png") !important;
+	background-image: url("icons/copy.png") !important;
 }
 
 #lizardSourceBoxClose:hover,
 #lizardSourceBoxCopy:hover {
-  filter: contrast(225%) !important;
+	filter: contrast(225%) !important;
 }
 
 #lizardSourceBoxClose:active:hover,
 #lizardSourceBoxCopy:active:hover {
-  filter: invert(100%) !important;
+	filter: invert(100%) !important;
 }
 
 
 /** Help **/
 
 #lizardHelpBox {
-  position: fixed !important;
-  top: 20px !important;
-  left: 15px !important;
-  width: auto !important;
-  z-index: 2147483643 !important;
-  background-color: #FFFFE1 !important;
-  border: 1px solid black !important;
-  box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
-  padding: 6px 6px !important;
-  font-family: Tahoma, Sans !important;
-  font-size: 11px !important;
-  color: black !important;
-  transition: opacity 0s !important;
-  opacity: 0.5 !important;
+	position: fixed !important;
+	top: 20px !important;
+	left: 15px !important;
+	width: auto !important;
+	z-index: 2147483643 !important;
+	background-color: #FFFFE1 !important;
+	border: 1px solid black !important;
+	box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
+	padding: 6px 6px !important;
+	font-family: Tahoma, Sans !important;
+	font-size: 11px !important;
+	color: black !important;
+	transition: opacity 0s !important;
+	opacity: 0.5 !important;
 }
 
 #lizardHelpBox.fadeout {
-  transition: opacity 2s !important;
-  opacity: 0.5 !important;
+	transition: opacity 2s !important;
+	opacity: 0.5 !important;
 }
 
 #lizardHelpBox:hover,
 #lizardHelpBox.justShowedUp {
-  transition: opacity 0s !important;
-  opacity: 1 !important;
+	transition: opacity 0s !important;
+	opacity: 1 !important;
 }
 
 #lizardHelpBox .helpImg {
-  width: 17px !important;
-  height: 17px !important;
-  background: no-repeat center/100% url("icons/lizard-32.png") !important;
+	width: 17px !important;
+	height: 17px !important;
+	background: no-repeat center/100% url("icons/lizard-32.png") !important;
 }
 
 #lizardHelpBox .helpCap {
-  display: flex !important;
-  width: auto !important;
-  flex-direction: row !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  font-family: inherit !important;
-  font-size: 13px !important;
-  font-weight: bold !important;
-  margin-bottom: 12px !important;
+	display: flex !important;
+	width: auto !important;
+	flex-direction: row !important;
+	justify-content: space-between !important;
+	align-items: center !important;
+	font-family: inherit !important;
+	font-size: 13px !important;
+	font-weight: bold !important;
+	margin-bottom: 12px !important;
 }
 
 #lizardHelpBox .helpRec {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  font-family: inherit !important;
-  margin: 6px !important;
-  width: auto !important;
-  height: 23px !important;
+	display: flex !important;
+	flex-direction: row !important;
+	align-items: center !important;
+	font-family: inherit !important;
+	margin: 6px !important;
+	width: auto !important;
+	height: 23px !important;
 }
 
 /* two by two layout */
 #lizardHelpBox .helpRec.xpMode {
-  flex-wrap: wrap !important;
-  justify-content: space-evenly !important;
-  height: auto !important;
-  padding: 5px 0 2px 0 !important;
-  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.5) !important;
-  border-radius: 0.2em  !important;
-  background-image: url("icons/xpModeBg.png") !important;
+	flex-wrap: wrap !important;
+	justify-content: space-evenly !important;
+	height: auto !important;
+	padding: 5px 0 2px 0 !important;
+	box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.5) !important;
+	border-radius: 0.2em  !important;
+	background-image: url("icons/xpModeBg.png") !important;
 }
 
 #lizardHelpBox .helpRec.xpMode > span {
-  display: flex !important;
-  flex-basis: calc(50% - 20px) !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
+	display: flex !important;
+	flex-basis: calc(50% - 20px) !important;
+	flex-direction: column !important;
+	justify-content: center !important;
+	align-items: center !important;
 }
 
 #lizardHelpBox .mouseButton {
-  width: 21px !important;
-  height: 21px !important;
-  padding: 1px !important;
+	width: 21px !important;
+	height: 21px !important;
+	padding: 1px !important;
 }
 
 #lizardHelpBox .mouseButton .mouseButtonImg {
-  width: 21px !important;
-  height: 21px !important;
-  background: no-repeat center/100% url("icons/leftClick.png") !important;
+	width: 21px !important;
+	height: 21px !important;
+	background: no-repeat center/100% url("icons/leftClick.png") !important;
 }
 
 #lizardHelpBox .mouseButton .mouseButtonImg.flip {
-  transform: scaleX(-1) !important;
+	transform: scaleX(-1) !important;
 }
 
 #lizardHelpBox .helpRec.xpMode.hidden {
-  display: none !important;
+	display: none !important;
 }
 
 #lizardHelpBox .letterKey {
-  letter-spacing: 1px !important;
-  width: 21px !important;
-  height: 21px !important;
-  border: 1px solid black !important;
-  border-radius: 0.3em !important;
-  box-sizing: content-box !important;
-  background-color: dimgray !important;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-  font-size: 12px !important;
-  font-weight: bold !important;
-  color: white !important;
-  text-align: center !important;
-  line-height: 21px !important;
-  margin-right: 7px !important;
+	letter-spacing: 1px !important;
+	width: 21px !important;
+	height: 21px !important;
+	border: 1px solid black !important;
+	border-radius: 0.3em !important;
+	box-sizing: content-box !important;
+	background-color: dimgray !important;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+	font-size: 12px !important;
+	font-weight: bold !important;
+	color: white !important;
+	text-align: center !important;
+	line-height: 21px !important;
+	margin-right: 7px !important;
 }
 
 #lizardHelpBox .helpText {
-  padding-top: 1px !important;
-  white-space: nowrap !important;
-  font-size: 11px !important;
+	padding-top: 1px !important;
+	white-space: nowrap !important;
+	font-size: 11px !important;
 }
 
 #lizardHelpBox .helpColor {
-  display: inline !important;
-  border-radius: 50% !important;
-  box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.6) !important;
-  font-size: 80% !important;
-  margin: 0 3px 0 3px !important;
+	display: inline !important;
+	border-radius: 50% !important;
+	box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.6) !important;
+	font-size: 80% !important;
+	margin: 0 3px 0 3px !important;
 }
 
 #lizardHelpBox .helpFooter {
-  width: auto !important;
+	width: auto !important;
 }
 
 #lizardHelpBox .helpFooterLink {
-  display: inline !important;
-  color: blue !important;
-  text-decoration: underline !important;
-  cursor: pointer !important;
+	display: inline !important;
+	color: blue !important;
+	text-decoration: underline !important;
+	cursor: pointer !important;
 }
 
 /** context menu **/
 
 #lizardContextMenuBox {
-  --menu-base-height: 15px;
-  --menu-vertical-spacing: 4px;
+	--menu-base-height: 15px;
+	--menu-vertical-spacing: 4px;
 
-  position: fixed !important;
-  border: 1px solid #7f7f7f !important;
-  width: auto !important;
-  background-color: #c0c0c0 !important;
-  z-index: 2147483644 !important;
-  font-family: Tahoma, Sans !important;
-  font-size: 11px !important;
-  line-height: var(--menu-base-height) !important;
-  color: black !important;
-  white-space: nowrap !important;
-  box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.75);
+	position: fixed !important;
+	border: 1px solid #7f7f7f !important;
+	width: auto !important;
+	background-color: #c0c0c0 !important;
+	z-index: 2147483644 !important;
+	font-family: Tahoma, Sans !important;
+	font-size: 11px !important;
+	line-height: var(--menu-base-height) !important;
+	color: black !important;
+	white-space: nowrap !important;
+	box-shadow: 5px 5px 5px 0 rgba(0,0,0,0.75);
 }
 
 #lizardContextMenuBox .mnuItem {
-  display: flex !important;
-  justify-content: flex-start !important;
-  box-sizing: content-box !important;
-  padding: var(--menu-vertical-spacing) 9px !important;
-  width: auto !important;
-  height: var(--menu-base-height) !important;
+	display: flex !important;
+	justify-content: flex-start !important;
+	box-sizing: content-box !important;
+	padding: var(--menu-vertical-spacing) 9px !important;
+	width: auto !important;
+	height: var(--menu-base-height) !important;
 }
 
 #lizardContextMenuBox .mnuItem:hover {
-  background-color: #A30000 !important;   /*#fe8a00, orangered*/
-  color: white !important;
+	background-color: #A30000 !important;   /*#fe8a00, orangered*/
+	color: white !important;
 }
 
 #lizardContextMenuBox .mnuTitle {
-  width: 100px !important;
-  height: var(--menu-base-height) !important;
+	width: 100px !important;
+	height: var(--menu-base-height) !important;
 }
 
 #lizardContextMenuBox .mnuTitle:not(.mnuAccessKey) {
-  display: flex !important;
+	display: flex !important;
 }
 
 /* Note: The ::first-letter selector can only be used with block-level elements. */
 #lizardContextMenuBox .mnuAccessKey::first-letter {
-  text-decoration: underline !important;
+	text-decoration: underline !important;
 }
 
 #lizardContextMenuBox .mnuItem.seperator {
-  height: 0 !important;
-  border-top: 1px solid #7f7f7f !important;
-  border-bottom: 1px solid #e0e0e0 !important;
-  margin: var(--menu-vertical-spacing) 0 !important;
-  padding: 0 !important;
+	height: 0 !important;
+	border-top: 1px solid #7f7f7f !important;
+	border-bottom: 1px solid #e0e0e0 !important;
+	margin: var(--menu-vertical-spacing) 0 !important;
+	padding: 0 !important;
 }
 
 /** version notice **/
 
 #lizardVersionNoticeBox {
-  --width-notice-box: 550px;
-  position: fixed !important;
-  top: 50px !important;
-  left: calc((100% - var(--width-notice-box)) / 2);
-  width: var(--width-notice-box) !important;
-  z-index: 2147483645 !important;
-  background-color: #d9f3e7 !important;
-  border: 2px solid #0c7e46 !important;
-  border-radius: 1em  !important;
-  box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
-  padding: 6px 6px !important;
-  font-family: Calibri, Tahoma, Sans !important;
-  color: black !important;
+	--width-notice-box: 550px;
+	position: fixed !important;
+	top: 50px !important;
+	left: calc((100% - var(--width-notice-box)) / 2);
+	width: var(--width-notice-box) !important;
+	z-index: 2147483645 !important;
+	background-color: #d9f3e7 !important;
+	border: 2px solid #0c7e46 !important;
+	border-radius: 1em  !important;
+	box-shadow: 5px 5px 4px 2px rgba(0, 0, 0, 0.6) !important;
+	padding: 6px 6px !important;
+	font-family: Calibri, Tahoma, Sans !important;
+	color: black !important;
 }
 
 #lizardVersionNoticeBox h1 {
-  padding: 6px !important;
-  font-size: 32px !important;
-  font-weight: bold !important;
-  text-align: center !important;
-  color: #0c7e46 !important;
+	padding: 6px !important;
+	font-size: 32px !important;
+	font-weight: bold !important;
+	text-align: center !important;
+	color: #0c7e46 !important;
 }
 
 #lizardVersionNoticeBoxClose {
-  float: right !important;
-  width: 16px !important;
-  height: 18px !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  background-image: url("icons/close.png") !important;
-  cursor: pointer !important;
+	float: right !important;
+	width: 16px !important;
+	height: 18px !important;
+	background-repeat: no-repeat !important;
+	background-position: center !important;
+	background-image: url("icons/close.png") !important;
+	cursor: pointer !important;
 }
 
 #lizardVersionNoticeBox .noticeSep {
-  height: 20px !important;
+	height: 20px !important;
 }
 
 #lizardVersionNoticeBox .noticeText {
-  margin: 0 9px !important;
-  padding: 3px 9px !important;
-  width: auto !important;
-  font-size: 18px !important;
-  white-space: nowrap !important;
+	margin: 0 9px !important;
+	padding: 3px 9px !important;
+	width: auto !important;
+	font-size: 18px !important;
+	white-space: nowrap !important;
 }
 
 #lizardVersionNoticeBox .noticeText * {
-  display: inline !important;
+	display: inline !important;
 }
 
 #lizardVersionNoticeBox .noticeLink {
-  color: blue !important;
-  text-decoration: underline !important;
-  cursor: pointer !important;
+	color: blue !important;
+	text-decoration: underline !important;
+	cursor: pointer !important;
 }
