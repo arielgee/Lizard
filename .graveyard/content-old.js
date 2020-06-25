@@ -65,7 +65,7 @@
 		};
 	};
 
-	let m_lizardState = {
+	let lizardState = {
 		bSessionStarted: false,
 		currentElement: null,
 		lastCursorPosition: {x: -1, y: -1},
@@ -78,15 +78,8 @@
 	};
 
 
-	initialization();
-
 	//////////////////////////////////////////////////////////////////////
-	function initialization() {
-		browser.runtime.onMessage.addListener(onRuntimeMessage);
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	function onRuntimeMessage(request) {
+	browser.runtime.onMessage.addListener((request, sender) => {
 
 		return new Promise((resolve, reject) => {
 
@@ -99,7 +92,7 @@
 
 					case msgs.MSG_TOGGLE_SESSION_STATE:
 						resolve({ message: "toggle" });
-						if (m_lizardState.bSessionStarted) {
+						if (lizardState.bSessionStarted) {
 							stopSession();
 						} else {
 							startSession();
@@ -108,7 +101,7 @@
 						//////////////////////////////////////////////////////////////
 
 					case msgs.MSG_SHUTDOWN_SESSION:
-						if (m_lizardState.bSessionStarted) {
+						if (lizardState.bSessionStarted) {
 							stopSession();
 						}
 						resolve({ message: "shutdown" });
@@ -122,94 +115,17 @@
 				}
 			}
 		});
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	function startSession() {
-
-		if (!document || !document.body) {
-			alert("\tWhoops!\n\n\tSorry, this is not a valid html document with a <body>.\t");
-			return;
-		}
-
-		if (m_lizardState.scrollbarWidth === -1) determineScrollbarWidth();
-
-		document.addEventListener("mousemove", onMouseMove, true);
-		document.addEventListener("mouseleave", onMouseLeave, true);
-		document.addEventListener("scroll", onScroll, false);
-		window.addEventListener("resize", onResize, false);
-		document.addEventListener("pagehide", onPageHide, true);
-		document.addEventListener("visibilitychange", onVisibilityChange, false);
-		document.addEventListener("keydown", onKeyDown, false);
-
-		prefs.getWheelToWiderNarrower().then((checked) => {
-			if(checked) {
-				document.addEventListener("wheel", onWheel, true);
-			}
-		});
-
-		prefs.getExpertMode().then((checked) => {
-			if(checked) {
-				document.addEventListener("click", onClick_XpMode, true);
-				document.addEventListener("contextmenu", onContextMenu, true);
-			} else {
-				document.addEventListener("click", onClick, true);
-			}
-		});
-
-		// select something
-		onMouseMove({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
-
-		prefs.getHelpBoxOnStart().then((checked) => {
-			if (checked) {
-				showHelp();
-			}
-		});
-
-		m_lizardState.bSessionStarted = true;
-		notifyToolbarButtonStatus(m_lizardState.bSessionStarted);
-
-		prefs.getVersionNotice().then((prevVersion) => {
-			if(prevVersion !== "") {
-				prefs.setVersionNotice("");
-				showVersionNotice(prevVersion);
-			}
-		});
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	function stopSession() {
-
-		lockSelection(false);
-		removeSelectionBox();
-		unselectElement();
-		removeInfoBoxes();
-
-		document.removeEventListener("mousemove", onMouseMove, true);
-		document.removeEventListener("mouseleave", onMouseLeave, true);
-		document.removeEventListener("scroll", onScroll, false);
-		window.removeEventListener("resize", onResize, false);
-		document.removeEventListener("pagehide", onPageHide, true);
-		document.removeEventListener("visibilitychange", onVisibilityChange, false);
-		document.removeEventListener("keydown", onKeyDown, false);
-		document.removeEventListener("wheel", onWheel, true);
-		document.removeEventListener("click", onClick, true);
-		document.removeEventListener("click", onClick_XpMode, true);
-		document.removeEventListener("contextmenu", onContextMenu, true);
-
-		m_lizardState.bSessionStarted = false;
-		notifyToolbarButtonStatus(m_lizardState.bSessionStarted);
-	}
+	});
 
 	//////////////////////////////////////////////////////////////////////
 	function onMouseMove(event) {
 
-		if (m_lizardState.bSelectionLocked || m_lizardState.bSelectionSuspended) {
+		if (lizardState.bSelectionLocked || lizardState.bSelectionSuspended) {
 			return;
 		}
 
 		// no narrower action if mouse is moved
-		m_lizardState.strolledElements = [];
+		lizardState.strolledElements = [];
 
 		removeSelectionBox();
 
@@ -222,7 +138,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function onMouseLeave(event) {
 
-		if (m_lizardState.bSelectionLocked) {
+		if (lizardState.bSelectionLocked) {
 			return;
 		}
 
@@ -233,22 +149,27 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function onScroll() {
-		repositionSelectionBox();
+	function onWheel(event) {
+
+		// this listener is added only when pref_wheelToWiderNarrower is checked
+
+		let elm = document.elementFromPoint(event.clientX, event.clientY);
+
+		if (event.deltaY < 0) {
+			wider();
+		} else if (event.deltaY > 0) {
+			narrower();
+		}
+		event.preventDefault();
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function onResize() {
-		repositionSelectionBox();
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	function onPageHide() {
+	function onPageHide(event) {
 		stopSession();
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function onVisibilityChange() {
+	function onVisibilityChange(event) {
 		if(document.hidden) {
 			notifyToolbarButtonStatus(false);
 		} else {
@@ -257,6 +178,30 @@
 			// When switching between 2 Lizard sessions the LAST event must be for the now visible tab so
 			// the toolbar button will reflect the state correctly
 			setTimeout(() => notifyToolbarButtonStatus(true), 450);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function onClick(event) {
+
+		if (lizardState.currentElement && event.shiftKey) {
+			hideElement();
+			event.preventDefault();
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function onClick_XpMode(event) {
+
+		// MOUSE_BUTTON_LEFT = 0
+		if(lizardState.currentElement && event.button === 0 && !lizardState.bContextMenuVisible) {
+
+			if (event.shiftKey) {
+				hideElement();
+			} else {
+				removeElement();
+			}
+			event.preventDefault();
 		}
 	}
 
@@ -305,7 +250,7 @@
 				sibling(false);	// following sibling
 				break;
 			case "l":
-				lockSelection(!m_lizardState.bSelectionLocked);
+				lockSelection(!lizardState.bSelectionLocked);
 				break;
 			case "b":
 				blinkElement();
@@ -326,7 +271,7 @@
 				removeInfoBoxes();
 				break;
 			case "contextmenu":
-				showContextMenu(m_lizardState.currentElement.offsetLeft+1, m_lizardState.currentElement.offsetTop+1, event.type);
+				showContextMenu(lizardState.currentElement.offsetLeft+1, lizardState.currentElement.offsetTop+1, event.type);
 				break;
 			default:
 				//console.log("[lizard]", "Unused key:" + event.key);
@@ -337,47 +282,8 @@
 		}
 
 		if(knownKey === true) {
-			if(m_lizardState.bContextMenuVisible === true) {
+			if(lizardState.bContextMenuVisible === true) {
 				onCloseLizardContextMenu();
-			}
-			event.preventDefault();
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	function onWheel(event) {
-
-		// this listener is added only when pref_wheelToWiderNarrower is checked
-
-		let elm = document.elementFromPoint(event.clientX, event.clientY);
-
-		if (event.deltaY < 0) {
-			wider();
-		} else if (event.deltaY > 0) {
-			narrower();
-		}
-		event.preventDefault();
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	function onClick(event) {
-
-		if (m_lizardState.currentElement && event.shiftKey) {
-			hideElement();
-			event.preventDefault();
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	function onClick_XpMode(event) {
-
-		// MOUSE_BUTTON_LEFT = 0
-		if(m_lizardState.currentElement && event.button === 0 && !m_lizardState.bContextMenuVisible) {
-
-			if (event.shiftKey) {
-				hideElement();
-			} else {
-				removeElement();
 			}
 			event.preventDefault();
 		}
@@ -400,28 +306,115 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	function onScroll(event) {
+		repositionSelectionBox();
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function onResize(event) {
+		repositionSelectionBox();
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function startSession() {
+
+		if (!document || !document.body) {
+			alert("\tWhoops!\n\n\tSorry, this is not a valid html document with a <body>.\t");
+			return;
+		}
+
+		if (lizardState.scrollbarWidth === -1) determineScrollbarWidth();
+
+		document.addEventListener("mousemove", onMouseMove, true);
+		document.addEventListener("mouseleave", onMouseLeave, true);
+		document.addEventListener("scroll", onScroll, false);
+		window.addEventListener("resize", onResize, false);
+		document.addEventListener("pagehide", onPageHide, true);
+		document.addEventListener("visibilitychange", onVisibilityChange, false);
+		document.addEventListener("keydown", onKeyDown, false);
+
+		prefs.getWheelToWiderNarrower().then((checked) => {
+			if(checked) {
+				document.addEventListener("wheel", onWheel, true);
+			}
+		});
+
+		prefs.getExpertMode().then((checked) => {
+			if(checked) {
+				document.addEventListener("click", onClick_XpMode, true);
+				document.addEventListener("contextmenu", onContextMenu, true);
+			} else {
+				document.addEventListener("click", onClick, true);
+			}
+		});
+
+		// select something
+		onMouseMove({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 });
+
+		prefs.getHelpBoxOnStart().then((checked) => {
+			if (checked) {
+				showHelp();
+			}
+		});
+
+		lizardState.bSessionStarted = true;
+		notifyToolbarButtonStatus(lizardState.bSessionStarted);
+
+		prefs.getVersionNotice().then((prevVersion) => {
+			if(prevVersion !== "") {
+				prefs.setVersionNotice("");
+				showVersionNotice(prevVersion);
+			}
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function stopSession() {
+
+		lockSelection(false);
+		removeSelectionBox();
+		unselectElement();
+		removeInfoBoxes();
+
+		document.removeEventListener("mousemove", onMouseMove, true);
+		document.removeEventListener("mouseleave", onMouseLeave, true);
+		document.removeEventListener("scroll", onScroll, false);
+		window.removeEventListener("resize", onResize, false);
+		document.removeEventListener("pagehide", onPageHide, true);
+		document.removeEventListener("visibilitychange", onVisibilityChange, false);
+		document.removeEventListener("keydown", onKeyDown, false);
+		document.removeEventListener("wheel", onWheel, true);
+		document.removeEventListener("click", onClick, true);
+		document.removeEventListener("click", onClick_XpMode, true);
+		document.removeEventListener("contextmenu", onContextMenu, true);
+
+		lizardState.bSessionStarted = false;
+		notifyToolbarButtonStatus(lizardState.bSessionStarted);
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	function selectElement(elm, clientX, clientY) {
 
 		if (elm && !(elm.classList.contains(CLS_LIZARD_ELEMENT))) {
-			m_lizardState.currentElement = elm;
+			lizardState.currentElement = elm;
 
 			if(clientX !== undefined && clientY !== undefined) {
-				m_lizardState.lastCursorPosition.x = clientX;
-				m_lizardState.lastCursorPosition.y = clientY;
+				lizardState.lastCursorPosition.x = clientX;
+				lizardState.lastCursorPosition.y = clientY;
 			}
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	function unselectElement() {
-		m_lizardState.currentElement = null;
-		m_lizardState.lastCursorPosition.x = m_lizardState.lastCursorPosition.y = -1;
+		lizardState.currentElement = null;
+		lizardState.lastCursorPosition.x = lizardState.lastCursorPosition.y = -1;
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	function createSelectionBox() {
 
-		if (!m_lizardState.currentElement) {
+		if (!lizardState.currentElement) {
 			return;
 		}
 
@@ -459,7 +452,7 @@
 		const innerWidth = window.innerWidth - getVScrollWidth();
 		const innerHeight = window.innerHeight - getHScrollWidth();
 
-		const vpRect = getElementViewportRect(m_lizardState.currentElement, innerWidth, innerHeight);
+		const vpRect = getElementViewportRect(lizardState.currentElement, innerWidth, innerHeight);
 
 		box.style.left = vpRect.left + "px";
 		box.style.top = vpRect.top + "px";
@@ -475,7 +468,7 @@
 			"\n----------------");*/
 
 		// label content
-		boxLabelTag.innerHTML = getLabelContent(m_lizardState.currentElement);
+		boxLabelTag.innerHTML = getLabelContent(lizardState.currentElement);
 
 		// label position
 		let rect = boxLabelTag.getBoundingClientRect();
@@ -551,7 +544,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function hideElement() {
 
-		let elm = m_lizardState.currentElement;
+		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
 			displayNotification("Hide: No element is selected.");
@@ -563,7 +556,7 @@
 			return;
 		}
 
-		let cursorPos = Object.assign({}, m_lizardState.lastCursorPosition);
+		let cursorPos = Object.assign({}, lizardState.lastCursorPosition);
 
 		removeSelectionBox();
 		unselectElement();
@@ -574,7 +567,7 @@
 		ua.data["element"] = elm;
 		ua.data["prev_visibility"] = elm.style.visibility;
 
-		m_lizardState.undoActions.push(ua);
+		lizardState.undoActions.push(ua);
 
 		elm.style.visibility = "hidden";
 
@@ -584,7 +577,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function removeElement() {
 
-		let elm = m_lizardState.currentElement;
+		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
 			displayNotification("Remove: No element is selected.");
@@ -596,7 +589,7 @@
 			return;
 		}
 
-		let cursorPos = Object.assign({}, m_lizardState.lastCursorPosition);
+		let cursorPos = Object.assign({}, lizardState.lastCursorPosition);
 
 		removeSelectionBox();
 		unselectElement();
@@ -609,7 +602,7 @@
 		ua.data["prev_parentNode"] = elm.parentNode;
 		ua.data["prev_nextSibling"] = elm.nextSibling;
 
-		m_lizardState.undoActions.push(ua);
+		lizardState.undoActions.push(ua);
 
 		elm.parentNode.removeChild(elm);
 
@@ -619,7 +612,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function deWidthify() {
 
-		let elm = m_lizardState.currentElement;
+		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
 			displayNotification("DeWidthify: No element is selected.");
@@ -632,7 +625,7 @@
 
 		_deWidthify(elm, ua.data.dewidthifiedItems);
 
-		m_lizardState.undoActions.push(ua);
+		lizardState.undoActions.push(ua);
 
 		repositionSelectionBox();
 	}
@@ -662,7 +655,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function isolateElement() {
 
-		let elm = m_lizardState.currentElement;
+		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
 			displayNotification("Isolate: No valid element is selected.");
@@ -691,7 +684,7 @@
 		ua.data["prev_scrollTop"] = document.documentElement.scrollTop;
 		ua.data["prev_scrollLeft"] = document.documentElement.scrollLeft;
 
-		m_lizardState.undoActions.push(ua);
+		lizardState.undoActions.push(ua);
 
 		let cloning = cloneIsolatedElement(elm);
 
@@ -755,7 +748,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function colorElement(foreground, background, colorizeChildren, saturateAmount, invertAmount) {
 
-		let elm = m_lizardState.currentElement;
+		let elm = lizardState.currentElement;
 
 		if (!elm || elm === null) {
 			displayNotification("Colorize/Decolorize: No element is selected.");
@@ -768,7 +761,7 @@
 
 		_colorElement(elm, foreground, background, ua.data.coloureditems, colorizeChildren, saturateAmount, invertAmount);
 
-		m_lizardState.undoActions.push(ua);
+		lizardState.undoActions.push(ua);
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -809,13 +802,13 @@
 	function undoLastAction() {
 
 		// nothing to undo
-		if (0 === m_lizardState.undoActions.length) {
+		if (0 === lizardState.undoActions.length) {
 			displayNotification("Undo stack is empty.");
 			return;
 		}
 
 		// pop the last undo action
-		let ua = m_lizardState.undoActions.pop();
+		let ua = lizardState.undoActions.pop();
 
 		switch (ua.type) {
 			case UNDO_ACTION_HIDE:
@@ -873,11 +866,11 @@
 	//////////////////////////////////////////////////////////////////////
 	function wider() {
 
-		let elm = m_lizardState.currentElement;
+		let elm = lizardState.currentElement;
 
 		if (elm && elm.parentElement) {
 
-			m_lizardState.strolledElements.push(elm);
+			lizardState.strolledElements.push(elm);
 
 			removeSelectionBox();
 			unselectElement();
@@ -891,10 +884,10 @@
 
 		let elm;
 
-		if (m_lizardState.strolledElements.length > 0) {
-			elm = m_lizardState.strolledElements.pop();
-		} else if (m_lizardState.currentElement) {
-			elm = m_lizardState.currentElement.firstElementChild;
+		if (lizardState.strolledElements.length > 0) {
+			elm = lizardState.strolledElements.pop();
+		} else if (lizardState.currentElement) {
+			elm = lizardState.currentElement.firstElementChild;
 		}
 
 		if (elm) {
@@ -908,7 +901,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function sibling(bDirection) {
 
-		let elm = m_lizardState.currentElement;
+		let elm = lizardState.currentElement;
 
 		let sibling = bDirection ? elm.previousElementSibling : elm.nextElementSibling;
 
@@ -935,13 +928,13 @@
 
 	//////////////////////////////////////////////////////////////////////
 	function lockSelection(bLock) {
-		m_lizardState.bSelectionLocked = bLock;
+		lizardState.bSelectionLocked = bLock;
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	function blinkElement() {
 
-		let elm = m_lizardState.currentElement;
+		let elm = lizardState.currentElement;
 
 		if (elm) {
 			// blink only none hidden elements
@@ -968,7 +961,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function viewSource() {
 
-		let elm = m_lizardState.currentElement;
+		let elm = lizardState.currentElement;
 
 		if (!elm) {
 			displayNotification("view Source: No element is selected.");
@@ -1104,7 +1097,7 @@
 
 		sourceBoxPre.textContent = source;
 
-		let point = getSourceBoxPosition(sourceBox, m_lizardState.currentElement.getBoundingClientRect());
+		let point = getSourceBoxPosition(sourceBox, lizardState.currentElement.getBoundingClientRect());
 
 		sourceBox.style.left = point.left + "px";
 		sourceBox.style.top = point.top + "px";
@@ -1115,7 +1108,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function cssSelector() {
 
-		let elm = m_lizardState.currentElement;
+		let elm = lizardState.currentElement;
 
 		if (elm) {
 			let selector = (new CssSelectorGenerator()).getSelector(elm);
@@ -1174,14 +1167,14 @@
 
 	//////////////////////////////////////////////////////////////////////
 	function onMouseDown_startSourceBoxResize(event) {
-		m_lizardState.bSelectionSuspended = true;
+		lizardState.bSelectionSuspended = true;
 		window.addEventListener("mouseup", onMouseUp_stopSourceBoxResize, false);
 		window.addEventListener("mousemove", onMouseMove_resizeSourceBox, false);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	function onMouseUp_stopSourceBoxResize(e) {
-		m_lizardState.bSelectionSuspended = false;
+		lizardState.bSelectionSuspended = false;
 		window.removeEventListener("mousemove", onMouseMove_resizeSourceBox, false);
 		window.removeEventListener("mouseup", onMouseUp_stopSourceBoxResize, false);
 	}
@@ -1346,7 +1339,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function showContextMenu(clientX, clientY, eventType) {
 
-		if (!m_lizardState.currentElement) {
+		if (!lizardState.currentElement) {
 			return;
 		}
 
@@ -1405,7 +1398,7 @@
 
 		} else if(eventType === "keydown") {
 
-			let vpRect = getElementViewportRect(m_lizardState.currentElement, INNER_WIDTH, INNER_HEIGHT);
+			let vpRect = getElementViewportRect(lizardState.currentElement, INNER_WIDTH, INNER_HEIGHT);
 			clientX = vpRect.left + 1;
 			clientY = vpRect.top + 1;
 		}
@@ -1415,7 +1408,7 @@
 
 		lockSelection(true);
 
-		setTimeout(() => m_lizardState.bContextMenuVisible = true, 400);
+		setTimeout(() => lizardState.bContextMenuVisible = true, 400);
 
 		document.addEventListener("wheel", onWheel_preventScroll, true);
 		document.addEventListener("keydown", onKeyDown_preventScroll, true);
@@ -1479,7 +1472,7 @@
 			lockSelection(false);
 		}
 
-		setTimeout(() => m_lizardState.bContextMenuVisible = false, 400);
+		setTimeout(() => lizardState.bContextMenuVisible = false, 400);
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -1577,7 +1570,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function determineScrollbarWidth() {
 
-		m_lizardState.scrollbarWidth = DEF_SCROLL_BAR_WIDTH;
+		lizardState.scrollbarWidth = DEF_SCROLL_BAR_WIDTH;
 
 		let inner = document.createElement("p");
 		inner.style.width = "100%";
@@ -1601,27 +1594,27 @@
 
 		document.body.removeChild(outer);
 
-		m_lizardState.scrollbarWidth = w1 - w2;
+		lizardState.scrollbarWidth = w1 - w2;
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	function getHScrollWidth() {
-		return (document.body.scrollWidth > (window.innerWidth - getVScrollWidthHScrollIgnored()) ? m_lizardState.scrollbarWidth : 0);
+		return (document.body.scrollWidth > (window.innerWidth - getVScrollWidthHScrollIgnored()) ? lizardState.scrollbarWidth : 0);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	function getVScrollWidth() {
-		return (document.body.scrollHeight > (window.innerHeight - getHScrollWidthVScrollIgnored()) ? m_lizardState.scrollbarWidth : 0);
+		return (document.body.scrollHeight > (window.innerHeight - getHScrollWidthVScrollIgnored()) ? lizardState.scrollbarWidth : 0);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	function getHScrollWidthVScrollIgnored() {
-		return (document.body.scrollWidth > window.innerWidth ? m_lizardState.scrollbarWidth : 0);
+		return (document.body.scrollWidth > window.innerWidth ? lizardState.scrollbarWidth : 0);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	function getVScrollWidthHScrollIgnored() {
-		return (document.body.scrollHeight > window.innerHeight ? m_lizardState.scrollbarWidth : 0);
+		return (document.body.scrollHeight > window.innerHeight ? lizardState.scrollbarWidth : 0);
 	}
 
 	//////////////////////////////////////////////////////////////////////

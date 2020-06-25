@@ -12,6 +12,7 @@
 
 ## To-Do
 --------------
+* staring session in tab then browsing to anther address and a new session will not start
 * the view-CSS-selector is not acting like the view-source. Shows only in-page and not affected by new-window or new-tab
 * handle return Promise from prefs functions
 * remove the showVersionNotice ???
