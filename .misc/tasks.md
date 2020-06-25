@@ -12,6 +12,7 @@
 
 ## To-Do
 --------------
+* the view-CSS-selector is not acting like the view-source. Shows only in-page and not affected by new-window or new-tab
 * handle return Promise from prefs functions
 * remove the showVersionNotice ???
 * duplicate 'manage Extension' / 'Open Option page' in left mouse browserAction button

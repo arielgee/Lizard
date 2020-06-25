@@ -10,10 +10,10 @@
 	let elmScrollDown;
 	let scrollerTimeoutId = -1;
 
-	initilization();
+	initialization();
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function initilization() {
+	function initialization() {
 		document.addEventListener("DOMContentLoaded", onDOMContentLoaded);
 		window.addEventListener("beforeunload", onBeforeUnload);
 	}
