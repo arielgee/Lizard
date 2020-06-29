@@ -175,7 +175,22 @@
 			return;
 		}
 
-		browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }).catch(() => {
+		browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }).then((response) => {
+
+			// In the situation where the scripts were injected but the user lateron browsed to a
+			// different page using the same tab, there are *some* cases that the sendMessage() Promise
+			// will not reject (fail) but instead will resolve with an undefined response.
+
+			// Assumption: the runtime onMessage Listener is still registered in the tab but the
+			// handler function no longer exists in the content so Promise is resolved with "undefined".
+
+			// Throwing an error here will execute the sendMessage()'s reject() function and the
+			// injectLizardScripts() function will be executed for the new page.
+			if(response === undefined) throw new Error("Receiving end is not responding.");
+
+		}).catch((error) => {
+
+			//console.log("[Lizard]", error);
 
 			// This is UGLY but it works. if the user double clicks (2 very fast clicks) on the lizard button (or the keyboard command) the
 			// injectLizardScripts() is called twice and an error is raised due to the redeclaration and onErrorToggleSessionState() is called.

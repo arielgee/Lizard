@@ -83,6 +83,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function initialization() {
 		browser.runtime.onMessage.addListener(onRuntimeMessage);
+		window.addEventListener("unload", onUnload);
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -138,7 +139,7 @@
 		document.addEventListener("mouseleave", onMouseLeave, true);
 		document.addEventListener("scroll", onScroll, false);
 		window.addEventListener("resize", onResize, false);
-		document.addEventListener("pagehide", onPageHide, true);
+		window.addEventListener("pagehide", onPageHide, true);
 		document.addEventListener("visibilitychange", onVisibilityChange, false);
 		document.addEventListener("keydown", onKeyDown, false);
 
@@ -189,7 +190,7 @@
 		document.removeEventListener("mouseleave", onMouseLeave, true);
 		document.removeEventListener("scroll", onScroll, false);
 		window.removeEventListener("resize", onResize, false);
-		document.removeEventListener("pagehide", onPageHide, true);
+		window.removeEventListener("pagehide", onPageHide, true);
 		document.removeEventListener("visibilitychange", onVisibilityChange, false);
 		document.removeEventListener("keydown", onKeyDown, false);
 		document.removeEventListener("wheel", onWheel, true);
@@ -199,6 +200,15 @@
 
 		m_lizardState.bSessionStarted = false;
 		notifyToolbarButtonStatus(m_lizardState.bSessionStarted);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function onUnload() {
+		if (m_lizardState.bSessionStarted) {
+			stopSession();
+		}
+		browser.runtime.onMessage.removeListener(onRuntimeMessage);
+		window.removeEventListener("unload", onUnload);
 	}
 
 	//////////////////////////////////////////////////////////////////////
