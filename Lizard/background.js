@@ -160,10 +160,14 @@
 			contexts: ["browser_action"],
 		});
 
-		browser.menus.create({
-			id: "mnu-open-options-page",
-			title: "Open Options Page",
-			contexts: ["browser_action"],
+		lzUtil.getBrowserVersion().then((version) => {
+			if(parseInt(version) < 62) {
+				browser.menus.create({
+					id: "mnu-open-options-page",
+					title: "Open Options Page",
+					contexts: ["browser_action"],
+				});
+			}
 		});
 	}
 

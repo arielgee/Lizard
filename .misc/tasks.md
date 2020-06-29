@@ -10,6 +10,7 @@
 * preferences dark mode
 * lizard box not visible in https://docs.tibco.com/...      => FRAMES!!!
 * staring session in tab then browsing to anther address and a new session will not start		=> fixed
+* duplicate 'manage Extension' / 'Open Option page' in left mouse browserAction button		=> 'Open Option page' only if browser version is below v62
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
@@ -20,6 +21,5 @@
 * the view-CSS-selector is not acting like the view-source. Shows only in-page and not affected by new-window or new-tab
 * handle return Promise from prefs functions
 * remove the showVersionNotice ???
-* duplicate 'manage Extension' / 'Open Option page' in left mouse browserAction button
 * Implemented Debouncer to prevent double injectLizardScripts() in sendToggleLizardStateMessage()
 * I Fucked Up: I Forgot about showVersionNotice() in version 1.11 (nothing to do, just a note for next version)
