@@ -11,14 +11,15 @@
 * lizard box not visible in https://docs.tibco.com/...      => FRAMES!!!
 * staring session in tab then browsing to anther address and a new session will not start		=> fixed
 * duplicate 'manage Extension' / 'Open Option page' in left mouse browserAction button		=> 'Open Option page' only if browser version is below v62
+* the view-CSS-selector is not acting like the view-source. Shows only in-page and not affected by new-window or new-tab		=> leave it like that
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
+* min version in manifest is v56. I'm using v59. I created VScroll buttons for view-source in window but it HAS VScroll? will it have them in v56?
 * "remember" the changes!!!
-* the view-CSS-selector is not acting like the view-source. Shows only in-page and not affected by new-window or new-tab
 * handle return Promise from prefs functions
 * remove the showVersionNotice ???
 * Implemented Debouncer to prevent double injectLizardScripts() in sendToggleLizardStateMessage()
