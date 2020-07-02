@@ -34,6 +34,7 @@
 	let m_lizardToggleStateMenuID = -1;
 	let m_lastInjectTime = 0;
 
+	let m_lizardDB;
 
 	initialization();
 
@@ -47,6 +48,34 @@
 		browser.browserAction.onClicked.addListener(onBrowserActionClicked);	// send toggle Lizard state message
 		browser.menus.onClicked.addListener(onMenusClicked);					// menus
 		browser.commands.onCommand.addListener(onCommands);						// keyboard
+
+		browser.tabs.onUpdated.addListener(onTabsUpdated);		// Fx61 => extraParameters; {url:["*://*/*"], properties:["status"]}
+		browser.tabs.onAttached.addListener(onTabsAttached);
+
+
+		m_lizardDB = new LizardDB();
+		m_lizardDB.open().then(async () => {
+			const rules = [
+				[ "www.ynet.co.il/home/0,7340,L-8,00.html", ".ad_anoy" ],
+				[ "www.multisend.co.il/site/login", ".fu.bar.id" ],
+				[ "www.urlencoder.org/", "div[disabled]" ],
+				[ "www.makorrishon.co.il/", "#region" ],
+				[ "www.ynet.co.il/home/0,7340,L-8,00.html", ".ad_anoy" ],
+				[ "www.multisend.co.il/site/login", ".fu.bar.id" ],
+				[ "www.urlencoder.org/", "div[disabled]" ],
+				[ "www.makorrishon.co.il/", "#region" ],
+				[ "file:///c:/Users/arielg/DevWork/WebExtensions/Lizard/.misc/Example.html", ".\\[object"],
+
+				[ "www.ynet.co.il/home/0,7340,L-8,00.html", ".ad_anoy-PLUS" ],
+				[ "www.multisend.co.il/site/login", ".fu.bar.id-PLUS" ],
+				[ "www.urlencoder.org", "div[disabled]-PLUS" ],
+				[ "www.makorrishon.co.il", "#region-PLUS" ],
+			];
+
+			for(let i=0; i<rules.length; i++) {
+				await m_lizardDB.setRule(rules[i][0], rules[i][1], { remove: true, color: {frgd: "#ff0000", bkgd: "#00ffff"} });
+			}
+		});
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -133,6 +162,22 @@
 				//////////////////////////////////////////////////////////////
 
 		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onTabsUpdated(tabId, changeInfo, tab) {
+		// When selecting an open tab that was not loaded (browser just opened) then changeInfo is {status: "complete", url: "https://*"}
+		// but the page is not realy 'complete'. Then the page is loading and when complete then there is not 'url' property. Hence !!!changeInfo.url
+		if (!!changeInfo.status && changeInfo.status === "complete" && !!!changeInfo.url) {
+			handleTabChangedState(tabId, tab.url);
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onTabsAttached(tabId) {
+		browser.tabs.get(tabId).then((tab) => {
+			handleTabChangedState(tabId, tab.url);
+		});
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -317,5 +362,24 @@
 				});
 			});
 		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function handleTabChangedState(tabId, tabUrl) {
+
+		m_lizardDB.getRules(tabUrl.toString()).then((rules) => {
+
+			console.log("[Lizard]", "result", rules);
+
+			for(let i=0, len=rules.length; i<len; i++) {
+
+				let code = "";
+				if(rules[i].remove) {
+					code = rules[i].cssSelector + " {display: none !important;}";
+				}
+
+				browser.tabs.insertCSS(tabId, { runAt: "document_start", code: code });
+			}
+		} );
 	}
 })();

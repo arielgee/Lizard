@@ -13,7 +13,7 @@
 
 	"permissions": [
 		"<all_urls>",
-		"activeTab",
+		"tabs",
 		"menus",
 		"notifications",
 		"clipboardWrite",
@@ -60,6 +60,7 @@
 	"background": {
 		"scripts": [
 			"common.js",
+			"lizardDB/lizardDB.js",
 			"background.js"
 		]
 	},
