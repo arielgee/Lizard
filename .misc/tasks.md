@@ -18,7 +18,8 @@
 
 ## To-Do
 --------------
-* indexedDB in v56
+* indexedDB in v56 => NO
+* work in private browsing ? private browsing in min AND amx version ?
 * min version in manifest is v56. I'm using v59. I created VScroll buttons for view-source in window but it HAS VScroll? will it have them in v56?
 * "remember" the changes!!!
 * handle return Promise from prefs functions

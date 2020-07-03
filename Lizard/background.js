@@ -65,6 +65,7 @@
 				[ "www.urlencoder.org/", "div[disabled]" ],
 				[ "www.makorrishon.co.il/", "#region" ],
 				[ "file:///c:/Users/arielg/DevWork/WebExtensions/Lizard/.misc/Example.html", ".\\[object"],
+				[ "file:///C:/Users/Ariel/DevWork/WebExtentions/Lizard/.misc/Example.html", ".\\[object"],
 
 				[ "www.ynet.co.il/home/0,7340,L-8,00.html", ".ad_anoy-PLUS" ],
 				[ "www.multisend.co.il/site/login", ".fu.bar.id-PLUS" ],

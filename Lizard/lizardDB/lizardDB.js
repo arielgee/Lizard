@@ -2,6 +2,7 @@
 
 class LizardDB {
 	constructor() {
+		this.m_databaseName = "lizardDB";
 		this.m_dbRequest = null;
 		this.m_db = null;
 	}
@@ -13,7 +14,7 @@ class LizardDB {
 
 			this._onDBRequestUpgradeNeeded = this._onDBRequestUpgradeNeeded.bind(this);
 
-			this.m_dbRequest = window.indexedDB.open("lizardDB", 1);
+			this.m_dbRequest = window.indexedDB.open(this.m_databaseName, 1);
 
 			this.m_dbRequest.addEventListener("upgradeneeded", this._onDBRequestUpgradeNeeded);
 
@@ -32,8 +33,13 @@ class LizardDB {
 
 	//////////////////////////////////////////////////////////////////////
 	close() {
-		if(!!!this.m_db) reject(new Error("Database not open"));
+		if(!this.isOpen) reject(new Error("Database not open"));
 		this.m_db.close();
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	get isOpen() {
+		return (!!this.m_db && this.m_db.name === this.m_databaseName)
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -41,7 +47,7 @@ class LizardDB {
 
 		return new Promise((resolve, reject) => {
 
-			if(!!!this.m_db) reject(new Error("Database not open"));
+			if(!this.isOpen) reject(new Error("Database not open"));
 
 			url = url.trim().replace(/^(.*)\/+$/, "$1");
 			cssSelector = cssSelector.trim();
@@ -82,7 +88,7 @@ class LizardDB {
 
 		return new Promise((resolve, reject) => {
 
-			if(!!!this.m_db) reject(new Error("Database not open"));
+			if(!this.isOpen) reject(new Error("Database not open"));
 
 			url = url.trim().replace(/^(.*)\/+$/, "$1");
 			if(!!!url) reject(new Error("Mandatory parameters missing"));
