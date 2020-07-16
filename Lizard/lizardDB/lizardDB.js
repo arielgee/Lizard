@@ -113,7 +113,10 @@ class LizardDB {
 
 	//////////////////////////////////////////////////////////////////////
 	_onDBRequestUpgradeNeeded(event) {
+
 		let db = this.m_dbRequest.result;
+
+		if(!!!db || db.name !== this.m_databaseName) throw new Error("Database not open")
 
 		db.onerror = (event) => console.log("[Lizard]", "upgradeNeeded error", event.target.error.name, event.target.error.message);
 
