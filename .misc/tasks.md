@@ -18,6 +18,7 @@
 
 ## To-Do
 --------------
+* what is the point of the empty object in this: 'Object.assign({},...'
 * indexedDB in v56 => NO
 * work in private browsing ? private browsing in min AND amx version ?
 * min version in manifest is v56. I'm using v59. I created VScroll buttons for view-source in window but it HAS VScroll? will it have them in v56?

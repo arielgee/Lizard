@@ -787,7 +787,7 @@
 		let colorImages = (saturateAmount && ((elm.nodeName === "IMG") || lzUtil.isSVGObject(elm) || lzUtil.hasBackgroundImage(elm)));
 
 		uaItems.push({
-			element:  elm,
+			element: elm,
 			prev_color: elm.style.color,
 			prev_borderColor: elm.style.borderColor,
 			prev_backgroundColor: elm.style.backgroundColor,
