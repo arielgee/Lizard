@@ -12,6 +12,7 @@
 * staring session in tab then browsing to anther address and a new session will not start		=> fixed
 * duplicate 'manage Extension' / 'Open Option page' in left mouse browserAction button		=> 'Open Option page' only if browser version is below v62
 * the view-CSS-selector is not acting like the view-source. Shows only in-page and not affected by new-window or new-tab		=> leave it like that
+* manifest.json; Rename `applications` to `browser_specific_settings` https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
