@@ -21,14 +21,13 @@
 	const PAGE_CONTEXT = ["audio", "editable", "image", "link", "page", "password", "selection", "video"];
 	const TOOLS_MENU_CONTEXT = ["tools_menu"];
 
-	// Ordered by file size. The larger one first.
 	const INJECTABLE = [
-		"SourceBeautifier/SourceBeautifier.js",
-		"content.js",
-		"common.js",
-		"content.css",
-		"CssSelectorGenerator/CssSelectorGenerator.js",
-		"const ALL_LIZARD_SCRIPTS_INJECTED=true;",
+		{ isScript: true,	details: { runAt: "document_start", file: "SourceBeautifier/SourceBeautifier.js" } },
+		{ isScript: true,	details: { runAt: "document_start", file: "CssSelectorGenerator/CssSelectorGenerator.js" } },
+		{ isScript: true,	details: { runAt: "document_start", file: "common.js" } },
+		{ isScript: true,	details: { runAt: "document_start", file: "content.js" } },
+		{ isScript: false,	details: { runAt: "document_start", file: "content.css" } },
+		{ isScript: true,	details: { runAt: "document_start", code: "const ALL_LIZARD_SCRIPTS_INJECTED=true;" } },
 	];
 
 	let m_lizardToggleStateMenuID = -1;
@@ -250,7 +249,7 @@
 
 				m_lastInjectTime = Date.now();
 
-				injectLizardScripts(tab).then(() => {
+				injectLizardScripts(tab.id).then(() => {
 					console.log("[lizard]", "Injection time(millisec):", Date.now()-m_lastInjectTime);
 					browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }).catch(onErrorToggleSessionState);
 				}, onErrorToggleSessionState);
@@ -266,33 +265,25 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function injectLizardScripts(tab) {
+	function injectLizardScripts(tabId) {
 
 		return new Promise((resolve, reject) => {
 
-			// Ordered by file size. The larger one first.
-			let injecting0 = browser.tabs.executeScript(tab.id, { runAt: "document_start", file: INJECTABLE[0]});
-			let injecting1 = browser.tabs.executeScript(tab.id, { runAt: "document_start", file: INJECTABLE[1]});
-			let injecting2 = browser.tabs.executeScript(tab.id, { runAt: "document_start", file: INJECTABLE[2]});
-			let injecting3 = browser.tabs.insertCSS(	tab.id, { runAt: "document_start", file: INJECTABLE[3]});
-			let injecting4 = browser.tabs.executeScript(tab.id, { runAt: "document_start", file: INJECTABLE[4]});
-			let injecting5 = browser.tabs.executeScript(tab.id, { runAt: "document_start", code: INJECTABLE[5]});
+			let injecting = [];
 
-			injecting0.then(() => {
-				injecting1.then(() => {
-					injecting2.then(() => {
-						injecting3.then(() => {
-							injecting4.then(() => {
-								injecting5.then(() => {
+			for(let i=0, len=INJECTABLE.length; i<len; i++) {
+				if(INJECTABLE[i].isScript) {
+					injecting.push(browser.tabs.executeScript(tabId, INJECTABLE[i].details));
+				} else {
+					injecting.push(browser.tabs.insertCSS(tabId, INJECTABLE[i].details));
+				}
+			}
 
-									resolve();
-
-								}, err => reject(new Error("Inject code '" + INJECTABLE[5] + "', " + err.message)) );
-							}, err => reject(new Error("Inject file '" + INJECTABLE[4] + "', " + err.message)) );
-						}, err => reject(new Error("Inject file '" + INJECTABLE[3] + "', " + err.message)) );
-					}, err => reject(new Error("Inject file '" + INJECTABLE[2] + "', " + err.message)) );
-				}, err => reject(new Error("Inject file '" + INJECTABLE[1] + "', " + err.message)) );
-			}, err => reject(new Error("Inject file '" + INJECTABLE[0] + "', " + err.message)) );
+			Promise.all(injecting).then(() => {
+				resolve();
+			}).catch((err) => {
+				reject(new Error("Injecting '" + err.fileName.replace(browser.runtime.getURL(""), "") + "', " + err.message));
+			});
 		});
 	}
 
