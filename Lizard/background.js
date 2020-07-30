@@ -14,8 +14,6 @@
 
 	const WTF_IMAGE_PATH = { 48: "icons/lizard-wtf-48.png" };
 
-	const VIEW_SOURCE_PAGE = "viewSource/viewSource.html";
-
 	const DEF_NOTIFICATION_TIMEOUT = 4300;
 
 	const PAGE_CONTEXT = ["audio", "editable", "image", "link", "page", "password", "selection", "video"];
@@ -334,7 +332,7 @@
 	////////////////////////////////////////////////////////////////////////////////////
 	function openViewSourcePage(type, id, newWindow) {
 
-		let viewSourceURL = browser.extension.getURL(VIEW_SOURCE_PAGE) + "?id=" + id;
+		let viewSourceURL = browser.extension.getURL("viewSource/viewSource.html") + "?id=" + id;
 
 		if (newWindow) {
 			browser.windows.create({
