@@ -19,6 +19,9 @@
 
 ## To-Do
 --------------
+* in common.js replace the two apply filter functions with a single one (_applyFilter())
+* when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
+* remove rule from Db is action was undo
 * externilize the CssSelectorGenerator options?
 * check what webNavigation permission gives
 * use webNavigation in sage-like ?

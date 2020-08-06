@@ -1128,19 +1128,25 @@
 		let elm = m_lizardState.currentElement;
 
 		if (elm) {
-			let selector = (new CssSelectorGenerator()).getSelector(elm);
-			viewSourceInPage("CSS Selector", selector, true);
+			try {
+				let selector = CssSelectorGenerator.getCssSelector(elm);
+				viewSourceInPage("CSS Selector", selector, true);
 
-			// +++ CSS Selector is displayed only in page
-			// prefs.getOpenViewSourceIn().then((value) => {
-			// 	if (value === prefs.VIEW_SOURCE_IN_TYPE.WINDOW) {
-			// 		viewSourceInNewPage("CSS Selector", selector, true);
-			// 	} else if (value === prefs.VIEW_SOURCE_IN_TYPE.TAB) {
-			// 		viewSourceInNewPage("CSS Selector", selector, false);
-			// 	} else if (value === prefs.VIEW_SOURCE_IN_TYPE.PAGE) {
-			// 		viewSourceInPage("CSS Selector", selector, true);
-			// 	}
-			// });
+				// +++ CSS Selector is displayed only in page
+				// prefs.getOpenViewSourceIn().then((value) => {
+				// 	if (value === prefs.VIEW_SOURCE_IN_TYPE.WINDOW) {
+				// 		viewSourceInNewPage("CSS Selector", selector, true);
+				// 	} else if (value === prefs.VIEW_SOURCE_IN_TYPE.TAB) {
+				// 		viewSourceInNewPage("CSS Selector", selector, false);
+				// 	} else if (value === prefs.VIEW_SOURCE_IN_TYPE.PAGE) {
+				// 		viewSourceInPage("CSS Selector", selector, true);
+				// 	}
+				// });
+
+			} catch (error) {
+				console.log("[Lizard]", error);
+			}
+
 		} else {
 			displayNotification("CSS Selector: No element is selected.");
 		}

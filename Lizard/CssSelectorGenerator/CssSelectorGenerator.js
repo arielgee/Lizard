@@ -1,372 +1,596 @@
 "use strict";
 
-/*	CSS Selector Generator, v1.2.0
+/*
+	CSS Selector Generator, v2.1.2
 	by Riki Fridrich <riki@fczbkk.com> (http://fczbkk.com)
 	https://github.com/fczbkk/css-selector-generator/
-	commit ff7bf8f on Nov 13, 2018
+	commit 803a312 on Jul 8, 2020
+
+	Dependencies:
+
+		cartesian, v1.0.0
+		by Alex Indigo <iam@alexindigo.com>
+		https://github.com/alexindigo/cartesian/
+		commit 4de6dd4 on Dec 2, 2015
+
+		xtend, v4.0.2
+		by Jake Verbaten <raynos2@gmail.com>
+		https://github.com/Raynos/xtend/
+		commit 37816c0 on on Jul 8, 2019
 */
 
-(function () {
+let CssSelectorGenerator = (function () {
 
-	let __indexOf = [].indexOf;
+	const DESCENDANT_OPERATOR = " > ";
+	const ESCAPED_COLON = ":".charCodeAt(0).toString(16).toUpperCase();
+	const SPECIAL_CHARACTERS_RE = /[ !"#$%&'()\[\]{|}<>*+,./;=?@^`~\\]/;
 
-	/////////////////////////////////////////////////////////////////////////////////////////////
-	let CssSelectorGenerator = (function () {
+	const SELECTOR_TYPE_GETTERS = {
+		tag: getTagSelector,
+		id: getIdSelector,
+		class: getClassSelectors,
+		attribute: getAttributeSelectors,
+		nthchild: getNthChildSelector,
+		nthoftype: getNthOfTypeSelector,
+	};
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.default_options = {
-			selectors: ['id', 'class', 'tag', 'nthchild'],
-			prefix_tag: false,
-			attribute_blacklist: [],
-			attribute_whitelist: [],
-			quote_attribute_when_needed: false,
-			id_blacklist: [],
-			class_blacklist: []
-		};
+	const DEFAULT_OPTIONS = {
+		selectors: ["id", "class", "tag", "attribute"],
+		// if set to true, always include tag name
+		includeTag: false,
+		whitelist: [],
+		blacklist: [],
+		combineWithinSelector: true,
+		combineBetweenSelectors: true,
+	};
 
-		//////////////////////////////////////////////////////////////////////
-		function CssSelectorGenerator(options) {
-			if (options == null) {
-				options = {};
+	// RegExp that will match invalid patterns that can be used in ID attribute.
+	const INVALID_ID_RE = new RegExp([
+		"^$", // empty or not set
+		"\\s", // contains whitespace
+		"^\\d", // begins with a number
+	].join("|"));
+
+	// RegExp that will match invalid patterns that can be used in class attribute.
+	const INVALID_CLASS_RE = new RegExp([
+		"^$", // empty or not set
+		"^\\d", // begins with a number
+	].join("|"));
+
+	// Order in which a combined selector is constructed.
+	const SELECTOR_PATTERN = [
+		"nthoftype",
+		"tag",
+		"id",
+		"class",
+		"attribute",
+		"nthchild",
+	];
+
+	// List of attributes to be ignored. These are handled by different selector types.
+	const ATTRIBUTE_BLACKLIST = convertMatchListToRegExp([
+		"class",
+		"id",
+		// Angular attributes
+		"ng-*",
+	]);
+
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Generates unique CSS selector for an element.
+	function getCssSelector(element, custom_options = {}) {
+		const options = sanitizeOptions(element, custom_options);
+		const parents = getParents(element, options.root);
+		const result = [];
+
+		// try to find optimized selector
+		for (let i = 0; i < parents.length; i++) {
+			result.unshift(getUniqueSelectorWithinParent(parents[i], options));
+			const selector = result.join(DESCENDANT_OPERATOR);
+			if (testSelector(element, selector, options.root)) {
+				return selector;
 			}
-			this.options = {};
-			this.setOptions(this.default_options);
-			this.setOptions(options);
 		}
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.setOptions = function (options) {
-			let key, results, val;
-			if (options == null) {
-				options = {};
-			}
-			results = [];
-			for (key in options) {
-				val = options[key];
-				if (this.default_options.hasOwnProperty(key)) {
-					results.push(this.options[key] = val);
-				} else {
-					results.push(void 0);
+		// use nth-child selector chain to root as fallback
+		return getFallbackSelector(element, options.root);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Constructs default options with proper root node for given element.
+	function constructDefaultOptions (element) {
+		return Object.assign({}, DEFAULT_OPTIONS, { root: element.ownerDocument.querySelector(":root") });
+	}
+
+	/********************************************************************************/
+	/********************************** selector-id *********************************/
+	/********************************************************************************/
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Get ID selector for an element.
+	function getIdSelector(element) {
+		const id = element.getAttribute("id") || "";
+		const selector = `#${sanitizeSelectorItem(id)}`;
+		return (!INVALID_ID_RE.test(id) && testSelector(element, selector, element.ownerDocument)) ? [selector] : [];
+	}
+
+	/********************************************************************************/
+	/******************************** selector-class ********************************/
+	/********************************************************************************/
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Get class selectors for an element.
+	function getClassSelectors(element) {
+		return (element.getAttribute("class") || "")
+			.trim()
+			.split(/\s+/)
+			.filter((item) => !INVALID_CLASS_RE.test(item))
+			.map((item) => `.${sanitizeSelectorItem(item)}`);
+	}
+
+	/********************************************************************************/
+	/********************************* selector-tag *********************************/
+	/********************************************************************************/
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Get tag selector for an element.
+	function getTagSelector(element) {
+		return [sanitizeSelectorItem(element.tagName.toLowerCase())];
+	}
+
+	/********************************************************************************/
+	/****************************** selector-attribute ******************************/
+	/********************************************************************************/
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Get attribute selectors for an element.
+	function attributeNodeToSelector({ nodeName, nodeValue }) {
+		return `[${nodeName}='${sanitizeSelectorItem(nodeValue)}']`;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Checks whether attribute should be used as a selector.
+	function isValidAttributeNode({ nodeName }) {
+		return !ATTRIBUTE_BLACKLIST.test(nodeName);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Get attribute selectors for an element.
+	function getAttributeSelectors(element) {
+		return [...element.attributes]
+			.filter(isValidAttributeNode)
+			.map(attributeNodeToSelector);
+	}
+
+	/********************************************************************************/
+	/****************************** selector-nth-of-type ****************************/
+	/********************************************************************************/
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Get nth-of-type selector for an element.
+	function getNthOfTypeSelector(element) {
+		const tag = getTagSelector(element)[0];
+		const parentElement = element.parentElement;
+
+		if (parentElement) {
+			const siblings = parentElement.querySelectorAll(tag);
+			for (let i = 0; i < siblings.length; i++) {
+				if (siblings[i] === element) {
+					return [`${tag}:nth-of-type(${i + 1})`];
 				}
 			}
-			return results;
-		};
+		}
+		return [];
+	}
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.isElement = function (element) {
-			return !!((element != null ? element.nodeType : void 0) === 1);
-		};
+	/********************************************************************************/
+	/******************************* selector-nth-child *****************************/
+	/********************************************************************************/
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.getParents = function (element) {
-			let current_element, result;
-			result = [];
-			if (this.isElement(element)) {
-				current_element = element;
-				while (this.isElement(current_element)) {
-					result.push(current_element);
-					current_element = current_element.parentNode;
-				}
-			}
-			return result;
-		};
+	////////////////////////////////////////////////////////////////////////////////////
+	// Get nth-child selector for an element.
+	function getNthChildSelector(element) {
+		const parent = element.parentNode;
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.getTagSelector = function (element) {
-			return this.sanitizeItem(element.tagName.toLowerCase());
-		};
-
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.sanitizeItem = function (item) {
-			let characters;
-			characters = (item.split('')).map(function (character) {
-				if (character === ':') {
-					return "\\" + (':'.charCodeAt(0).toString(16).toUpperCase()) + " ";
-				} else if (/[ !"#$%&'()*+,.\/;<=>?@\[\\\]^`{|}~]/.test(character)) {
-					return "\\" + character;
-				} else {
-					return escape(character).replace(/\%/g, '\\');
-				}
-			});
-			return characters.join('');
-		};
-
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.sanitizeAttribute = function (item) {
-			let characters;
-			if (this.options.quote_attribute_when_needed) {
-				return this.quoteAttribute(item);
-			}
-			characters = (item.split('')).map(function (character) {
-				if (character === ':') {
-					return "\\" + (':'.charCodeAt(0).toString(16).toUpperCase()) + " ";
-				} else if (/[ !"#$%&'()*+,.\/;<=>?@\[\\\]^`{|}~]/.test(character)) {
-					return "\\" + character;
-				} else {
-					return escape(character).replace(/\%/g, '\\');
-				}
-			});
-			return characters.join('');
-		};
-
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.quoteAttribute = function (item) {
-			let characters, quotesNeeded;
-			quotesNeeded = false;
-			characters = (item.split('')).map(function (character) {
-				if (character === ':') {
-					quotesNeeded = true;
-					return character;
-				} else if (character === "'") {
-					quotesNeeded = true;
-					return "\\" + character;
-				} else {
-					quotesNeeded = quotesNeeded || (escape(character === !character));
-					return character;
-				}
-			});
-			if (quotesNeeded) {
-				return "'" + (characters.join('')) + "'";
-			}
-			return characters.join('');
-		};
-
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.getIdSelector = function (element) {
-			let id, id_blacklist, prefix, sanitized_id;
-			prefix = this.options.prefix_tag ? this.getTagSelector(element) : '';
-			id = element.getAttribute('id');
-			id_blacklist = this.options.id_blacklist.concat(['', /\s/, /^\d/]);
-			if (id && (id != null) && (id !== '') && this.notInList(id, id_blacklist)) {
-				sanitized_id = prefix + ("#" + (this.sanitizeItem(id)));
-				if (element.ownerDocument.querySelectorAll(sanitized_id).length === 1) {
-					return sanitized_id;
-				}
-			}
-			return null;
-		};
-
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.notInList = function (item, list) {
-			return !list.find(function (x) {
-				if (typeof x === 'string') {
-					return x === item;
-				}
-				return x.exec(item);
-			});
-		};
-
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.getClassSelectors = function (element) {
-			let class_string, item, k, len, ref, result;
-			result = [];
-			class_string = element.getAttribute('class');
-			if (class_string != null) {
-				class_string = class_string.replace(/\s+/g, ' ');
-				class_string = class_string.replace(/^\s|\s$/g, '');
-				if (class_string !== '') {
-					ref = class_string.split(/\s+/);
-					for (k = 0, len = ref.length; k < len; k++) {
-						item = ref[k];
-						if (this.notInList(item, this.options.class_blacklist)) {
-							result.push("." + (this.sanitizeItem(item)));
-						}
+		if (parent) {
+			let counter = 0;
+			const siblings = parent.childNodes;
+			for (let i = 0; i < siblings.length; i++) {
+				if (csgDependencies.isElement(siblings[i])) {
+					counter += 1;
+					if (siblings[i] === element) {
+						return [`:nth-child(${counter})`];
 					}
 				}
 			}
-			return result;
-		};
+		}
+		return [];
+	}
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.getAttributeSelectors = function (element) {
-			let a, attr, blacklist, k, l, len, len1, ref, ref1, ref2, result, whitelist;
-			result = [];
-			whitelist = this.options.attribute_whitelist;
-			for (k = 0, len = whitelist.length; k < len; k++) {
-				attr = whitelist[k];
-				if (element.hasAttribute(attr)) {
-					result.push("[" + attr + "=" + (this.sanitizeAttribute(element.getAttribute(attr))) + "]");
-				}
-			}
-			blacklist = this.options.attribute_blacklist.concat(['id', 'class']);
-			ref = element.attributes;
-			for (l = 0, len1 = ref.length; l < len1; l++) {
-				a = ref[l];
-				if (!((ref1 = a.nodeName, __indexOf.call(blacklist, ref1) >= 0) || (ref2 = a.nodeName, __indexOf.call(whitelist, ref2) >= 0))) {
-					result.push("[" + a.nodeName + "=" + (this.sanitizeAttribute(a.nodeValue)) + "]");
-				}
-			}
-			return result;
-		};
+	/********************************************************************************/
+	/******************************* selector-fallback ******************************/
+	/********************************************************************************/
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.getNthChildSelector = function (element) {
-			let counter, k, len, parent_element, prefix, sibling, siblings;
-			parent_element = element.parentNode;
-			prefix = this.options.prefix_tag ? this.getTagSelector(element) : '';
-			if (parent_element != null) {
-				counter = 0;
-				siblings = parent_element.childNodes;
-				for (k = 0, len = siblings.length; k < len; k++) {
-					sibling = siblings[k];
-					if (this.isElement(sibling)) {
-						counter++;
-						if (sibling === element) {
-							return prefix + (":nth-child(" + counter + ")");
-						}
-					}
-				}
-			}
-			return null;
-		};
+	////////////////////////////////////////////////////////////////////////////////////
+	function getFallbackSelector(element, root) {
+		return getParents(element, root)
+			.map((element) => getNthChildSelector(element)[0])
+			.reverse()
+			.join(DESCENDANT_OPERATOR);
+	}
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.testSelector = function (element, selector) {
-			let is_unique, result;
-			is_unique = false;
-			if ((selector != null) && selector !== '') {
-				result = element.ownerDocument.querySelectorAll(selector);
-				if (result.length === 1 && result[0] === element) {
-					is_unique = true;
-				}
-			}
-			return is_unique;
-		};
+	/********************************************************************************/
+	/********************************* utilities-data *******************************/
+	/********************************************************************************/
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.testUniqueness = function (element, selector) {
-			let found_elements, parent;
-			parent = element.parentNode;
-			found_elements = parent.querySelectorAll(selector);
-			return found_elements.length === 1 && found_elements[0] === element;
-		};
+	////////////////////////////////////////////////////////////////////////////////////
+	//Creates all possible combinations of items in the list.
+	function getCombinations(items = []) {
+		// see the empty first result, will be removed later
+		const result = [[]];
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.testCombinations = function (element, items, tag) {
-			let item, k, l, len, len1, len2, len3, m, n, ref, ref1, ref2, ref3;
-			if (tag == null) {
-				tag = this.getTagSelector(element);
-			}
-			if (!this.options.prefix_tag) {
-				ref = this.getCombinations(items);
-				for (k = 0, len = ref.length; k < len; k++) {
-					item = ref[k];
-					if (this.testSelector(element, item)) {
-						return item;
-					}
-				}
-				ref1 = this.getCombinations(items);
-				for (l = 0, len1 = ref1.length; l < len1; l++) {
-					item = ref1[l];
-					if (this.testUniqueness(element, item)) {
-						return item;
-					}
-				}
-			}
-			ref2 = this.getCombinations(items).map(function (item) {
-				return tag + item;
+		items.forEach((items_item) => {
+			result.forEach((result_item) => {
+				result.push(result_item.concat(items_item));
 			});
-			for (m = 0, len2 = ref2.length; m < len2; m++) {
-				item = ref2[m];
-				if (this.testSelector(element, item)) {
-					return item;
-				}
-			}
-			ref3 = this.getCombinations(items).map(function (item) {
-				return tag + item;
-			});
-			for (n = 0, len3 = ref3.length; n < len3; n++) {
-				item = ref3[n];
-				if (this.testUniqueness(element, item)) {
-					return item;
-				}
-			}
-			return null;
-		};
+		});
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.getUniqueSelector = function (element) {
-			let k, len, ref, selector, selector_type, selectors, tag_selector;
-			tag_selector = this.getTagSelector(element);
-			ref = this.options.selectors;
-			for (k = 0, len = ref.length; k < len; k++) {
-				selector_type = ref[k];
-				switch (selector_type) {
-					case 'id':
-						selector = this.getIdSelector(element);
-						break;
-					case 'tag':
-						if (tag_selector && this.testUniqueness(element, tag_selector)) {
-							selector = tag_selector;
-						}
-						break;
-					case 'class':
-						selectors = this.getClassSelectors(element);
-						if ((selectors != null) && selectors.length !== 0) {
-							selector = this.testCombinations(element, selectors, tag_selector);
-						}
-						break;
-					case 'attribute':
-						selectors = this.getAttributeSelectors(element);
-						if ((selectors != null) && selectors.length !== 0) {
-							selector = this.testCombinations(element, selectors, tag_selector);
-						}
-						break;
-					case 'nthchild':
-						selector = this.getNthChildSelector(element);
+		// remove seed
+		result.shift();
+
+		return result
+			// sort results by length, we want the shortest selectors to win
+			.sort((a, b) => a.length - b.length);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Converts array of arrays into a flat array.
+	function flattenArray(input) {
+		return [].concat(...input);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Convert string that can contain wildcards (asterisks) to RegExp source.
+	function wildcardToRegExp(input) {
+		return input
+			// convert all special characters used by RegExp, except an asterisk
+			.replace(/[|\\{}()[\]^$+?.]/g, "\\$&")
+			// convert asterisk to pattern that matches anything
+			.replace(/\*/g, ".+");
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Converts list of white/blacklist items to a single RegExp.
+	function convertMatchListToRegExp(list = []) {
+		if (list.length === 0) {
+			return new RegExp(".^");
+		}
+		const combined_re = list
+			.map((item) => {
+				return (typeof(item) === "string")
+					? wildcardToRegExp(item)
+					: item.source;
+			})
+			.join("|");
+		return new RegExp(combined_re);
+	}
+
+	/********************************************************************************/
+	/********************************* utilities-dom ********************************/
+	/********************************************************************************/
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Check whether element is matched uniquely by selector.
+	function testSelector(element, selector, root = document) {
+		const result = root.querySelectorAll(selector);
+		return (result.length === 1 && result[0] === element);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Find all parent elements of the element.
+	function getParents(element, root = getRootNode(element)) {
+		const result = [];
+		let parent = element;
+		while (csgDependencies.isElement(parent) && parent !== root) {
+			result.push(parent);
+			parent = parent.parentElement;
+		}
+		return result;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Returns root node for given element. This needs to be used because of document-less environments, e.g. jsdom.
+	function getRootNode(element) {
+		return element.ownerDocument.querySelector(":root");
+	}
+
+	/********************************************************************************/
+	/******************************* utilities-options ******************************/
+	/********************************************************************************/
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Makes sure the options object contains all required keys.
+	function sanitizeOptions(element, custom_options = {}) {
+		return Object.assign({}, constructDefaultOptions(element), custom_options);
+	}
+
+	/********************************************************************************/
+	/****************************** utilities-selectors *****************************/
+	/********************************************************************************/
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Escapes special characters used by CSS selector items.
+	function sanitizeSelectorItem(input = "") {
+		return input.split("")
+			.map((character) => {
+				if (character === ":") {
+					return `\\${ESCAPED_COLON} `;
 				}
-				if (selector) {
+				if (SPECIAL_CHARACTERS_RE.test(character)) {
+					return `\\${character}`;
+				}
+				return escape(character)
+					.replace(/%/g, "\\");
+			})
+			.join("");
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Returns list of selectors of given type for the element.
+	function getSelectorsByType(element, selector_type) {
+		return (SELECTOR_TYPE_GETTERS[selector_type] || (() => []))(element);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Remove blacklisted selectors from list.
+	function filterSelectors(list = [], blacklist_re, whitelist_re) {
+		return list.filter((item) => (
+			whitelist_re.test(item)
+			|| !blacklist_re.test(item)
+		));
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Prioritise whitelisted selectors in list.
+	function orderSelectors(list = [], whitelist_re) {
+		return list.sort((a, b) => {
+			const a_is_whitelisted = whitelist_re.test(a);
+			const b_is_whitelisted = whitelist_re.test(b);
+			if (a_is_whitelisted && !b_is_whitelisted) { return -1; }
+			if (!a_is_whitelisted && b_is_whitelisted) { return 1; }
+			return 0;
+		});
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Tries to generate unique selector for the element within it's parent.
+	function getUniqueSelectorWithinParent(element, options) {
+		if (element.parentNode) {
+			const selectors_list = getSelectorsList(element, options);
+			const type_combinations = getTypeCombinations(selectors_list, options);
+			const all_selectors = flattenArray(type_combinations);
+
+			for (let i = 0; i < all_selectors.length; i++) {
+				const selector = all_selectors[i];
+				if (testSelector(element, selector, element.parentNode)) {
 					return selector;
 				}
 			}
-			return '*';
+		}
+		return "*";
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Creates object containing all selector types and their potential values.
+	function getSelectorsList(element, options) {
+		const {
+			blacklist,
+			whitelist,
+			combineWithinSelector,
+		} = options;
+
+		const blacklist_re = convertMatchListToRegExp(blacklist);
+		const whitelist_re = convertMatchListToRegExp(whitelist);
+
+		const reducer = (data, selector_type) => {
+			const selectors_by_type = getSelectorsByType(element, selector_type);
+			const filtered_selectors =
+				filterSelectors(selectors_by_type, blacklist_re, whitelist_re);
+			const found_selectors = orderSelectors(filtered_selectors, whitelist_re);
+
+			data[selector_type] = combineWithinSelector
+				? getCombinations(found_selectors)
+				: found_selectors.map((item) => [item]);
+
+			return data;
 		};
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.getSelector = function (element) {
-			let item, k, len, parents, result, selector, selectors;
-			selectors = [];
-			parents = this.getParents(element);
-			for (k = 0, len = parents.length; k < len; k++) {
-				item = parents[k];
-				selector = this.getUniqueSelector(item);
-				if (selector != null) {
-					selectors.unshift(selector);
-					result = selectors.join(' > ');
-					if (this.testSelector(element, result)) {
-						return result;
-					}
+		return getSelectorsToGet(options)
+			.reduce(reducer, {});
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Creates list of selector types that we will need to generate the selector.
+	function getSelectorsToGet(options) {
+		const {
+			selectors,
+			includeTag,
+		} = options;
+
+		const selectors_to_get = [].concat(selectors);
+		if (includeTag && !selectors_to_get.includes("tag")) {
+			selectors_to_get.push("tag");
+		}
+		return selectors_to_get;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Adds "tag" to a list, if it does not contain it. Used to modify selectors list when includeTag option is enabled to make sure all results contain the TAG part.
+	function addTagTypeIfNeeded(list) {
+		return (list.includes("tag") || list.includes("nthoftype"))
+			? [...list]
+			: [...list, "tag"];
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function combineSelectorTypes(selectors_list, options = {}) {
+		const {
+			selectors,
+			combineBetweenSelectors,
+			includeTag,
+		} = options;
+
+		const combinations = combineBetweenSelectors
+			? getCombinations(selectors)
+			: selectors.map(item => [item]);
+
+		return includeTag
+			? combinations.map(addTagTypeIfNeeded)
+			: combinations;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function getTypeCombinations(selectors_list, options) {
+		return combineSelectorTypes(selectors_list, options)
+			.map((item) => constructSelectors(item, selectors_list))
+			.filter((item) => item !== "");
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Generates all variations of possible selectors from provided data.
+	function constructSelectors(selector_types, selectors_by_type) {
+		const data = {};
+		selector_types.forEach((selector_type) => {
+			const selector_variants = selectors_by_type[selector_type];
+			if (selector_variants.length > 0) {
+				data[selector_type] = selector_variants;
+			}
+		});
+
+		const combinations = csgDependencies.cartesian(data);
+		return combinations.map(constructSelector);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Creates selector for given selector type. Combines several parts if needed.
+	function constructSelectorType(selector_type, selectors_data) {
+		return (selectors_data[selector_type])
+			? selectors_data[selector_type].join("")
+			: "";
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Converts selector data object to a selector.
+	function constructSelector(selector_data = {}) {
+		return SELECTOR_PATTERN
+			.map((type) => constructSelectorType(type, selector_data))
+			.join("");
+	}
+
+	/********************************************************************************/
+	return {
+		getCssSelector: getCssSelector,
+	}
+
+})();
+
+
+let csgDependencies = (function () {
+
+	/********************************************************************************/
+	/****************** From: https://github.com/fczbkk/iselement *******************/
+	/********************************************************************************/
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function isElement(element) {
+		return (element !== null)
+			&& (typeof(element) === "object")
+			&& (element.nodeType === Node.ELEMENT_NODE)
+			&& (typeof(element.style) === "object")
+			&& (typeof(element.ownerDocument) === "object");
+	}
+
+	/********************************************************************************/
+	/**************** From: https://github.com/alexindigo/cartesian *****************/
+	/********************************************************************************/
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Creates cartesian product of the provided properties
+	function cartesian(list) {
+		let last, init, keys, product = [];
+
+		if (Array.isArray(list)) {
+			init = [];
+			last = list.length - 1;
+		}
+		else if (typeof(list) === "object" && list !== null) {
+			init = {};
+			keys = Object.keys(list);
+			last = keys.length - 1;
+		}
+		else {
+			throw new TypeError("Expecting an Array or an Object, but `" + (list === null ? "null" : typeof(list)) + "` provided.");
+		}
+
+		function add(row, i) {
+			let j, k, r;
+
+			k = keys ? keys[i] : i;
+
+			// either array or not, not expecting objects here
+			Array.isArray(list[k]) || (typeof(list[k]) === "undefined" ? list[k] = [] : list[k] = [list[k]]);
+
+			for (j = 0; j < list[k].length; j++) {
+				r = clone(row);
+				store(r, list[k][j], k);
+
+				if (i >= last) {
+					product.push(r);
+				}
+				else {
+					add(r, i + 1);
 				}
 			}
-			return null;
-		};
+		}
+		add(init, 0);
+		return product;
+	}
 
-		//////////////////////////////////////////////////////////////////////
-		CssSelectorGenerator.prototype.getCombinations = function (items) {
-			let i, j, k, l, ref, ref1, result;
-			if (items == null) {
-				items = [];
-			}
-			result = [[]];
-			for (i = k = 0, ref = items.length - 1; 0 <= ref ? k <= ref : k >= ref; i = 0 <= ref ? ++k : --k) {
-				for (j = l = 0, ref1 = result.length - 1; 0 <= ref1 ? l <= ref1 : l >= ref1; j = 0 <= ref1 ? ++l : --l) {
-					result.push(result[j].concat(items[i]));
+	////////////////////////////////////////////////////////////////////////////////////
+	// Clones (shallow copy) provided object or array
+	function clone(obj) {
+		return Array.isArray(obj) ? [].concat(obj) : extend(obj);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	// Stores provided element in the provided object or array
+	function store(obj, elem, key) {
+		Array.isArray(obj) ? obj.push(elem) : (obj[key] = elem);
+	}
+
+	/********************************************************************************/
+	/******************** From: https://github.com/Raynos/xtend *********************/
+	/********************************************************************************/
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function extend() {
+		let target = {};
+
+		for (let i=0, len=arguments.length; i<len; i++) {
+			let source = arguments[i];
+
+			for (let key in source) {
+				if (hasOwnProperty.call(source, key)) {
+					target[key] = source[key];
 				}
 			}
-			result.shift();
-			result = result.sort(function (a, b) {
-				return a.length - b.length;
-			});
-			result = result.map(function (item) {
-				return item.join('');
-			});
-			return result;
-		};
+		}
+		return target;
+	}
 
-		return CssSelectorGenerator;
-
-	})();
-
-	this.CssSelectorGenerator = CssSelectorGenerator;
-
-}).call(this);
+	/********************************************************************************/
+	return {
+		isElement: isElement,
+		cartesian: cartesian,
+	}
+})();
