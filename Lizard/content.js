@@ -1024,7 +1024,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function viewSourceInNewPage(type, source, newWin) {
 
-		let id = window.btoa(lzUtil.random1to100() + Date.now().toString());
+		let id = lzUtil.getUniqId();
 
 		sourceData.setSavedViewSourceData(source, type, id);
 

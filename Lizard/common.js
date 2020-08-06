@@ -489,6 +489,16 @@ let lzUtil = (function () {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	function getUniqId(prefix = "", length = 32) {
+
+		let dec2hex = (d) => ( (d < 10) ? "0" + String(d) : d.toString(16) );
+		let values = new Uint8Array(length / 2);
+
+		window.crypto.getRandomValues(values);
+		return prefix + Array.from(values, dec2hex).join("");
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	function isSVGObject(elm) {
 		return ((typeof elm.className === "object") && (elm.className.toString() === "[object SVGAnimatedString]"));
 	}
@@ -597,6 +607,7 @@ let lzUtil = (function () {
 		getElementComputedCssText: getElementComputedCssText,
 		escapeRegExp: escapeRegExp,
 		random1to100: random1to100,
+		getUniqId: getUniqId,
 		isSVGObject: isSVGObject,
 		hasBackgroundImage: hasBackgroundImage,
 		getElementMatchedCSSRules: getElementMatchedCSSRules,
