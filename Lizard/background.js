@@ -51,29 +51,6 @@
 
 
 		m_lizardDB = new LizardDB();
-		m_lizardDB.open().then(async () => {
-			const rules = [
-				[ "www.ynet.co.il/home/0,7340,L-8,00.html", ".ad_anoy" ],
-				[ "www.multisend.co.il/site/login", ".fu.bar.id" ],
-				[ "www.urlencoder.org/", "div[disabled]" ],
-				[ "www.makorrishon.co.il/", "#region" ],
-				[ "www.ynet.co.il/home/0,7340,L-8,00.html", ".ad_anoy" ],
-				[ "www.multisend.co.il/site/login", ".fu.bar.id" ],
-				[ "www.urlencoder.org/", "div[disabled]" ],
-				[ "www.makorrishon.co.il/", "#region" ],
-				[ "file:///c:/Users/arielg/DevWork/WebExtensions/Lizard/.misc/Example.html", ".\\[object"],
-				[ "file:///C:/Users/Ariel/DevWork/WebExtentions/Lizard/.misc/Example.html", ".\\[object"],
-
-				[ "www.ynet.co.il/home/0,7340,L-8,00.html", ".ad_anoy-PLUS" ],
-				[ "www.multisend.co.il/site/login", ".fu.bar.id-PLUS" ],
-				[ "www.urlencoder.org", "div[disabled]-PLUS" ],
-				[ "www.makorrishon.co.il", "#region-PLUS" ],
-			];
-
-			for(let i=0; i<rules.length; i++) {
-				await m_lizardDB.setRule(rules[i][0], rules[i][1], { remove: true, color: {frgd: "#ff0000", bkgd: "#00ffff"} });
-			}
-		});
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
