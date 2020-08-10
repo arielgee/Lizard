@@ -92,16 +92,16 @@ class LizardDB {
 			url = this._normalizeUrl(url);
 			if(!!!url) reject(new Error("Mandatory parameters missing. url: `" + url + "`"));
 
-			let tran = this.m_db.transaction(["rules"], "readwrite");
+			let tran = this.m_db.transaction(["rules"], "readonly");
 			tran.onerror = tran.onabort = (event) => {
 				const error = event.target.error;
 				console.log("[Lizard]", "setRule transaction error/abort",error.name, error.message);
 				reject(error);
 			};
 
-			const requestGet = tran.objectStore("rules").index("idx.url").getAll([ url ], 1024);
+			const requestGet = tran.objectStore("rules").index("idx.url").getAll([ url ], 4096);
 
-			requestGet.onsuccess = () => resolve(requestGet.result);
+			requestGet.onsuccess = () => resolve(requestGet.result.sort((a, b) => a.created > b.created ));
 			requestGet.onerror = (event) => {
 				const error = event.target.error;
 				console.log("[Lizard]", "getRules getAll error",error.name, error.message);
