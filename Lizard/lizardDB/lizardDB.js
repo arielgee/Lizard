@@ -81,6 +81,33 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	deleteRule(url, cssSelector) {
+
+		return new Promise((resolve, reject) => {
+
+			if(!this.isOpen) reject(new Error("Database not open"));
+
+			url = this._normalizeUrl(url);
+			cssSelector = cssSelector.trim();
+			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: `" + url + "`, cssSelector: `" + cssSelector + "`"));
+
+			let tran = this._getRulesTransaction("readwrite", (error) => {
+				console.log("[Lizard]", "deleteRule transaction error/abort", error.name, error.message);
+				reject(error);
+			});
+
+			const requestDel = tran.objectStore("rules").delete([ url, cssSelector ]);
+
+			requestDel.onsuccess = () => resolve(requestDel.result);
+			requestDel.onerror = (event) => {
+				const error = event.target.error;
+				console.log("[Lizard]", "deleteRule delete error",error.name, error.message);
+				reject(error);
+			};
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	getRules(url) {
 
 		return new Promise((resolve, reject) => {
