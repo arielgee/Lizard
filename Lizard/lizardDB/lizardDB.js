@@ -68,8 +68,7 @@ class LizardDB {
 				if(this._isBoolean(details.remove)) obj.remove = details.remove;
 				if(this._isBoolean(details.dewidthify)) obj.dewidthify = details.dewidthify;
 				if(this._isBoolean(details.isolate)) obj.isolate = details.isolate;
-				if(this._isColorsObjectValue(details.color)) obj.color = details.color;
-				if(this._isColorsObjectValue(details.decolor)) obj.decolor = details.decolor;
+				if(this._isColorObjectValue(details.color)) obj.color = details.color;
 
 				const requestPut = tran.objectStore("rules").put(obj);
 
@@ -158,7 +157,6 @@ class LizardDB {
 			dewidthify: false,
 			isolate: false,
 			color: null,
-			decolor: null,
 		};
 	}
 
@@ -168,11 +166,15 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	_isColorsObjectValue(variable) {
+	_isColorObjectValue(variable) {
 		return (variable === null) ||
 				( typeof(variable) === "object" &&
-					Object.keys(variable).length === 2 &&
-					!!variable.frgd && !!(variable.frgd.match(/#[0-9a-f]{6}/i)) &&
-					!!variable.bkgd && !!(variable.bkgd.match(/#[0-9a-f]{6}/i)) );
+					Object.keys(variable).length === 5 &&
+					variable.hasOwnProperty("foreground") && !!(variable.foreground.match(/#[0-9a-f]{6}/i)) &&
+					variable.hasOwnProperty("background") && !!(variable.background.match(/#[0-9a-f]{6}/i)) &&
+					variable.hasOwnProperty("colorizeChildren") && (typeof(variable.colorizeChildren) === "boolean") &&
+					variable.hasOwnProperty("saturateAmount") && ( variable.saturateAmount === null || !!(variable.saturateAmount.match(/(100)?0%/)) ) &&
+					variable.hasOwnProperty("invertAmount") && !!(variable.invertAmount.match(/(10)?0%/)) );
+	}
 	}
 };
