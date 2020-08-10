@@ -49,9 +49,9 @@ class LizardDB {
 
 			if(!this.isOpen) reject(new Error("Database not open"));
 
-			url = url.trim().replace(/^(.*)\/+$/, "$1");
+			url = this._normalizeUrl(url);
 			cssSelector = cssSelector.trim();
-			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing"));
+			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: `" + url + "`, cssSelector: `" + cssSelector + "`"));
 
 			let tran = this.m_db.transaction(["rules"], "readwrite");
 			tran.onerror = tran.onabort = (event) => {
@@ -89,8 +89,8 @@ class LizardDB {
 
 			if(!this.isOpen) reject(new Error("Database not open"));
 
-			url = url.trim().replace(/^(.*)\/+$/, "$1");
-			if(!!!url) reject(new Error("Mandatory parameters missing"));
+			url = this._normalizeUrl(url);
+			if(!!!url) reject(new Error("Mandatory parameters missing. url: `" + url + "`"));
 
 			let tran = this.m_db.transaction(["rules"], "readwrite");
 			tran.onerror = tran.onabort = (event) => {
@@ -176,5 +176,10 @@ class LizardDB {
 					variable.hasOwnProperty("saturateAmount") && ( variable.saturateAmount === null || !!(variable.saturateAmount.match(/(100)?0%/)) ) &&
 					variable.hasOwnProperty("invertAmount") && !!(variable.invertAmount.match(/(10)?0%/)) );
 	}
+
+	//////////////////////////////////////////////////////////////////////
+	_normalizeUrl(url) {
+		// A rule's URL is normalized: without query string or hash and without trailing slashes.
+		return url.split(/(\?|#).*/)[0].trim().replace(/^(.*)\/+$/, "$1");
 	}
 };
