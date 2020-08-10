@@ -40,15 +40,15 @@
 
 		createMenus();
 
-		browser.runtime.onMessage.addListener(onRuntimeMessage);				// Messages handler
-		browser.runtime.onInstalled.addListener(onRuntimeInstalled);			// version notice
-		browser.browserAction.onClicked.addListener(onBrowserActionClicked);	// send toggle Lizard state message
-		browser.menus.onClicked.addListener(onMenusClicked);					// menus
-		browser.commands.onCommand.addListener(onCommands);						// keyboard
 
 		browser.tabs.onUpdated.addListener(onTabsUpdated);		// Fx61 => extraParameters; {url:["*://*/*"], properties:["status"]}
 		browser.tabs.onAttached.addListener(onTabsAttached);
 
+		browser.runtime.onMessage.addListener(onRuntimeMessage);							// Messages handler
+		browser.runtime.onInstalled.addListener(onRuntimeInstalled);						// version notice
+		browser.browserAction.onClicked.addListener(onBrowserActionClicked);				// send toggle Lizard state message
+		browser.menus.onClicked.addListener(onMenusClicked);								// menus
+		browser.commands.onCommand.addListener(onCommands);									// keyboard
 
 		m_lizardDB = new LizardDB();
 	}
