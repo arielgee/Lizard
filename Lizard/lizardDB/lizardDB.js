@@ -53,12 +53,10 @@ class LizardDB {
 			cssSelector = cssSelector.trim();
 			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: `" + url + "`, cssSelector: `" + cssSelector + "`"));
 
-			let tran = this.m_db.transaction(["rules"], "readwrite");
-			tran.onerror = tran.onabort = (event) => {
-				const error = event.target.error;
-				console.log("[Lizard]", "setRule transaction error/abort",error.name, error.message);
+			let tran = this._getRulesTransaction("readwrite", (error) => {
+				console.log("[Lizard]", "setRule transaction error/abort", error.name, error.message);
 				reject(error);
-			};
+			});
 
 			this._getExistingRule(url, cssSelector, tran).then((existingRule) => {
 
@@ -92,12 +90,10 @@ class LizardDB {
 			url = this._normalizeUrl(url);
 			if(!!!url) reject(new Error("Mandatory parameters missing. url: `" + url + "`"));
 
-			let tran = this.m_db.transaction(["rules"], "readonly");
-			tran.onerror = tran.onabort = (event) => {
-				const error = event.target.error;
-				console.log("[Lizard]", "setRule transaction error/abort",error.name, error.message);
+			let tran = this._getRulesTransaction("readonly", (error) => {
+				console.log("[Lizard]", "getRules transaction error/abort", error.name, error.message);
 				reject(error);
-			};
+			});
 
 			const requestGet = tran.objectStore("rules").index("idx.url").getAll([ url ], 4096);
 
@@ -126,6 +122,13 @@ class LizardDB {
 		objStore.createIndex("idx.hitCount", [ "hitCount" ], { unique: false });
 
 		//objStore.transaction.oncomplete = (event) => {};
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_getRulesTransaction(mode = "", failCallback) {
+		let tran = this.m_db.transaction(["rules"], mode);
+		tran.onerror = tran.onabort = (event) => { failCallback(event.target.error); };
+		return tran;
 	}
 
 	//////////////////////////////////////////////////////////////////////
