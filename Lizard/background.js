@@ -69,12 +69,12 @@
 				//////////////////////////////////////////////////////////////
 
 			case msgs.MSG_OPEN_VIEW_SOURCE_WINDOW:
-				openViewSourcePage(message.data.type, message.data.id, true);
+				openViewSourcePage(message.data.id, true);
 				break;
 				//////////////////////////////////////////////////////////////
 
 			case msgs.MSG_OPEN_VIEW_SOURCE_TAB:
-				openViewSourcePage(message.data.type, message.data.id, false);
+				openViewSourcePage(message.data.id, false);
 				break;
 				//////////////////////////////////////////////////////////////
 
@@ -307,9 +307,9 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function openViewSourcePage(type, id, newWindow) {
+	function openViewSourcePage(id, newWindow) {
 
-		let viewSourceURL = browser.extension.getURL("viewSource/viewSource.html") + "?id=" + id;
+		let viewSourceURL = browser.extension.getURL("viewSource/viewSource.html?id=" + id);
 
 		if (newWindow) {
 			browser.windows.create({
