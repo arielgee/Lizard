@@ -11,6 +11,8 @@ let msgs = (function () {
 	const MSG_OPEN_VIEW_SOURCE_WINDOW = "msgOpenViewSourceWindow";
 	const MSG_OPEN_VIEW_SOURCE_TAB = "msgOpenViewSourceTab";
 	const MSG_OPEN_OPTIONS_PAGE = "msgOpenOptionsPage";
+	const MSG_SAVE_ACTION_AS_RULE = "msgSaveActionAsRule";
+	const MSG_DELETE_RULE = "msgDeleteRule";
 
 	return {
 		MSG_TOGGLE_SESSION_STATE: MSG_TOGGLE_SESSION_STATE,
@@ -20,6 +22,8 @@ let msgs = (function () {
 		MSG_OPEN_VIEW_SOURCE_WINDOW: MSG_OPEN_VIEW_SOURCE_WINDOW,
 		MSG_OPEN_VIEW_SOURCE_TAB: MSG_OPEN_VIEW_SOURCE_TAB,
 		MSG_OPEN_OPTIONS_PAGE: MSG_OPEN_OPTIONS_PAGE,
+		MSG_SAVE_ACTION_AS_RULE: MSG_SAVE_ACTION_AS_RULE,
+		MSG_DELETE_RULE: MSG_DELETE_RULE,
 	};
 })();
 

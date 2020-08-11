@@ -57,9 +57,10 @@
 		};
 	};
 
-	const UNDO_LIZARD_ACTION = function (typeval) {
+	const UNDO_LIZARD_ACTION = function (typeval, ruleKey = null) {
 		return {
 			type: typeval,
+			ruleKey: ruleKey,
 			data: {
 			},
 		};
@@ -579,7 +580,9 @@
 		unselectElement();
 		lockSelection(false);
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_HIDE);
+		let ruleKey = saveActionAsRule(elm, { hide: true });
+
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_HIDE, ruleKey);
 
 		ua.data["element"] = elm;
 		ua.data["prev_visibility"] = elm.style.visibility;
@@ -612,7 +615,9 @@
 		unselectElement();
 		lockSelection(false);
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_REMOVE);
+		let ruleKey = saveActionAsRule(elm, { remove: true });
+
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_REMOVE, ruleKey);
 
 		// save element and it's position
 		ua.data["element"] = elm;
@@ -636,7 +641,9 @@
 			return;
 		}
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_DEWIDTHIFY);
+		let ruleKey = saveActionAsRule(elm, { dewidthify: true });
+
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_DEWIDTHIFY, ruleKey);
 
 		ua.data["dewidthifiedItems"] = [];
 
@@ -694,7 +701,9 @@
 		lockSelection(false);
 		removeInfoBoxes();
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_ISOLATE);
+		let ruleKey = saveActionAsRule(elm, { isolate: true });
+
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_ISOLATE, ruleKey);
 
 		// save document's body and scroll position
 		ua.data["prev_body"] = document.body;
@@ -772,7 +781,17 @@
 			return;
 		}
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_COLORIZE);
+		let ruleKey = saveActionAsRule(elm, {
+			color: {
+				foreground: foreground,
+				background: background,
+				colorizeChildren: colorizeChildren,
+				saturateAmount: saturateAmount,
+				invertAmount: invertAmount,
+			}
+		});
+
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_COLORIZE, ruleKey);
 
 		ua.data["coloureditems"] = [];
 
@@ -826,6 +845,15 @@
 
 		// pop the last undo action
 		let ua = m_lizardState.undoActions.pop();
+
+		let uaRuleKey = ua.ruleKey;
+		if( (uaRuleKey instanceof Object) && uaRuleKey.hasOwnProperty("url") && uaRuleKey.hasOwnProperty("cssSelector") ) {
+			let msg = BROWSER_MESSAGE(msgs.MSG_DELETE_RULE);
+			msg.data["url"] = uaRuleKey.url;
+			msg.data["cssSelector"] = uaRuleKey.cssSelector;
+
+			browser.runtime.sendMessage(msg);
+		}
 
 		switch (ua.type) {
 			case UNDO_ACTION_HIDE:
@@ -1722,6 +1750,23 @@
 			elm.removeEventListener("click", onCloseVersionNoticeBox, false);
 			elm.parentNode.removeChild(elm);
 		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function saveActionAsRule(elm, details) {
+
+		let msg = BROWSER_MESSAGE(msgs.MSG_SAVE_ACTION_AS_RULE);
+		msg.data["url"] = window.location.toString();
+		msg.data["cssSelector"] = CssSelectorGenerator.getCssSelector(elm, { includeTag: true });
+		msg.data["details"] = details;
+
+		browser.runtime.sendMessage(msg);
+
+		// return rule key
+		return {
+			url: msg.data.url,
+			cssSelector: msg.data.cssSelector,
+		};
 	}
 
 })();

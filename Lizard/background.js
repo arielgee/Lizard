@@ -28,6 +28,12 @@
 		{ isScript: true,	details: { runAt: "document_start", code: "const ALL_LIZARD_SCRIPTS_INJECTED=true;" } },
 	];
 
+	const WEB_NAV_FILTER = {
+		url: [
+			{ schemes: ["https", "http", "file", "ftp"] }
+		]
+	};
+
 	let m_lizardToggleStateMenuID = -1;
 	let m_lastInjectTime = 0;
 
@@ -40,17 +46,15 @@
 
 		createMenus();
 
-
-		browser.tabs.onUpdated.addListener(onTabsUpdated);		// Fx61 => extraParameters; {url:["*://*/*"], properties:["status"]}
-		browser.tabs.onAttached.addListener(onTabsAttached);
-
 		browser.runtime.onMessage.addListener(onRuntimeMessage);							// Messages handler
 		browser.runtime.onInstalled.addListener(onRuntimeInstalled);						// version notice
 		browser.browserAction.onClicked.addListener(onBrowserActionClicked);				// send toggle Lizard state message
 		browser.menus.onClicked.addListener(onMenusClicked);								// menus
 		browser.commands.onCommand.addListener(onCommands);									// keyboard
+		browser.webNavigation.onCommitted.addListener(onWebNavCommitted, WEB_NAV_FILTER);	// apply rules
 
 		m_lizardDB = new LizardDB();
+		m_lizardDB.open();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -83,6 +87,15 @@
 				break;
 				//////////////////////////////////////////////////////////////
 
+			case msgs.MSG_SAVE_ACTION_AS_RULE:
+				m_lizardDB.setRule(message.data.url, message.data.cssSelector, message.data.details);
+				break;
+				//////////////////////////////////////////////////////////////
+
+			case msgs.MSG_DELETE_RULE:
+				m_lizardDB.deleteRule(message.data.url, message.data.cssSelector);
+				break;
+				//////////////////////////////////////////////////////////////
 		}
 	}
 
@@ -140,19 +153,8 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function onTabsUpdated(tabId, changeInfo, tab) {
-		// When selecting an open tab that was not loaded (browser just opened) then changeInfo is {status: "complete", url: "https://*"}
-		// but the page is not realy 'complete'. Then the page is loading and when complete then there is not 'url' property. Hence !!!changeInfo.url
-		if (!!changeInfo.status && changeInfo.status === "complete" && !!!changeInfo.url) {
-			handleTabChangedState(tabId, tab.url);
-		}
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////
-	function onTabsAttached(tabId) {
-		browser.tabs.get(tabId).then((tab) => {
-			handleTabChangedState(tabId, tab.url);
-		});
+	function onWebNavCommitted(details) {
+		applySavedRules(details.tabId, details.url.toString());
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -332,21 +334,52 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function handleTabChangedState(tabId, tabUrl) {
+	function applySavedRules(tabId, url) {
 
-		m_lizardDB.getRules(tabUrl.toString()).then((rules) => {
+		m_lizardDB.getRules(url).then(async (rules) => {
 
-			console.log("[Lizard]", "result", rules);
+			let jsCode = "";
 
 			for(let i=0, len=rules.length; i<len; i++) {
 
-				let code = "";
-				if(rules[i].remove) {
-					code = rules[i].cssSelector + " {display: none !important;}";
+				const rule = rules[i];
+				const cssSelectorEncoded = encodeURIComponent(rule.cssSelector);
+
+				if(rule.hide) {
+					jsCode += `ruleActions.hideElement("${cssSelectorEncoded}");`;
 				}
 
-				browser.tabs.insertCSS(tabId, { runAt: "document_start", code: code });
+				if(rule.remove) {
+					jsCode += `ruleActions.removeElement("${cssSelectorEncoded}");`;
+				}
+
+				if(rule.dewidthify) {
+					jsCode += `ruleActions.dewidthifyElement("${cssSelectorEncoded}");`;
+				}
+
+				if(rule.isolate) {
+					jsCode += `ruleActions.isolateElement("${cssSelectorEncoded}");`;
+				}
+
+				if(rule.color !== null) {
+					const color = rule.color;
+					let details = {
+						cssSelectorEncoded: cssSelectorEncoded,
+						foreground: color.foreground,
+						background: color.background,
+						colorizeChildren: color.colorizeChildren,
+						saturateAmount: color.saturateAmount,		// can be null
+						invertAmount: color.invertAmount,
+					};
+					jsCode += `ruleActions.colorizeElement(${JSON.stringify(details)});`;
+				}
 			}
-		} );
+
+			if(jsCode.length > 0) {
+				//console.log("[Lizard] inject jsCode", jsCode.replace(/(^|;)/g, "$1\n\n").replace(/(\{|,)(\")?/g, "$1\n\t$2").replace(/\}/g, "\n}").replace(/":/g, "\": "));
+				await browser.tabs.executeScript(tabId, { runAt: "document_start", file: "ruleActions/ruleActions.js" });
+				await browser.tabs.executeScript(tabId, { runAt: "document_start", code: jsCode });
+			}
+		});
 	}
 })();
