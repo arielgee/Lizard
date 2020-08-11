@@ -68,10 +68,10 @@ class LizardDB {
 				if(this._isBoolean(details.isolate)) obj.isolate = details.isolate;
 				if(this._isColorObjectValue(details.color)) obj.color = details.color;
 
-				const requestPut = tran.objectStore("rules").put(obj);
+				const reqPut = tran.objectStore("rules").put(obj);
 
-				requestPut.onsuccess = () => resolve(requestPut.result);
-				requestPut.onerror = (event) => {
+				reqPut.onsuccess = () => resolve(reqPut.result);
+				reqPut.onerror = (event) => {
 					const error = event.target.error;
 					console.log("[Lizard]", "setRule put error",error.name, error.message);
 					reject(error);
@@ -96,12 +96,70 @@ class LizardDB {
 				reject(error);
 			});
 
-			const requestDel = tran.objectStore("rules").delete([ url, cssSelector ]);
+			const reqDelete = tran.objectStore("rules").delete([ url, cssSelector ]);
 
-			requestDel.onsuccess = () => resolve(requestDel.result);
-			requestDel.onerror = (event) => {
+			reqDelete.onsuccess = () => resolve();
+			reqDelete.onerror = (event) => {
 				const error = event.target.error;
 				console.log("[Lizard]", "deleteRule delete error",error.name, error.message);
+				reject(error);
+			};
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	deleteRulesByUrl(url) {
+
+		return new Promise((resolve, reject) => {
+
+			if(!this.isOpen) reject(new Error("Database not open"));
+
+			url = this._normalizeUrl(url);
+			if(!!!url) reject(new Error("Mandatory parameters missing. url: `" + url + "`"));
+
+			let tran = this._getRulesTransaction("readwrite", (error) => {
+				console.log("[Lizard]", "deleteRulesByUrl transaction error/abort", error.name, error.message);
+				reject(error);
+			});
+
+			const reqCursor = tran.objectStore("rules").index("idx.url").openCursor([ url ]);
+
+			reqCursor.onsuccess = () => {
+				let cursor = reqCursor.result;
+				if(cursor) {
+					cursor.delete();
+					cursor.continue();
+				} else {
+					resolve();
+				}
+			};
+
+			reqCursor.onerror = (event) => {
+				const error = event.target.error;
+				console.log("[Lizard]", "deleteRulesByUrl delete error",error.name, error.message);
+				reject(error);
+			};
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	clearAllRules() {
+
+		return new Promise((resolve, reject) => {
+
+			if(!this.isOpen) reject(new Error("Database not open"));
+
+			let tran = this._getRulesTransaction("readwrite", (error) => {
+				console.log("[Lizard]", "clearAllRules transaction error/abort", error.name, error.message);
+				reject(error);
+			});
+
+			const reqClear = tran.objectStore("rules").clear();
+
+			reqClear.onsuccess = () => resolve();
+			reqClear.onerror = (event) => {
+				const error = event.target.error;
+				console.log("[Lizard]", "clearAllRules delete error",error.name, error.message);
 				reject(error);
 			};
 		});
@@ -122,14 +180,24 @@ class LizardDB {
 				reject(error);
 			});
 
-			const requestGet = tran.objectStore("rules").index("idx.url").getAll([ url ], 4096);
+			const reqGet = tran.objectStore("rules").index("idx.url").getAll([ url ], 4096);
 
-			requestGet.onsuccess = () => resolve(requestGet.result.sort((a, b) => a.created > b.created ));
-			requestGet.onerror = (event) => {
+			reqGet.onsuccess = () => resolve(reqGet.result.sort((a, b) => a.created > b.created ));
+			reqGet.onerror = (event) => {
 				const error = event.target.error;
 				console.log("[Lizard]", "getRules getAll error",error.name, error.message);
 				reject(error);
 			};
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	logRules(url) {
+		this.getRules(url).then((rules) => {
+			console.log(`%cRules for: '${url}'`, "color:#45ffff;font-size:150%");
+			for(let i=0, len=rules.length; i<len; i++) {
+				console.log(rules[i]);
+			}
 		});
 	}
 
