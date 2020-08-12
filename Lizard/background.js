@@ -378,7 +378,7 @@
 			if(jsCode.length > 0) {
 				//console.log("[Lizard] inject jsCode", jsCode.replace(/(^|;)/g, "$1\n\n").replace(/(\{|,)(\")?/g, "$1\n\t$2").replace(/\}/g, "\n}").replace(/":/g, "\": "));
 				await browser.tabs.executeScript(tabId, { runAt: "document_start", file: "ruleActions/ruleActions.js" });
-				await browser.tabs.executeScript(tabId, { runAt: "document_start", code: jsCode });
+				await browser.tabs.executeScript(tabId, { runAt: "document_idle", code: jsCode });
 			}
 		});
 	}
