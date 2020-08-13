@@ -51,6 +51,7 @@ let prefs = (function () {
 	const PREF_DEF_COLORIZE_IMAGES = true;
 	const PREF_DEF_MENU_ITEM_CONTEXT = true;
 	const PREF_DEF_MENU_ITEM_TOOLS = true;
+	const PREF_DEF_REMEMBER_PAGE_ALTERATIONS = false;
 	const PREF_DEF_EXPERT_MODE = false;
 	const PREF_DEF_XP_MODE_CONTEXT_MENU = false;
 	const PREF_DEF_VERSION_NOTICE = "";
@@ -66,6 +67,7 @@ let prefs = (function () {
 	const PREF_COLORIZE_IMAGES = "pref_colorizeImages";
 	const PREF_MENU_ITEM_CONTEXT = "pref_menuItemContext";
 	const PREF_MENU_ITEM_TOOLS = "pref_menuItemTools";
+	const PREF_REMEMBER_PAGE_ALTERATIONS = "pref_rememberPageAlterations";
 	const PREF_EXPERT_MODE = "pref_expertMode";
 	const PREF_XP_MODE_CONTEXT_MENU = "pref_xpModeContextMenu";
 	const PREF_VERSION_NOTICE = "pref_versionNotice";
@@ -183,6 +185,16 @@ let prefs = (function () {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	function getRememberPageAlterations() {
+		return getPreferenceValue(PREF_REMEMBER_PAGE_ALTERATIONS, PREF_DEF_REMEMBER_PAGE_ALTERATIONS);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function setRememberPageAlterations(value) {
+		return setPreferenceValue(PREF_REMEMBER_PAGE_ALTERATIONS, value);
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	function getExpertMode() {
 		return getPreferenceValue(PREF_EXPERT_MODE, PREF_DEF_EXPERT_MODE);
 	}
@@ -225,6 +237,7 @@ let prefs = (function () {
 		this.setColorizeImages(PREF_DEF_COLORIZE_IMAGES);
 		this.setMenuItemContext(PREF_DEF_MENU_ITEM_CONTEXT);
 		this.setMenuItemTools(PREF_DEF_MENU_ITEM_TOOLS);
+		this.setRememberPageAlterations(PREF_DEF_REMEMBER_PAGE_ALTERATIONS);
 		this.setExpertMode(PREF_DEF_EXPERT_MODE);
 		this.setXpModeContextMenu(PREF_DEF_XP_MODE_CONTEXT_MENU);
 
@@ -240,6 +253,7 @@ let prefs = (function () {
 			colorizeImages: PREF_DEF_COLORIZE_IMAGES,
 			menuItemContext: PREF_DEF_MENU_ITEM_CONTEXT,
 			menuItemTools: PREF_DEF_MENU_ITEM_TOOLS,
+			rememberPageAlterations: PREF_DEF_REMEMBER_PAGE_ALTERATIONS,
 			expertMode: PREF_DEF_EXPERT_MODE,
 			xpModeContextMenu: PREF_DEF_XP_MODE_CONTEXT_MENU,
 		};
@@ -291,6 +305,8 @@ let prefs = (function () {
 		setMenuItemContext: setMenuItemContext,
 		getMenuItemTools: getMenuItemTools,
 		setMenuItemTools: setMenuItemTools,
+		getRememberPageAlterations: getRememberPageAlterations,
+		setRememberPageAlterations: setRememberPageAlterations,
 		getExpertMode: getExpertMode,
 		setExpertMode: setExpertMode,
 		getXpModeContextMenu: getXpModeContextMenu,

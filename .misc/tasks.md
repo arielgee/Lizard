@@ -19,6 +19,7 @@
 
 ## To-Do
 --------------
+* the onRuntimeMessage in background.js and in content.js are not the same. consider moving BROWSER_MESSAGE() to common.js for both 'runtime.onMessage'
 * the rememberPageAlterations preference will indicate that the feature is available to sertine Fx version (and will be disabled if not)
 * switching to 'Example.html' tab (not selected) after Fx load I get 'Uncaught (in promise) Error: Missing host permission for the tab'. Am i injecting or something into the tab too soon?
 * in common.js replace the two apply filter functions with a single one (_applyFilter())

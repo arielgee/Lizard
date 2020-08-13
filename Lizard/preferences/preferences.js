@@ -20,6 +20,7 @@ let preferences = (function() {
 	let m_elmColorizeImages;
 	let m_elmContextMenu;
 	let m_elmToolsMenu;
+	let m_elmRememberPageAlterations;
 	let m_elmExpertMode;
 	let m_elmXpModeContextMenu;
 	let m_elmLabelReqRestartSessionXp;
@@ -57,6 +58,7 @@ let preferences = (function() {
 		m_elmColorizeImages = document.getElementById("colorizeImages");
 		m_elmContextMenu = document.getElementById("contextMenu");
 		m_elmToolsMenu = document.getElementById("toolsMenu");
+		m_elmRememberPageAlterations = document.getElementById("rememberPageAlterations");
 		m_elmExpertMode = document.getElementById("expertMode");
 		m_elmXpModeContextMenu = document.getElementById("xpModeContextMenu");
 		m_elmLabelReqRestartSessionXp = document.getElementById("restartSessionXp");
@@ -105,6 +107,7 @@ let preferences = (function() {
 		m_elmColorizeImages.addEventListener("change", onChangeColorizeImages);
 		m_elmContextMenu.addEventListener("change", onChangeContextMenu);
 		m_elmToolsMenu.addEventListener("change", onChangeToolsMenu);
+		m_elmRememberPageAlterations.addEventListener("change", onChangeRememberPageAlterations);
 		m_elmExpertMode.addEventListener("change", onChangeExpertMode);
 		m_elmXpModeContextMenu.addEventListener("change", onChangeXpModeContextMenu);
 
@@ -134,6 +137,7 @@ let preferences = (function() {
 		m_elmColorizeImages.removeEventListener("change", onChangeColorizeImages);
 		m_elmContextMenu.removeEventListener("change", onChangeContextMenu);
 		m_elmToolsMenu.removeEventListener("change", onChangeToolsMenu);
+		m_elmRememberPageAlterations.removeEventListener("change", onChangeRememberPageAlterations);
 		m_elmExpertMode.removeEventListener("change", onChangeExpertMode);
 		m_elmXpModeContextMenu.removeEventListener("change", onChangeXpModeContextMenu);
 
@@ -203,6 +207,10 @@ let preferences = (function() {
 
 		prefs.getMenuItemTools().then((checked) => {
 			m_elmToolsMenu.checked = checked;
+		});
+
+		prefs.getRememberPageAlterations().then((checked) => {
+			m_elmRememberPageAlterations.checked = checked;
 		});
 
 		prefs.getExpertMode().then((checked) => {
@@ -328,6 +336,12 @@ let preferences = (function() {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
+	function onChangeRememberPageAlterations() {
+		prefs.setRememberPageAlterations(m_elmRememberPageAlterations.checked);
+		//browser.runtime.sendMessage({ type: msgs.MSG_TOGGLE_REMEMBER_PAGE_ALTERATIONS });	// notify background.js
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
 	function onChangeExpertMode() {
 		prefs.setExpertMode(m_elmExpertMode.checked);
 		m_elmLabelReqRestartSessionXp.classList.add("flash");
@@ -379,6 +393,7 @@ let preferences = (function() {
 		m_elmColorizeImages.checked = defPrefs.colorizeImages;
 		m_elmContextMenu.checked = defPrefs.menuItemContext;
 		m_elmToolsMenu.checked = defPrefs.menuItemTools;
+		m_elmRememberPageAlterations.checked = defPrefs.rememberPageAlterations;
 		m_elmExpertMode.checked = defPrefs.expertMode;
 		m_elmXpModeContextMenu.checked = defPrefs.xpModeContextMenu;
 	}
