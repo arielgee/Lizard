@@ -338,7 +338,7 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function onChangeRememberPageAlterations() {
 		prefs.setRememberPageAlterations(m_elmRememberPageAlterations.checked);
-		//browser.runtime.sendMessage(msgs.BROWSER_MESSAGE(msgs.ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS));	// notify background.js
+		lzUtil.toggleRememberPageAlterations();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////

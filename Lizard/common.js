@@ -493,6 +493,15 @@ let lzUtil = (function () {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	function toggleRememberPageAlterations() {
+
+		let msg = msgs.BROWSER_MESSAGE(msgs.ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS);
+
+		browser.runtime.sendMessage(msg);
+		_sendMessageAllLizardSessions(msg);
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	function getElementComputedCssText(elm) {
 
 		let css = "";
@@ -635,6 +644,7 @@ let lzUtil = (function () {
 		applyInvertFilter: applyInvertFilter,
 		reloadLizardWebExtension: reloadLizardWebExtension,
 		reloadLizardWebExtensionAndTab: reloadLizardWebExtensionAndTab,
+		toggleRememberPageAlterations: toggleRememberPageAlterations,
 		getElementComputedCssText: getElementComputedCssText,
 		escapeRegExp: escapeRegExp,
 		random1to100: random1to100,

@@ -16,16 +16,16 @@
 * the onRuntimeMessage in background.js and in content.js are not the same. consider moving BROWSER_MESSAGE() to common.js for both 'runtime.onMessage'
 * remove rule from Db if action was undo
 * check what webNavigation permission gives
+* rename 'handleWebNavigationOnCommittedListener' to handleRememberPageAlterationsFromPreferences
+* check if undo /deleteRule works
+* switching to 'Example.html' tab (not selected) after Fx load I get 'Uncaught (in promise) Error: Missing host permission for the tab'. Am i injecting or something into the tab too soon?
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* rename 'handleWebNavigationOnCommittedListener' to handleRememberPageAlterationsFromPreferences
-* check if undo /deleteRule works
 * the rememberPageAlterations preference will indicate that the feature is available to sertine Fx version (and will be disabled if not)
-* switching to 'Example.html' tab (not selected) after Fx load I get 'Uncaught (in promise) Error: Missing host permission for the tab'. Am i injecting or something into the tab too soon?
 * in common.js replace the two apply filter functions with a single one (_applyFilter())
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
 * externilize the CssSelectorGenerator options?

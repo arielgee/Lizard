@@ -68,6 +68,7 @@
 		undoActions: [],
 		strolledElements: [],
 		scrollbarWidth: -1,
+		rememberPageAlterations: false,
 	};
 
 
@@ -77,6 +78,8 @@
 	function initialization() {
 		browser.runtime.onMessage.addListener(onRuntimeMessage);
 		window.addEventListener("unload", onUnload);
+
+		prefs.getRememberPageAlterations().then((value) => m_lizardState.rememberPageAlterations = value );
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -106,6 +109,12 @@
 							stopSession();
 						}
 						resolve({ message: "shutdown" });
+						break;
+						//////////////////////////////////////////////////////////////
+
+					case msgs.ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS:
+						prefs.getRememberPageAlterations().then((value) => m_lizardState.rememberPageAlterations = value );
+						resolve({ message: "toggle" });
 						break;
 						//////////////////////////////////////////////////////////////
 
@@ -572,7 +581,7 @@
 		unselectElement();
 		lockSelection(false);
 
-		let ruleKey = saveActionAsRule(elm, { hide: true });
+		let ruleKey = rememberPageAlterations(elm, { hide: true });
 
 		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_HIDE, ruleKey);
 
@@ -607,7 +616,7 @@
 		unselectElement();
 		lockSelection(false);
 
-		let ruleKey = saveActionAsRule(elm, { remove: true });
+		let ruleKey = rememberPageAlterations(elm, { remove: true });
 
 		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_REMOVE, ruleKey);
 
@@ -633,7 +642,7 @@
 			return;
 		}
 
-		let ruleKey = saveActionAsRule(elm, { dewidthify: true });
+		let ruleKey = rememberPageAlterations(elm, { dewidthify: true });
 
 		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_DEWIDTHIFY, ruleKey);
 
@@ -693,7 +702,7 @@
 		lockSelection(false);
 		removeInfoBoxes();
 
-		let ruleKey = saveActionAsRule(elm, { isolate: true });
+		let ruleKey = rememberPageAlterations(elm, { isolate: true });
 
 		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_ISOLATE, ruleKey);
 
@@ -773,7 +782,7 @@
 			return;
 		}
 
-		let ruleKey = saveActionAsRule(elm, {
+		let ruleKey = rememberPageAlterations(elm, {
 			color: {
 				foreground: foreground,
 				background: background,
@@ -1741,6 +1750,15 @@
 		if (elm) {
 			elm.removeEventListener("click", onCloseVersionNoticeBox, false);
 			elm.parentNode.removeChild(elm);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function rememberPageAlterations(elm, details) {
+		if(m_lizardState.rememberPageAlterations) {
+			return saveActionAsRule(elm, details);
+		} else {
+			return null;
 		}
 	}
 

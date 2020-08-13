@@ -51,7 +51,8 @@
 		browser.browserAction.onClicked.addListener(onBrowserActionClicked);				// send toggle Lizard state message
 		browser.menus.onClicked.addListener(onMenusClicked);								// menus
 		browser.commands.onCommand.addListener(onCommands);									// keyboard
-		handleWebNavigationOnCommittedListener();											// apply rules
+
+		handleRememberPageAlterationsFromPreference();										// apply rules
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -81,6 +82,11 @@
 
 			case msgs.ID_OPEN_OPTIONS_PAGE:
 				browser.runtime.openOptionsPage();
+				break;
+				//////////////////////////////////////////////////////////////
+
+			case msgs.ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS:
+				handleRememberPageAlterationsFromPreference();
 				break;
 				//////////////////////////////////////////////////////////////
 
@@ -155,7 +161,7 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	async function handleWebNavigationOnCommittedListener() {
+	async function handleRememberPageAlterationsFromPreference() {
 
 		let rememberPageAlters = await prefs.getRememberPageAlterations();
 		let hasWebNavListener = browser.webNavigation.onCommitted.hasListener(onWebNavCommitted);
@@ -359,6 +365,12 @@
 
 		m_lizardDB.getRules(url).then(async (rules) => {
 
+			if(rules.length === 0) return;
+
+			try {
+				await browser.tabs.executeScript(tabId, { runAt: "document_start", file: "ruleActions/ruleActions.js" });
+			} catch(error) { return }	// 'Error: Missing host permission for the tab' when tab is 'saved' after Fx load
+
 			let jsCode = "";
 
 			for(let i=0, len=rules.length; i<len; i++) {
@@ -398,8 +410,7 @@
 
 			if(jsCode.length > 0) {
 				//console.log("[Lizard] inject jsCode", jsCode.replace(/(^|;)/g, "$1\n\n").replace(/(\{|,)(\")?/g, "$1\n\t$2").replace(/\}/g, "\n}").replace(/":/g, "\": "));
-				await browser.tabs.executeScript(tabId, { runAt: "document_start", file: "ruleActions/ruleActions.js" });
-				await browser.tabs.executeScript(tabId, { runAt: "document_idle", code: jsCode });
+				browser.tabs.executeScript(tabId, { runAt: "document_idle", code: jsCode });
 			}
 		});
 	}
