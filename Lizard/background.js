@@ -23,8 +23,8 @@
 		{ isScript: true,	details: { runAt: "document_start", file: "SourceBeautifier/SourceBeautifier.js" } },
 		{ isScript: true,	details: { runAt: "document_start", file: "CssSelectorGenerator/CssSelectorGenerator.js" } },
 		{ isScript: true,	details: { runAt: "document_start", file: "common.js" } },
-		{ isScript: true,	details: { runAt: "document_start", file: "content.js" } },
 		{ isScript: false,	details: { runAt: "document_start", file: "content.css" } },
+		{ isScript: true,	details: { runAt: "document_start", file: "content.js" } },
 		{ isScript: true,	details: { runAt: "document_start", code: "const ALL_LIZARD_SCRIPTS_INJECTED=true;" } },
 	];
 

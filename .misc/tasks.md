@@ -20,6 +20,8 @@
 * check if undo /deleteRule works
 * switching to 'Example.html' tab (not selected) after Fx load I get 'Uncaught (in promise) Error: Missing host permission for the tab'. Am i injecting or something into the tab too soon?
 * in common.js replace the two apply filter functions with a single one (_applyFilter())
+* all indexedDB actions will be done in background by background
+* try to hide the element without indexedDB. to compare and see how fast is the indexedDB queries
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
@@ -33,8 +35,6 @@
 * if url has additinal parameters (#striped)
 * in content use member variable for CssSelectorGenerator() to save the repeting 'new'
 * change communication method between content and background:https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts#Communicating_with_background_scripts
-* all indexedDB actions will be done in background by background
-* try to hide the element without indexedDB. to compare and see how fast is the indexedDB queries
 * what is the point of the empty object in this: 'Object.assign({},...'
 * indexedDB in v56 => NO
 * work in private browsing ? private browsing in min AND amx version ?

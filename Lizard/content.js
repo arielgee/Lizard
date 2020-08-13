@@ -78,8 +78,6 @@
 	function initialization() {
 		browser.runtime.onMessage.addListener(onRuntimeMessage);
 		window.addEventListener("unload", onUnload);
-
-		prefs.getRememberPageAlterations().then((value) => m_lizardState.rememberPageAlterations = value );
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -150,6 +148,8 @@
 				document.addEventListener("wheel", onWheel, true);
 			}
 		});
+
+		prefs.getRememberPageAlterations().then((value) => m_lizardState.rememberPageAlterations = value );
 
 		prefs.getExpertMode().then((checked) => {
 			if(checked) {
