@@ -413,7 +413,7 @@ let lzUtil = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
-	function _shutdownAllLizardSessions() {
+	function _sendMessageAllLizardSessions(message) {
 
 		return new Promise((resolve) => {
 
@@ -426,8 +426,8 @@ let lzUtil = (function () {
 
 					let allPromises = [];
 
-					for (let i = 0; i < tabs.length; i++) {
-						allPromises[i] = browser.tabs.sendMessage(tabs[i].id, msgs.BROWSER_MESSAGE(msgs.ID_SHUTDOWN_SESSION));
+					for (let i=0; i<tabs.length; i++) {
+						allPromises[i] = browser.tabs.sendMessage(tabs[i].id, message);
 					}
 
 					// Promise.all is fail-fast; first rejected promise will reject all immediately so convert catch error to simple regular (success) value.
@@ -476,7 +476,7 @@ let lzUtil = (function () {
 	//////////////////////////////////////////////////////////////////////
 	function reloadLizardWebExtension() {
 
-		_shutdownAllLizardSessions().then((results) => {
+		_sendMessageAllLizardSessions(msgs.BROWSER_MESSAGE(msgs.ID_SHUTDOWN_SESSION)).then((results) => {
 			setTimeout(() => { browser.runtime.reload(); }, 10);
 		});
 	}
@@ -484,7 +484,7 @@ let lzUtil = (function () {
 	//////////////////////////////////////////////////////////////////////
 	function reloadLizardWebExtensionAndTab() {
 
-		_shutdownAllLizardSessions().then((results) => {
+		_sendMessageAllLizardSessions(msgs.BROWSER_MESSAGE(msgs.ID_SHUTDOWN_SESSION)).then((results) => {
 			setTimeout(() => {
 				browser.tabs.reload({ bypassCache: true });
 				browser.runtime.reload();
