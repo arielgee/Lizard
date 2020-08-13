@@ -28,6 +28,10 @@
 
 ## To-Do
 --------------
+* indexedDB
+	* v59 - not working
+	* v68 - working
+* create a managment page for rules
 * the rememberPageAlterations preference will indicate that the feature is available to sertine Fx version (and will be disabled if not)
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
 * externilize the CssSelectorGenerator options?
@@ -36,7 +40,6 @@
 * in content use member variable for CssSelectorGenerator() to save the repeting 'new'
 * change communication method between content and background:https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts#Communicating_with_background_scripts
 * what is the point of the empty object in this: 'Object.assign({},...'
-* indexedDB in v56 => NO
 * work in private browsing ? private browsing in min AND amx version ?
 * min version in manifest is v56. I'm using v59. I created VScroll buttons for view-source in window but it HAS VScroll? will it have them in v56?
 * "remember" the changes!!!
