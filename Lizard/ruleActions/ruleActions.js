@@ -98,9 +98,9 @@ let ruleActions = (function () {
 		elm.style.borderColor = foreground;
 		elm.style.backgroundColor = background;
 		if(colorImages) {
-			_applyFilter(elm, "saturate", saturateAmount);
+			_applyCssFilter(elm, "saturate", saturateAmount);
 			if (invertAmount) {
-				_applyFilter(elm, "invert", invertAmount);
+				_applyCssFilter(elm, "invert", invertAmount);
 			}
 		}
 
@@ -122,7 +122,7 @@ let ruleActions = (function () {
 	//////////////////////////////////////////////////////////////////////
 	// filterName = "saturate"	; // "1000%" or "0%" (colorize, decolorize)
 	// filterName = "invert"	; // "100%" or "0%" ((colorize || decolorize) +shift, (colorize || decolorize))
-	function _applyFilter(elm, filterName, amount) {
+	function _applyCssFilter(elm, filterName, amount) {
 
 		let validFilters = [ "saturate", "invert" ];
 		if( !validFilters.includes(filterName) ) {

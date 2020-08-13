@@ -19,6 +19,7 @@
 * rename 'handleWebNavigationOnCommittedListener' to handleRememberPageAlterationsFromPreferences
 * check if undo /deleteRule works
 * switching to 'Example.html' tab (not selected) after Fx load I get 'Uncaught (in promise) Error: Missing host permission for the tab'. Am i injecting or something into the tab too soon?
+* in common.js replace the two apply filter functions with a single one (_applyFilter())
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
@@ -26,7 +27,6 @@
 ## To-Do
 --------------
 * the rememberPageAlterations preference will indicate that the feature is available to sertine Fx version (and will be disabled if not)
-* in common.js replace the two apply filter functions with a single one (_applyFilter())
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
 * externilize the CssSelectorGenerator options?
 * use webNavigation in sage-like ?

@@ -819,9 +819,9 @@
 		elm.style.borderColor = foreground;
 		elm.style.backgroundColor = background;
 		if (colorImages) {
-			lzUtil.applySaturateFilter(elm, saturateAmount);
+			lzUtil.applyCssFilter(elm, "saturate", saturateAmount);
 			if (invertAmount) {
-				lzUtil.applyInvertFilter(elm, invertAmount);
+				lzUtil.applyCssFilter(elm, "invert", invertAmount);
 			}
 		}
 

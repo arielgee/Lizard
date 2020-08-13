@@ -440,36 +440,26 @@ let lzUtil = (function () {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function applySaturateFilter(elm, saturateAmount) {	// "1000%" or "0%" (colorize, decolorize)
+	// filterName = "saturate"	; // "1000%" or "0%" (colorize, decolorize)
+	// filterName = "invert"	; // "100%" or "0%" ((colorize || decolorize) +shift, (colorize || decolorize))
+	function applyCssFilter(elm, filterName, amount) {
 
-		let re = new RegExp("\\b(saturate\\()([^)]+)(\\))");	// match "saturate([amount])"
-
-		let compStyle = window.getComputedStyle(elm);
-
-		if (re.test(compStyle.filter)) {
-			elm.style.filter = compStyle.filter.replace(re, "$1" + saturateAmount + "$3");	// replace amount
-		} else {
-			if (compStyle.filter != "" && compStyle.filter != "none") {
-				elm.style.filter = compStyle.filter;
-			}
-			elm.style.filter += "saturate(" + saturateAmount + ")";
+		let validFilters = [ "saturate", "invert" ];
+		if( !validFilters.includes(filterName) ) {
+			console.log("[Lizard]", "Error: invalid filter name: `" + filterName + "`. Expected: " + validFilters.map(n => "`" + n + "`").join(", "));
 		}
-	}
 
-	//////////////////////////////////////////////////////////////////////
-	function applyInvertFilter(elm, invertAmount) {	// "100%" or "0%" ((colorize || decolorize) +shift, (colorize || decolorize))
-
-		let re = new RegExp("\\b(invert\\()([^)]+)(\\))");	// match "invert([amount])"
+		let re = new RegExp("\\b(" + filterName + "\\()([^)]+)(\\))");	// match: "saturate([amount])" or "invert([amount])"
 
 		let compStyle = window.getComputedStyle(elm);
 
 		if (re.test(compStyle.filter)) {
-			elm.style.filter = compStyle.filter.replace(re, "$1" + invertAmount + "$3");	// replace amount
+			elm.style.filter = compStyle.filter.replace(re, "$1" + amount + "$3");	// replace amount
 		} else {
 			if (compStyle.filter != "" && compStyle.filter != "none") {
 				elm.style.filter = compStyle.filter;
 			}
-			elm.style.filter += "invert(" + invertAmount + ")";
+			elm.style.filter += filterName + "(" + amount + ")";
 		}
 	}
 
@@ -640,8 +630,7 @@ let lzUtil = (function () {
 	}
 
 	return {
-		applySaturateFilter: applySaturateFilter,
-		applyInvertFilter: applyInvertFilter,
+		applyCssFilter: applyCssFilter,
 		reloadLizardWebExtension: reloadLizardWebExtension,
 		reloadLizardWebExtensionAndTab: reloadLizardWebExtensionAndTab,
 		toggleRememberPageAlterations: toggleRememberPageAlterations,
