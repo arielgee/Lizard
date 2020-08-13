@@ -37,7 +37,7 @@
 	let m_lizardToggleStateMenuID = -1;
 	let m_lastInjectTime = 0;
 
-	let m_lizardDB;
+	let m_lizardDB = null;
 
 	initialization();
 
@@ -51,10 +51,7 @@
 		browser.browserAction.onClicked.addListener(onBrowserActionClicked);				// send toggle Lizard state message
 		browser.menus.onClicked.addListener(onMenusClicked);								// menus
 		browser.commands.onCommand.addListener(onCommands);									// keyboard
-		browser.webNavigation.onCommitted.addListener(onWebNavCommitted, WEB_NAV_FILTER);	// apply rules
-
-		m_lizardDB = new LizardDB();
-		m_lizardDB.open();
+		handleWebNavigationOnCommittedListener();											// apply rules
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -155,6 +152,28 @@
 	////////////////////////////////////////////////////////////////////////////////////
 	function onWebNavCommitted(details) {
 		applySavedRules(details.tabId, details.url.toString());
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	async function handleWebNavigationOnCommittedListener() {
+
+		let rememberPageAlters = await prefs.getRememberPageAlterations();
+		let hasWebNavListener = browser.webNavigation.onCommitted.hasListener(onWebNavCommitted);
+
+		if(rememberPageAlters && !hasWebNavListener) {
+
+			if(!!!m_lizardDB) m_lizardDB = new LizardDB();
+			m_lizardDB.open();
+
+			browser.webNavigation.onCommitted.addListener(onWebNavCommitted, WEB_NAV_FILTER);
+
+		} else if(!rememberPageAlters && hasWebNavListener) {
+
+			if(!!m_lizardDB) m_lizardDB.close();
+			m_lizardDB = null;
+
+			browser.webNavigation.onCommitted.removeListener(onWebNavCommitted, WEB_NAV_FILTER);
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
