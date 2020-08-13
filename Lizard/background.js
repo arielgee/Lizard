@@ -57,39 +57,39 @@
 	////////////////////////////////////////////////////////////////////////////////////
 	function onRuntimeMessage(message) {
 
-		switch (message.type) {
+		switch (message.id) {
 
-			case msgs.MSG_SESSION_STATE_CHANGED:
+			case msgs.ID_SESSION_STATE_CHANGED:
 				updateLizardUI(message.data.status);
 				break;
 				//////////////////////////////////////////////////////////////
 
-			case msgs.MSG_DISPLAY_NOTIFICATION:
+			case msgs.ID_DISPLAY_NOTIFICATION:
 				createLizardNotification(message.data.message, message.data.timeout);
 				break;
 				//////////////////////////////////////////////////////////////
 
-			case msgs.MSG_OPEN_VIEW_SOURCE_WINDOW:
+			case msgs.ID_OPEN_VIEW_SOURCE_WINDOW:
 				openViewSourcePage(message.data.id, true);
 				break;
 				//////////////////////////////////////////////////////////////
 
-			case msgs.MSG_OPEN_VIEW_SOURCE_TAB:
+			case msgs.ID_OPEN_VIEW_SOURCE_TAB:
 				openViewSourcePage(message.data.id, false);
 				break;
 				//////////////////////////////////////////////////////////////
 
-			case msgs.MSG_OPEN_OPTIONS_PAGE:
+			case msgs.ID_OPEN_OPTIONS_PAGE:
 				browser.runtime.openOptionsPage();
 				break;
 				//////////////////////////////////////////////////////////////
 
-			case msgs.MSG_SAVE_ACTION_AS_RULE:
+			case msgs.ID_SAVE_ACTION_AS_RULE:
 				m_lizardDB.setRule(message.data.url, message.data.cssSelector, message.data.details);
 				break;
 				//////////////////////////////////////////////////////////////
 
-			case msgs.MSG_DELETE_RULE:
+			case msgs.ID_DELETE_RULE:
 				m_lizardDB.deleteRule(message.data.url, message.data.cssSelector);
 				break;
 				//////////////////////////////////////////////////////////////
@@ -220,7 +220,9 @@
 			return;
 		}
 
-		browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }).then((response) => {
+		let msg = msgs.BROWSER_MESSAGE(msgs.ID_TOGGLE_SESSION_STATE);
+
+		browser.tabs.sendMessage(tab.id, msg).then((response) => {
 
 			// In the situation where the scripts were injected but the user lateron browsed to a
 			// different page using the same tab, there are *some* cases that the sendMessage() Promise
@@ -247,7 +249,7 @@
 
 				injectLizardScripts(tab.id).then(() => {
 					console.log("[lizard]", "Injection time(millisec):", Date.now()-m_lastInjectTime);
-					browser.tabs.sendMessage(tab.id, { message: msgs.MSG_TOGGLE_SESSION_STATE }).catch(onErrorToggleSessionState);
+					browser.tabs.sendMessage(tab.id, msg).catch(onErrorToggleSessionState);
 				}, onErrorToggleSessionState);
 			}
 		});

@@ -49,14 +49,6 @@
 	const UNDO_ACTION_ISOLATE = "undoIsolate";
 	const UNDO_ACTION_COLORIZE = "undoColorize";
 
-	const BROWSER_MESSAGE = function (typeval) {
-		return {
-			type: typeval,
-			data: {
-			},
-		};
-	};
-
 	const UNDO_LIZARD_ACTION = function (typeval, ruleKey = null) {
 		return {
 			type: typeval,
@@ -88,7 +80,7 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function onRuntimeMessage(request) {
+	function onRuntimeMessage(message) {
 
 		return new Promise((resolve, reject) => {
 
@@ -97,9 +89,9 @@
 				reject();
 			} else {
 
-				switch (request.message) {
+				switch (message.id) {
 
-					case msgs.MSG_TOGGLE_SESSION_STATE:
+					case msgs.ID_TOGGLE_SESSION_STATE:
 						resolve({ message: "toggle" });
 						if (m_lizardState.bSessionStarted) {
 							stopSession();
@@ -109,7 +101,7 @@
 						break;
 						//////////////////////////////////////////////////////////////
 
-					case msgs.MSG_SHUTDOWN_SESSION:
+					case msgs.ID_SHUTDOWN_SESSION:
 						if (m_lizardState.bSessionStarted) {
 							stopSession();
 						}
@@ -848,7 +840,7 @@
 
 		let uaRuleKey = ua.ruleKey;
 		if( (uaRuleKey instanceof Object) && uaRuleKey.hasOwnProperty("url") && uaRuleKey.hasOwnProperty("cssSelector") ) {
-			let msg = BROWSER_MESSAGE(msgs.MSG_DELETE_RULE);
+			let msg = msgs.BROWSER_MESSAGE(msgs.ID_DELETE_RULE);
 			msg.data["url"] = uaRuleKey.url;
 			msg.data["cssSelector"] = uaRuleKey.cssSelector;
 
@@ -1056,7 +1048,7 @@
 
 		sourceData.setSavedViewSourceData(source, type, id);
 
-		let msg = BROWSER_MESSAGE(newWin ? msgs.MSG_OPEN_VIEW_SOURCE_WINDOW : msgs.MSG_OPEN_VIEW_SOURCE_TAB);
+		let msg = msgs.BROWSER_MESSAGE(newWin ? msgs.ID_OPEN_VIEW_SOURCE_WINDOW : msgs.ID_OPEN_VIEW_SOURCE_TAB);
 		msg.data["id"] = id;
 
 		browser.runtime.sendMessage(msg);
@@ -1555,7 +1547,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function onLizardOptionsPage(event) {
 
-		let msg = BROWSER_MESSAGE(msgs.MSG_OPEN_OPTIONS_PAGE);
+		let msg = msgs.BROWSER_MESSAGE(msgs.ID_OPEN_OPTIONS_PAGE);
 
 		browser.runtime.sendMessage(msg);
 
@@ -1613,7 +1605,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function notifyToolbarButtonStatus(bStatus) {
 
-		let msg = BROWSER_MESSAGE(msgs.MSG_SESSION_STATE_CHANGED);
+		let msg = msgs.BROWSER_MESSAGE(msgs.ID_SESSION_STATE_CHANGED);
 		msg.data["status"] = (bStatus ? "on" : "off");
 
 		browser.runtime.sendMessage(msg);
@@ -1622,7 +1614,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function displayNotification(message, timeout) {
 
-		let msg = BROWSER_MESSAGE(msgs.MSG_DISPLAY_NOTIFICATION);
+		let msg = msgs.BROWSER_MESSAGE(msgs.ID_DISPLAY_NOTIFICATION);
 		msg.data["message"] = message;
 		msg.data["timeout"] = timeout;
 
@@ -1755,7 +1747,7 @@
 	//////////////////////////////////////////////////////////////////////
 	function saveActionAsRule(elm, details) {
 
-		let msg = BROWSER_MESSAGE(msgs.MSG_SAVE_ACTION_AS_RULE);
+		let msg = msgs.BROWSER_MESSAGE(msgs.ID_SAVE_ACTION_AS_RULE);
 		msg.data["url"] = window.location.toString();
 		msg.data["cssSelector"] = CssSelectorGenerator.getCssSelector(elm, { includeTag: true });
 		msg.data["details"] = details;

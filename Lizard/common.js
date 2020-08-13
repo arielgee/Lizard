@@ -4,26 +4,37 @@
 ///
 let msgs = (function () {
 
-	const MSG_TOGGLE_SESSION_STATE = "msgToggleSessionState";
-	const MSG_SHUTDOWN_SESSION = "msgShutdownSession";
-	const MSG_SESSION_STATE_CHANGED = "msgSessionStateChanged";
-	const MSG_DISPLAY_NOTIFICATION = "msgDisplayNotification";
-	const MSG_OPEN_VIEW_SOURCE_WINDOW = "msgOpenViewSourceWindow";
-	const MSG_OPEN_VIEW_SOURCE_TAB = "msgOpenViewSourceTab";
-	const MSG_OPEN_OPTIONS_PAGE = "msgOpenOptionsPage";
-	const MSG_SAVE_ACTION_AS_RULE = "msgSaveActionAsRule";
-	const MSG_DELETE_RULE = "msgDeleteRule";
+	const ID_TOGGLE_SESSION_STATE = "msgToggleSessionState";
+	const ID_SHUTDOWN_SESSION = "msgShutdownSession";
+	const ID_SESSION_STATE_CHANGED = "msgSessionStateChanged";
+	const ID_DISPLAY_NOTIFICATION = "msgDisplayNotification";
+	const ID_OPEN_VIEW_SOURCE_WINDOW = "msgOpenViewSourceWindow";
+	const ID_OPEN_VIEW_SOURCE_TAB = "msgOpenViewSourceTab";
+	const ID_OPEN_OPTIONS_PAGE = "msgOpenOptionsPage";
+	const ID_SAVE_ACTION_AS_RULE = "msgSaveActionAsRule";
+	const ID_DELETE_RULE = "msgDeleteRule";
+	const ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS = "msgToggleRememberPageAlterations";
+
+	const BROWSER_MESSAGE = (msgId) => {
+		return {
+			id: msgId,
+			data: {},
+		};
+	};
 
 	return {
-		MSG_TOGGLE_SESSION_STATE: MSG_TOGGLE_SESSION_STATE,
-		MSG_SHUTDOWN_SESSION: MSG_SHUTDOWN_SESSION,
-		MSG_SESSION_STATE_CHANGED: MSG_SESSION_STATE_CHANGED,
-		MSG_DISPLAY_NOTIFICATION: MSG_DISPLAY_NOTIFICATION,
-		MSG_OPEN_VIEW_SOURCE_WINDOW: MSG_OPEN_VIEW_SOURCE_WINDOW,
-		MSG_OPEN_VIEW_SOURCE_TAB: MSG_OPEN_VIEW_SOURCE_TAB,
-		MSG_OPEN_OPTIONS_PAGE: MSG_OPEN_OPTIONS_PAGE,
-		MSG_SAVE_ACTION_AS_RULE: MSG_SAVE_ACTION_AS_RULE,
-		MSG_DELETE_RULE: MSG_DELETE_RULE,
+		ID_TOGGLE_SESSION_STATE: ID_TOGGLE_SESSION_STATE,
+		ID_SHUTDOWN_SESSION: ID_SHUTDOWN_SESSION,
+		ID_SESSION_STATE_CHANGED: ID_SESSION_STATE_CHANGED,
+		ID_DISPLAY_NOTIFICATION: ID_DISPLAY_NOTIFICATION,
+		ID_OPEN_VIEW_SOURCE_WINDOW: ID_OPEN_VIEW_SOURCE_WINDOW,
+		ID_OPEN_VIEW_SOURCE_TAB: ID_OPEN_VIEW_SOURCE_TAB,
+		ID_OPEN_OPTIONS_PAGE: ID_OPEN_OPTIONS_PAGE,
+		ID_SAVE_ACTION_AS_RULE: ID_SAVE_ACTION_AS_RULE,
+		ID_DELETE_RULE: ID_DELETE_RULE,
+		ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS: ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS,
+
+		BROWSER_MESSAGE: BROWSER_MESSAGE,
 	};
 })();
 
@@ -416,7 +427,7 @@ let lzUtil = (function () {
 					let allPromises = [];
 
 					for (let i = 0; i < tabs.length; i++) {
-						allPromises[i] = browser.tabs.sendMessage(tabs[i].id, { message: msgs.MSG_SHUTDOWN_SESSION });
+						allPromises[i] = browser.tabs.sendMessage(tabs[i].id, msgs.BROWSER_MESSAGE(msgs.ID_SHUTDOWN_SESSION));
 					}
 
 					// Promise.all is fail-fast; first rejected promise will reject all immediately so convert catch error to simple regular (success) value.

@@ -13,22 +13,24 @@
 * duplicate 'manage Extension' / 'Open Option page' in left mouse browserAction button		=> 'Open Option page' only if browser version is below v62
 * the view-CSS-selector is not acting like the view-source. Shows only in-page and not affected by new-window or new-tab		=> leave it like that
 * manifest.json; Rename `applications` to `browser_specific_settings` https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json
+* the onRuntimeMessage in background.js and in content.js are not the same. consider moving BROWSER_MESSAGE() to common.js for both 'runtime.onMessage'
+* remove rule from Db if action was undo
+* check what webNavigation permission gives
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* the onRuntimeMessage in background.js and in content.js are not the same. consider moving BROWSER_MESSAGE() to common.js for both 'runtime.onMessage'
+* rename 'handleWebNavigationOnCommittedListener' to handleRememberPageAlterationsFromPreferences
+* check if undo /deleteRule works
 * the rememberPageAlterations preference will indicate that the feature is available to sertine Fx version (and will be disabled if not)
 * switching to 'Example.html' tab (not selected) after Fx load I get 'Uncaught (in promise) Error: Missing host permission for the tab'. Am i injecting or something into the tab too soon?
 * in common.js replace the two apply filter functions with a single one (_applyFilter())
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
-* remove rule from Db is action was undo
 * externilize the CssSelectorGenerator options?
-* check what webNavigation permission gives
 * use webNavigation in sage-like ?
-* is url has additinal parameters (#striped)
+* if url has additinal parameters (#striped)
 * in content use member variable for CssSelectorGenerator() to save the repeting 'new'
 * change communication method between content and background:https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts#Communicating_with_background_scripts
 * all indexedDB actions will be done in background by background
