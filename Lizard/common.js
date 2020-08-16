@@ -629,6 +629,27 @@ let lzUtil = (function () {
 		});
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////
+	function unsupportedExtensionFeatures() {
+
+		return new Promise((resolve) => {
+
+			const MIN_VERSION_REMEMBER_PAGE_ALTERATIONS = 64;
+
+			lzUtil.getBrowserVersion().then((version) => {
+
+				let unsupportedFeatures = [];
+
+				if(parseInt(version) < MIN_VERSION_REMEMBER_PAGE_ALTERATIONS) {
+					prefs.setRememberPageAlterations(false);
+					unsupportedFeatures.push("rememberPageAlterations");
+				}
+
+				resolve(unsupportedFeatures);
+			});
+		});
+	}
+
 	return {
 		applyCssFilter: applyCssFilter,
 		reloadLizardWebExtension: reloadLizardWebExtension,
@@ -644,5 +665,6 @@ let lzUtil = (function () {
 		disableElementTree: disableElementTree,
 		versionNumericCompare: versionNumericCompare,
 		getBrowserVersion: getBrowserVersion,
+		unsupportedExtensionFeatures: unsupportedExtensionFeatures,
 	}
 })();

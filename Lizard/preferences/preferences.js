@@ -75,6 +75,8 @@ let preferences = (function() {
 
 		addEventListeners();
 		getSavedPreferences();
+
+		handleUnsupportedFeatures();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -398,4 +400,15 @@ let preferences = (function() {
 		m_elmXpModeContextMenu.checked = defPrefs.xpModeContextMenu;
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////
+	function handleUnsupportedFeatures() {
+
+		lzUtil.unsupportedExtensionFeatures().then((unsupportedFeatures) => {
+
+			if(unsupportedFeatures.includes("rememberPageAlterations")) {
+				m_elmRememberPageAlterations.checked = false;
+				lzUtil.disableElementTree(m_elmRememberPageAlterations.parentElement.parentElement, true);
+			}
+		});
+	}
 })();

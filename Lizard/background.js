@@ -42,7 +42,7 @@
 	initialization();
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function initialization() {
+	async function initialization() {
 
 		createMenus();
 
@@ -52,6 +52,7 @@
 		browser.menus.onClicked.addListener(onMenusClicked);								// menus
 		browser.commands.onCommand.addListener(onCommands);									// keyboard
 
+		await lzUtil.unsupportedExtensionFeatures();
 		handleRememberPageAlterationsFromPreference();										// apply rules
 	}
 

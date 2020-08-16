@@ -22,6 +22,10 @@
 * in common.js replace the two apply filter functions with a single one (_applyFilter())
 * all indexedDB actions will be done in background by background
 * try to hide the element without indexedDB. to compare and see how fast is the indexedDB queries
+* the rememberPageAlterations preference will indicate that the feature is available to sertine Fx version (and will be disabled if not)
+* in content use member variable for CssSelectorGenerator() to save the repeting 'new'
+* change communication method between content and background:https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts#Communicating_with_background_scripts
+* "remember" the changes!!!
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
@@ -30,19 +34,16 @@
 --------------
 * indexedDB
 	* v59 - not working
-	* v68 - working
+	* v64 - working
+* remove 'manage extention' menu item and eplase it with mine?
 * create a managment page for rules
-* the rememberPageAlterations preference will indicate that the feature is available to sertine Fx version (and will be disabled if not)
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
 * externilize the CssSelectorGenerator options?
 * use webNavigation in sage-like ?
 * if url has additinal parameters (#striped)
-* in content use member variable for CssSelectorGenerator() to save the repeting 'new'
-* change communication method between content and background:https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts#Communicating_with_background_scripts
 * what is the point of the empty object in this: 'Object.assign({},...'
 * work in private browsing ? private browsing in min AND amx version ?
 * min version in manifest is v56. I'm using v59. I created VScroll buttons for view-source in window but it HAS VScroll? will it have them in v56?
-* "remember" the changes!!!
 * handle return Promise from prefs functions
 * remove the showVersionNotice ???
 * Implemented Debouncer to prevent double injectLizardScripts() in sendToggleLizardStateMessage()
