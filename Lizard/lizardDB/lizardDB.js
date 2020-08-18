@@ -144,14 +144,14 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	clearAllRules() {
+	deleteAllRules() {
 
 		return new Promise((resolve, reject) => {
 
 			if(!this.isOpen) reject(new Error("Database not open"));
 
 			let tran = this._getRulesTransaction("readwrite", (error) => {
-				console.log("[Lizard]", "clearAllRules transaction error/abort", error.name, error.message);
+				console.log("[Lizard]", "deleteAllRules transaction error/abort", error.name, error.message);
 				reject(error);
 			});
 
@@ -160,7 +160,7 @@ class LizardDB {
 			reqClear.onsuccess = () => resolve();
 			reqClear.onerror = (event) => {
 				const error = event.target.error;
-				console.log("[Lizard]", "clearAllRules delete error",error.name, error.message);
+				console.log("[Lizard]", "deleteAllRules delete error",error.name, error.message);
 				reject(error);
 			};
 		});
