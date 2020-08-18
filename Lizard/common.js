@@ -413,6 +413,29 @@ let lzUtil = (function () {
 	};
 
 	//////////////////////////////////////////////////////////////////////
+	String.prototype.escapeMarkup = function() {
+		return this.replace(String.prototype.escapeMarkup.regex, (match) => {
+			return String.prototype.escapeMarkup.markupReservedCharacters[match];
+		});
+	};
+	String.prototype.escapeMarkup.markupReservedCharacters = {
+		"&": "&amp;",
+		"<": "&lt;",
+		">": "&gt;",
+		"\"": "&quot;",
+		"'": "&#039;",
+	};
+	String.prototype.escapeMarkup.regex = new RegExp("[" + Object.keys(String.prototype.escapeMarkup.markupReservedCharacters).join("") + "]", "gm");
+
+	//////////////////////////////////////////////////////////////////////
+	String.prototype.unescapeMarkup = function() {
+		return this.replace(String.prototype.unescapeMarkup.regex, (match) => {
+			return Object.keys(String.prototype.escapeMarkup.markupReservedCharacters).find((key) => String.prototype.escapeMarkup.markupReservedCharacters[key] === match);
+		});
+	};
+	String.prototype.unescapeMarkup.regex = new RegExp(Object.values(String.prototype.escapeMarkup.markupReservedCharacters).join("|"), "gm");
+
+	//////////////////////////////////////////////////////////////////////
 	function _sendMessageAllLizardSessions(message) {
 
 		return new Promise((resolve) => {
