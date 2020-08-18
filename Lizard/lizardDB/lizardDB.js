@@ -67,7 +67,7 @@ class LizardDB {
 				if(this._isBoolean(details.remove)) obj.remove = details.remove;
 				if(this._isBoolean(details.dewidthify)) obj.dewidthify = details.dewidthify;
 				if(this._isBoolean(details.isolate)) obj.isolate = details.isolate;
-				if(this._isColorObjectValue(details.color)) obj.color = details.color;
+				if(LizardDB._isColorObjectValue(details.color)) obj.color = details.color;
 
 				const reqPut = tran.objectStore("rules").put(obj);
 
@@ -193,6 +193,11 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	static isColorObjectValid(obj) {
+		return LizardDB._isColorObjectValue(obj);
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	logRules(url) {
 		this.getRules(url).then((rules) => {
 			console.log(`%cRules for: '${url}'`, "color:#45ffff;font-size:150%");
@@ -265,15 +270,15 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	_isColorObjectValue(variable) {
-		return (variable === null) ||
-				( typeof(variable) === "object" &&
-					Object.keys(variable).length === 5 &&
-					variable.hasOwnProperty("foreground") && !!(variable.foreground.match(/#[0-9a-f]{6}/i)) &&
-					variable.hasOwnProperty("background") && !!(variable.background.match(/#[0-9a-f]{6}/i)) &&
-					variable.hasOwnProperty("colorizeChildren") && (typeof(variable.colorizeChildren) === "boolean") &&
-					variable.hasOwnProperty("saturateAmount") && ( variable.saturateAmount === null || !!(variable.saturateAmount.match(/(100)?0%/)) ) &&
-					variable.hasOwnProperty("invertAmount") && !!(variable.invertAmount.match(/(10)?0%/)) );
+	static _isColorObjectValue(obj) {
+		return (obj === null) ||
+				( typeof(obj) === "object" &&
+					Object.keys(obj).length === 5 &&
+					obj.hasOwnProperty("foreground") && !!(obj.foreground.match(/^#[0-9a-f]{6}$/i)) &&
+					obj.hasOwnProperty("background") && !!(obj.background.match(/^#[0-9a-f]{6}$/i)) &&
+					obj.hasOwnProperty("colorizeChildren") && (typeof(obj.colorizeChildren) === "boolean") &&
+					obj.hasOwnProperty("saturateAmount") && ( obj.saturateAmount === null || !!(obj.saturateAmount.match(/^(100)?0%$/)) ) &&
+					obj.hasOwnProperty("invertAmount") && !!(obj.invertAmount.match(/^(10)?0%$/)) );
 	}
 
 	//////////////////////////////////////////////////////////////////////
