@@ -28,13 +28,13 @@
 * "remember" the changes!!!
 * what is the point of the empty object in this: 'Object.assign({},...' => good point. the {} is the target object that is alos returnd by Object.assign()
 * create a managment page for rules
+* fix rules.html when selector is too long. see the image in Example.html. CssSelectorGenerator returnd the entire src as selector
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* fix rules.html when selector is too long. see the image in Example.html. CssSelectorGenerator returnd the entire src as selector
 * lizardDB - change index names to the value name
 * indexedDB
 	* v59 - not working
