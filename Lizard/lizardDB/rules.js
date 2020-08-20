@@ -641,12 +641,15 @@
 		let urls = [];
 
 		for(let i=0; i<hosts; i++) {
-			urls.push(lzUtil.getUniqId("https://www.host", 6) + lzUtil.getUniqId(".com/somepath/morepath/", 8) + (!!(lzUtil.random1to100()%2) ? ".html" : ".asp"));
+			urls.push(lzUtil.getUniqId("https://www.host", (!!(lzUtil.random1to100()%2)?6:10)) +
+										(!!(lzUtil.random1to100()%2) ? lzUtil.getUniqId(".com/path", lzUtil.random1to100()) : lzUtil.getUniqId(".net.hk/path", lzUtil.random1to100())) +
+										(!!(lzUtil.random1to100()%2) ? lzUtil.getUniqId("/page", 8) : lzUtil.getUniqId("/web", 10)) +
+										(!!(lzUtil.random1to100()%2) ? ".html" : ".asp"));
 		}
 
 		for(let i=0, len=urls.length; i<len; i++) {
 			for(let j=0; j<selectorsForUrl; j++) {
-				await m_lizardDB.setRule(urls[i], !!(lzUtil.random1to100()%2) ? lzUtil.getUniqId("#id", 8) : lzUtil.getUniqId(".cls", 32), {
+				await m_lizardDB.setRule(urls[i], !!(lzUtil.random1to100()%2) ? lzUtil.getUniqId("#id", j===6?8192:100) : lzUtil.getUniqId(".cls", j===3?8192:32), {
 					hide:		!!(lzUtil.random1to100()%2),
 					remove:		!!(lzUtil.random1to100()%2),
 					dewidthify:	!!(lzUtil.random1to100()%2),
