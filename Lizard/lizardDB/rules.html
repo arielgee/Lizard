@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="rules.css"/>
+	<script src="../common.js"></script>
+	<script src="lizardDB.js"></script>
+	<script src="rules.js"></script>
+</head>
+
+<body>
+	<div id="mainDashboard">
+
+		<div id="experimentalWarningBar" title="Experimental Feature">
+			<div><img src="../icons/flask-light-18.png"></div>
+		</div>
+
+		<!-- ####################################################################################################################### -->
+		<h1><img src="../icons/lizard-32.png">&nbsp;Rules&nbsp;</h1>
+
+		<div class="listHeaderLine">
+			<h3>Rule&nbsp;URLs&nbsp;</h3>
+			<div class="toolbar">
+				<input type="text" tabindex="0" placeholder="filter" id="textFilterURLs" class="textFilter">
+				<button type="button" tabindex="-1" class="toolbarButton buttonClearTextFilter" id="btnClearFilterURLs"></button>
+				<button type="button" tabindex="0" class="toolbarButton" id="btnRefreshURLs">Refresh</button>
+				<button type="button" tabindex="0" class="toolbarButton dangerous" id="btnDeleteRule">Delete Rule</button>
+				<button type="button" tabindex="0" class="toolbarButton dangerous" id="btnDeleteAllRules"><b>Delete All Rules!</b></button>
+			</div>
+		</div>
+
+		<div class="actionNotifyOverlayParent">
+			<ol id="urlsList" type="1"></ol>
+			<div id="notifyUrlsList" class="actionNotifyOverlay"></div>
+		</div>
+
+		<!-- ####################################################################################################################### -->
+		<h3>URL:&nbsp;<a id="anchorURL" target="_blank" rel="noopener noreferrer"></a></h3>
+
+		<div id="urlRuleContainer">
+
+
+			<div id="elementSelectorsContainer">
+
+				<div class="listHeaderLine">
+					<h4>Element&nbsp;Selectors&nbsp;</h4>
+					<div class="toolbar">
+						<input type="text" tabindex="0" placeholder="filter" id="textFilterSelectors" class="textFilter">
+						<button type="button" tabindex="-1" class="toolbarButton buttonClearTextFilter" id="btnClearFilterSelectors"></button>
+						<button type="button" tabindex="0" class="toolbarButton" id="btnRefreshSelectors">Refresh</button>
+						<button type="button" tabindex="0" class="toolbarButton dangerous" id="btnDeleteSelector">Delete Selector</button>
+					</div>
+				</div>
+
+				<div class="actionNotifyOverlayParent">
+					<ol id="selectorsList" type="1"></ol>
+					<div id="notifySelectorsList" class="actionNotifyOverlay"></div>
+				</div>
+			</div>
+
+
+			<div id="verticalBarDelimiter"></div>
+
+
+			<div id="ruleDetailsContainer">
+
+				<div class="listHeaderLine">
+					<h4>Details&nbsp;</h4>
+					<div class="toolbar">
+						<button type="button" tabindex="0" class="toolbarButton" id="btnSave">Save</button>
+						<button type="button" tabindex="0" class="toolbarButton" id="btnRevert">Revert</button>
+					</div>
+				</div>
+
+				<div id="ruleDetails" class="actionNotifyOverlayParent">
+					<div id="ruleProperties"></div>
+					<textarea id="textRuleDetails" wrap="off" spellcheck="false"></textarea>
+					<div id="notifyRuleDetails" class="actionNotifyOverlay"></div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

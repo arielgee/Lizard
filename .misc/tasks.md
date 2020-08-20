@@ -26,22 +26,24 @@
 * in content use member variable for CssSelectorGenerator() to save the repeting 'new'
 * change communication method between content and background:https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts#Communicating_with_background_scripts
 * "remember" the changes!!!
+* what is the point of the empty object in this: 'Object.assign({},...' => good point. the {} is the target object that is alos returnd by Object.assign()
+* create a managment page for rules
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
+* fix rules.html when selector is too long. see the image in Example.html. CssSelectorGenerator returnd the entire src as selector
+* lizardDB - change index names to the value name
 * indexedDB
 	* v59 - not working
 	* v64 - working
 * remove 'manage extention' menu item and eplase it with mine?
-* create a managment page for rules
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
 * externilize the CssSelectorGenerator options?
 * use webNavigation in sage-like ?
 * if url has additinal parameters (#striped)
-* what is the point of the empty object in this: 'Object.assign({},...'
 * work in private browsing ? private browsing in min AND amx version ?
 * min version in manifest is v56. I'm using v59. I created VScroll buttons for view-source in window but it HAS VScroll? will it have them in v56?
 * handle return Promise from prefs functions

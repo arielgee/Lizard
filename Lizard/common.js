@@ -673,6 +673,16 @@ let lzUtil = (function () {
 		});
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////
+	function numberOfVItemsInViewport(elm, elmViewport) {
+
+		let rectElm = elm.getBoundingClientRect();
+		let rectView = elmViewport.getBoundingClientRect();
+
+		return parseInt(rectView.height / rectElm.height);
+	}
+
+
 	return {
 		applyCssFilter: applyCssFilter,
 		reloadLizardWebExtension: reloadLizardWebExtension,
@@ -689,5 +699,6 @@ let lzUtil = (function () {
 		versionNumericCompare: versionNumericCompare,
 		getBrowserVersion: getBrowserVersion,
 		unsupportedExtensionFeatures: unsupportedExtensionFeatures,
+		numberOfVItemsInViewport: numberOfVItemsInViewport,
 	}
 })();

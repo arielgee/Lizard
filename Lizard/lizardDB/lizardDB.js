@@ -193,6 +193,34 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	getAllDistinctUrls() {
+
+		return new Promise((resolve, reject) => {
+
+			if(!this.isOpen) reject(new Error("Database not open"));
+
+			let tran = this._getRulesTransaction("readonly", (error) => {
+				console.log("[Lizard]", "getAllDistinctUrls transaction error/abort", error.name, error.message);
+				reject(error);
+			});
+
+			const reqGet = tran.objectStore("rules").getAll();
+
+			reqGet.onsuccess = () => {
+				let result = reqGet.result.map(r => r.url);		// create string array out of the urls
+				result = [...new Set(result)];					// filter out duplicates
+				resolve(result.sort((a, b) => a.url > b.url ));	// sort and resolve
+			};
+
+			reqGet.onerror = (event) => {
+				const error = event.target.error;
+				console.log("[Lizard]", "getAllDistinctUrls getAll error",error.name, error.message);
+				reject(error);
+			};
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	static isColorObjectValid(obj) {
 		return LizardDB._isColorObjectValue(obj);
 	}
