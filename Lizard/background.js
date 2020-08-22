@@ -208,6 +208,7 @@
 			contexts: ["browser_action"],
 		});
 
+		// getBrowserVersion() must first be called from here or it will fail when called from content.js
 		lzUtil.getBrowserVersion().then((version) => {
 			if(parseInt(version) < 62) {
 				browser.menus.create({

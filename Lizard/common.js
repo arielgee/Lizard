@@ -387,6 +387,8 @@ let sourceData = (function () {
 ///
 let lzUtil = (function () {
 
+	let m_browserVersion;
+
 	//////////////////////////////////////////////////////////////////////
 	String.prototype.format = function (args) {
 		let str = this;
@@ -643,12 +645,16 @@ let lzUtil = (function () {
 		return (v1.length - v2.length);
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
 	function getBrowserVersion() {
 		return new Promise((resolve) => {
-			browser.runtime.getBrowserInfo().then((result) => {
-				resolve(result.version);
-			});
+			if(m_browserVersion === null) {
+				browser.runtime.getBrowserInfo().then((result) => {
+					resolve(m_browserVersion = result.version);
+				});
+			} else {
+				resolve(m_browserVersion);
+			}
 		});
 	}
 
