@@ -36,6 +36,8 @@
 
 ## To-Do
 --------------
+* when injecting ruleActions, the call to colorizeElement() need to be delayed so that it will affect isolated elements
+	* jsCode += `setTimeout(() => ruleActions.colorizeElement(${JSON.stringify(details)}), 250);`;
 * lizardDB - change index names to the value name
 * indexedDB
 	* v59 - not working
