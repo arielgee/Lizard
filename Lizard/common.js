@@ -688,6 +688,38 @@ let lzUtil = (function () {
 		return parseInt(rectView.height / rectElm.height);
 	}
 
+	//////////////////////////////////////////////////////////////////////
+	function writeTextToClipboard(text) {
+
+		getBrowserVersion().then(async (version) => {
+
+			if(parseInt(version) >= 63) {
+
+				try {
+					await navigator.clipboard.writeText(text);
+					return;
+				} catch (error) {
+					console.log("[Lizard]", "navigator.clipboard.writeText()", error);
+				}
+			}
+
+			// fallback
+			try {
+				let restoreFocus = document.activeElement;
+				let input = document.createElement("textarea");
+				let style = input.style;
+				style.height = style.width = style.borderWidth = style.padding = style.margin = 0;
+				input.value = text;
+				document.body.appendChild(input);
+				input.select();
+				document.execCommand("copy");
+				document.body.removeChild(input);
+				restoreFocus.focus();
+			} catch (error) {
+				console.log("[Lizard]", "document.execCommand('copy');", error);
+			}
+		});
+	}
 
 	return {
 		applyCssFilter: applyCssFilter,
@@ -706,5 +738,6 @@ let lzUtil = (function () {
 		getBrowserVersion: getBrowserVersion,
 		unsupportedExtensionFeatures: unsupportedExtensionFeatures,
 		numberOfVItemsInViewport: numberOfVItemsInViewport,
+		writeTextToClipboard: writeTextToClipboard,
 	}
 })();

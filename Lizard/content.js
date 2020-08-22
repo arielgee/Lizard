@@ -1294,8 +1294,12 @@
 				(sel.anchorNode.parentNode.id === sel.focusNode.parentNode.id) &&		// selection in same node
 				(sel.focusNode.parentNode.id === ID_LIZARD_SOURCE_BOX_PRE)) {			// selection is in ID_LIZARD_SOURCE_BOX_PRE
 
-				document.execCommand("copy");		// copy user selected text in ID_LIZARD_SOURCE_BOX_PRE element
+				// copy user selected text in ID_LIZARD_SOURCE_BOX_PRE element
+				lzUtil.writeTextToClipboard(sel.toString());
+
 			} else {
+
+				// copy all text in ID_LIZARD_SOURCE_BOX_PRE element
 
 				let rng = document.createRange();
 
@@ -1304,7 +1308,7 @@
 				sel.removeAllRanges();
 				sel.addRange(rng);
 
-				document.execCommand("copy");		// copy all text in ID_LIZARD_SOURCE_BOX_PRE element
+				lzUtil.writeTextToClipboard(sel.toString());
 
 				sel.removeAllRanges();
 			}
