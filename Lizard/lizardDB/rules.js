@@ -196,11 +196,23 @@
 
 		let lstItem = event.target;
 		let list = lstItem.parentElement;
-		let elm, index;
+		let keyboardAction, elm, index;
 
 		if(lstItem.tagName !== "LI") return;
 
-		switch (event.code) {
+
+		if(event.ctrlKey && (event.code === "KeyC" || event.key === "Insert")) {
+			keyboardAction = "CopyToClipboard";
+		} else {
+			keyboardAction = event.code;
+		}
+
+		switch (keyboardAction) {
+			case "CopyToClipboard":
+				lzUtil.writeTextToClipboard(lstItem.textContent);
+				break;
+				/////////////////////////////////////////////////////////////////////////
+
 			case "Tab":
 				elm = event.shiftKey ? lstItem.previousElementSibling : lstItem.nextElementSibling;
 				break;
@@ -447,7 +459,6 @@
 		m_elmTextRuleDetails.classList.remove("editValid", "editError");
 	}
 
-
 	////////////////////////////////////////////////////////////////////////////////////
 	function saveModifiedRule() {
 
@@ -513,7 +524,7 @@
 			try {
 				obj = JSON.parse(text);
 			} catch(error) {
-				console.log("[Lizard]", error);
+				if( !error.message.startsWith("JSON.parse:") ) console.log("[Lizard]", error);
 				m_elmTextRuleDetails.classList.add("editError");
 				m_elmTextRuleDetails.classList.remove("editValid");
 				return;		// JSON parsing error
