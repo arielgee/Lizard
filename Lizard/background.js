@@ -100,6 +100,11 @@
 				m_lizardDB.deleteRule(message.data.url, message.data.cssSelector);
 				break;
 				//////////////////////////////////////////////////////////////
+
+			case msgs.ID_UPDATE_RULE_STATS:
+				m_lizardDB.updateRuleStats(message.data.url, message.data.cssSelector);
+				break;
+				//////////////////////////////////////////////////////////////
 		}
 	}
 

@@ -82,6 +82,41 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	updateRuleStats(url, cssSelector) {
+
+		return new Promise((resolve, reject) => {
+
+			if(!this.isOpen) reject(new Error("Database not open"));
+
+			url = this._normalizeUrl(url);
+			cssSelector = cssSelector.trim();
+			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: `" + url + "`, cssSelector: `" + cssSelector + "`"));
+
+			let tran = this._getRulesTransaction("readwrite", (error) => {
+				console.log("[Lizard]", "updateRuleStats transaction error/abort", error.name, error.message);
+				reject(error);
+			});
+
+			this._getExistingRule(url, cssSelector, tran).then((existingRule) => {
+
+				const obj = Object.assign(this._getDefaultRuleObject(url, cssSelector), existingRule);
+
+				obj.lastUsed = Date.now();
+				obj.hitCount += 1;
+
+				const reqPut = tran.objectStore("rules").put(obj);
+
+				reqPut.onsuccess = () => resolve(reqPut.result);
+				reqPut.onerror = (event) => {
+					const error = event.target.error;
+					console.log("[Lizard]", "updateRuleStats put error",error.name, error.message);
+					reject(error);
+				};
+			});
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	deleteRule(url, cssSelector) {
 
 		return new Promise((resolve, reject) => {

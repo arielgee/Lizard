@@ -57,6 +57,7 @@
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
 * externilize the CssSelectorGenerator options?
 * use webNavigation in sage-like ?
+* JSDoc
 * if url has additinal parameters (#striped)
 * work in private browsing ? private browsing in min AND amx version ?
 * min version in manifest is v56. I'm using v59. I created VScroll buttons for view-source in window but it HAS VScroll? will it have them in v56?

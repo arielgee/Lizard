@@ -3,33 +3,41 @@
 let ruleActions = (function () {
 
 	//////////////////////////////////////////////////////////////////////
-	function hideElement(cssSelector) {
-		let elm = document.querySelector(decodeURIComponent(cssSelector));
+	function hideElement(cssSelectorEncoded) {
+		let cssSelector = decodeURIComponent(cssSelectorEncoded);
+		let elm = document.querySelector(cssSelector);
 		if(!!elm) {
+			_updateRuleStats(cssSelector);
 			elm.style.visibility = "hidden";
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function removeElement(cssSelector) {
-		let elm = document.querySelector(decodeURIComponent(cssSelector));
+	function removeElement(cssSelectorEncoded) {
+		let cssSelector = decodeURIComponent(cssSelectorEncoded);
+		let elm = document.querySelector(cssSelector);
 		if(!!elm) {
+			_updateRuleStats(decodeURIComponent(cssSelector));
 			elm.parentNode.removeChild(elm);
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function dewidthifyElement(cssSelector) {
-		let elm = document.querySelector(decodeURIComponent(cssSelector));
+	function dewidthifyElement(cssSelectorEncoded) {
+		let cssSelector = decodeURIComponent(cssSelectorEncoded);
+		let elm = document.querySelector(cssSelector);
 		if(!!elm) {
+			_updateRuleStats(decodeURIComponent(cssSelector));
 			_dewidthify(elm);
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function isolateElement(cssSelector) {
-		let elm = document.querySelector(decodeURIComponent(cssSelector));
+	function isolateElement(cssSelectorEncoded) {
+		let cssSelector = decodeURIComponent(cssSelectorEncoded);
+		let elm = document.querySelector(cssSelector);
 		if(!!elm) {
+			_updateRuleStats(decodeURIComponent(cssSelector));
 			let cloning = _cloneIsolatedElement(elm);
 
 			document.documentElement.removeChild(document.body);
@@ -52,8 +60,10 @@ let ruleActions = (function () {
 
 	//////////////////////////////////////////////////////////////////////
 	function colorizeElement(details) {
-		let elm = document.querySelector(decodeURIComponent(details.cssSelectorEncoded));
+		let cssSelector = decodeURIComponent(details.cssSelectorEncoded);
+		let elm = document.querySelector(cssSelector);
 		if(!!elm) {
+			_updateRuleStats(cssSelector);
 			_colorizeElement(elm, details.foreground, details.background, details.colorizeChildren, details.saturateAmount, details.invertAmount);
 		}
 	}
@@ -143,6 +153,17 @@ let ruleActions = (function () {
 			}
 			elm.style.filter += filterName + "(" + amount + ")";
 		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function _updateRuleStats(cssSelector) {
+		browser.runtime.sendMessage({
+			id: "msgUpdateRuleStats",			// For economical reasons the common.js was not injected
+			data: {
+				url: window.location.toString(),
+				cssSelector: cssSelector,
+			},
+		});
 	}
 
 	/********************************************************************/
