@@ -123,7 +123,7 @@ class LizardDB {
 				reject(error);
 			});
 
-			const reqCursor = tran.objectStore("rules").index("idx.url").openCursor([ url ]);
+			const reqCursor = tran.objectStore("rules").index("idx_url").openCursor([ url ]);
 
 			reqCursor.onsuccess = () => {
 				let cursor = reqCursor.result;
@@ -181,7 +181,7 @@ class LizardDB {
 				reject(error);
 			});
 
-			const reqGet = tran.objectStore("rules").index("idx.url").getAll([ url ], 4096);
+			const reqGet = tran.objectStore("rules").index("idx_url").getAll([ url ], 4096);
 
 			reqGet.onsuccess = () => resolve(reqGet.result.sort((a, b) => a.created > b.created ));
 			reqGet.onerror = (event) => {
@@ -240,15 +240,15 @@ class LizardDB {
 
 		let db = this.m_dbRequest.result;
 
-		if(!!!db || db.name !== this.m_databaseName) throw new Error("Database not open")
+		if(!!!db || db.name !== this.m_databaseName) throw new Error("Database not open");
 
 		db.onerror = (event) => console.log("[Lizard]", "upgradeNeeded error", event.target.error.name, event.target.error.message);
 
 		let objStore = db.createObjectStore("rules", { keyPath: [ "url", "cssSelector" ] });
-		objStore.createIndex("idx.url", [ "url" ], { unique: false });
-		objStore.createIndex("idx.created", [ "created" ], { unique: false });
-		objStore.createIndex("idx.lastUsed", [ "lastUsed" ], { unique: false });
-		objStore.createIndex("idx.hitCount", [ "hitCount" ], { unique: false });
+		objStore.createIndex("idx_url", [ "url" ], { unique: false });
+		objStore.createIndex("idx_created", [ "created" ], { unique: false });
+		objStore.createIndex("idx_lastUsed", [ "lastUsed" ], { unique: false });
+		objStore.createIndex("idx_hitCount", [ "hitCount" ], { unique: false });
 
 		//objStore.transaction.oncomplete = (event) => {};
 	}

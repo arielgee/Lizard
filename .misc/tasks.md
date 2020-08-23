@@ -30,6 +30,7 @@
 * create a managment page for rules
 * fix rules.html when selector is too long. see the image in Example.html. CssSelectorGenerator returnd the entire src as selector
 * replace onClick_CopySourceText() with lzUtil.writeTextToClipboard()
+* lizardDB - change index names to the value name
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
@@ -38,7 +39,6 @@
 --------------
 * when injecting ruleActions, the call to colorizeElement() need to be delayed so that it will affect isolated elements
 	* jsCode += `setTimeout(() => ruleActions.colorizeElement(${JSON.stringify(details)}), 250);`;
-* lizardDB - change index names to the value name
 * indexedDB
 	* v59 - not working
 	* v64 - working
