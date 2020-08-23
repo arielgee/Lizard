@@ -80,6 +80,10 @@ ol > li::marker {
 	color: rgb(201, 0, 0);
 }
 
+h1 > img {
+	user-select: none;
+	-moz-user-select: none;
+}
 
 .listHeaderLine {
 	display: flex;

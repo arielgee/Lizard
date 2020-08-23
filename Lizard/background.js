@@ -406,7 +406,12 @@
 						saturateAmount: color.saturateAmount,		// can be null
 						invertAmount: color.invertAmount,
 					};
-					jsCode += `ruleActions.colorizeElement(${JSON.stringify(details)});`;
+
+					// isolate special case:
+					//		An isolated element that is also colored may not get colored due to the way the
+					//		isolation is performed. By delaying the coloring (timeout of zero may also be enough),
+					//		the isolated element will be in place by the time colorizeElement() is executed.
+					jsCode += `setTimeout(() => ruleActions.colorizeElement(${JSON.stringify(details)}), ${(rule.isolate ? 10 : 0)});`;
 				}
 			}
 
