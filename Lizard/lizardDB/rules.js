@@ -635,7 +635,7 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	async function _add_testing_rules(selectorsForUrl = 23) {
+	async function _add_testing_rules(selectorsForUrl = 17) {
 
 		const msg = "Congratulations! You've stumbled upon a hidden testing function.\n\n" +
 					"This will add an untold number of meaningless rules to the extension,\n" +
@@ -646,7 +646,7 @@
 
 		const logStyle = "font-size:150%;color:red;"
 
-		console.log("%c[Lizard] _add_testing_rules(): Started. Wait for it...", logStyle);
+		console.log("%c[Lizard] _add_testing_rules(): ▶️ Started. Wait for it...", logStyle);
 
 		const hosts = 73;
 		let urls = [];
@@ -654,9 +654,11 @@
 		for(let i=0; i<hosts; i++) {
 			urls.push(lzUtil.getUniqId("https://www.host", (!!(lzUtil.random1to100()%2)?6:10)) +
 										(!!(lzUtil.random1to100()%2) ? lzUtil.getUniqId(".com/path", lzUtil.random1to100()) : lzUtil.getUniqId(".net.hk/path", lzUtil.random1to100())) +
-										(!!(lzUtil.random1to100()%2) ? lzUtil.getUniqId("/page", 8) : lzUtil.getUniqId("/web", 10)) +
+										(!!(lzUtil.random1to100()%2) ? lzUtil.getUniqId("/page", 8) : lzUtil.getUniqId("/web", 48)) +
 										(!!(lzUtil.random1to100()%2) ? ".html" : ".asp"));
 		}
+
+		let pause = (timeout) => { return new Promise((resolve) => setTimeout(() => resolve(), timeout) ); };
 
 		for(let i=0, len=urls.length; i<len; i++) {
 			for(let j=0; j<selectorsForUrl; j++) {
@@ -667,10 +669,11 @@
 					isolate:	!!(lzUtil.random1to100()%2),
 				});
 			}
-			console.log("%c[Lizard] _add_testing_rules(): Added so far: " + selectorsForUrl*(i+1), logStyle);
+			await pause(10);
+			console.log("%c[Lizard] _add_testing_rules(): ⏩ Added so far: " + selectorsForUrl*(i+1) + " ✔️", logStyle);
 		}
 		loadURLsList();
 		notifyAction(m_elmNotifyUrlsList, hosts*selectorsForUrl + " rules added", 2000);
-		console.log("%c[Lizard] _add_testing_rules(): Done.", logStyle);
+		console.log("%c[Lizard] _add_testing_rules(): ⏹️ Done.", logStyle);
 	}
 })();
