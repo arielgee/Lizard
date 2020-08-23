@@ -371,7 +371,7 @@
 
 			try {
 				await browser.tabs.executeScript(tabId, { runAt: "document_start", file: "ruleActions/ruleActions.js" });
-			} catch(error) { return }	// 'Error: Missing host permission for the tab' when tab is 'saved' after Fx load
+			} catch(error) { return; }	// 'Error: Missing host permission for the tab' when tab is 'saved' after Fx load
 
 			let jsCode = "";
 

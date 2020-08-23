@@ -30,6 +30,8 @@
 * create a managment page for rules
 * fix rules.html when selector is too long. see the image in Example.html. CssSelectorGenerator returnd the entire src as selector
 * replace onClick_CopySourceText() with lzUtil.writeTextToClipboard()
+* when injecting ruleActions, the call to colorizeElement() need to be delayed so that it will affect isolated elements
+	* jsCode += `setTimeout(() => ruleActions.colorizeElement(${JSON.stringify(details)}), 250);`;
 * lizardDB - change index names to the value name
 ---
 
@@ -37,11 +39,20 @@
 
 ## To-Do
 --------------
-* when injecting ruleActions, the call to colorizeElement() need to be delayed so that it will affect isolated elements
-	* jsCode += `setTimeout(() => ruleActions.colorizeElement(${JSON.stringify(details)}), 250);`;
 * indexedDB
 	* v59 - not working
 	* v64 - working
+* if two actions performed on same element and then undo last one, the rule is deleted and the first action is forgotten
+* sometimes got this when _add_testing_rules()
+`	Uncaught (in promise) DOMException: IDBTransaction.objectStore: Transaction is already committing or done. lizardDB.js:72`
+`		setRule moz-extension://2078f906-1bb6-416c-94c4-047156007510/lizardDB/lizardDB.js:72`
+`		enter resource://devtools/server/actors/utils/event-loop.js:79`
+`		enter self-hosted:935`
+`		_pushThreadPause resource://devtools/server/actors/thread.js:326`
+`		onAttach resource://devtools/server/actors/thread.js:478`
+`		onAttach self-hosted:935`
+`		onPacket resource://devtools/server/devtools-server-connection.js:379`
+`		receiveMessage resource://devtools/shared/transport/child-transport.js:66`
 * remove 'manage extention' menu item and eplase it with mine?
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
 * externilize the CssSelectorGenerator options?
