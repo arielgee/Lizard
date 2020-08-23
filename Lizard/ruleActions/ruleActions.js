@@ -93,10 +93,12 @@ let ruleActions = (function () {
 	function _colorizeElement(elm, foreground, background, colorizeChildren, saturateAmount, invertAmount) {
 
 		let colorImages = (!!saturateAmount && ((elm.nodeName === "IMG") || _isSVGObject(elm) || _hasBackgroundImage(elm)));
+		let elmStyle = elm.style;
 
-		elm.style.color = foreground;
-		elm.style.borderColor = foreground;
-		elm.style.backgroundColor = background;
+		elmStyle.color = foreground;
+		elmStyle.webkitTextFillColor = foreground;
+		elmStyle.borderColor = foreground;
+		elmStyle.backgroundColor = background;
 		if(colorImages) {
 			_applyCssFilter(elm, "saturate", saturateAmount);
 			if (invertAmount) {

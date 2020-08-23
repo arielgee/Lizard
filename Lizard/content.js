@@ -805,19 +805,22 @@
 	function _colorElement(elm, foreground, background, uaItems, deep, saturateAmount, invertAmount) {
 
 		let colorImages = (saturateAmount && ((elm.nodeName === "IMG") || lzUtil.isSVGObject(elm) || lzUtil.hasBackgroundImage(elm)));
+		let elmStyle = elm.style;
 
 		uaItems.push({
 			element: elm,
-			prev_color: elm.style.color,
-			prev_borderColor: elm.style.borderColor,
-			prev_backgroundColor: elm.style.backgroundColor,
-			prev_filter: elm.style.filter,
+			prev_color: elmStyle.color,
+			prev_webkitTextFillColor: elmStyle.webkitTextFillColor,
+			prev_borderColor: elmStyle.borderColor,
+			prev_backgroundColor: elmStyle.backgroundColor,
+			prev_filter: elmStyle.filter,
 			undoFilter: colorImages,
 		});
 
-		elm.style.color = foreground;
-		elm.style.borderColor = foreground;
-		elm.style.backgroundColor = background;
+		elmStyle.color = foreground;
+		elmStyle.webkitTextFillColor = foreground;
+		elmStyle.borderColor = foreground;
+		elmStyle.backgroundColor = background;
 		if (colorImages) {
 			lzUtil.applyCssFilter(elm, "saturate", saturateAmount);
 			if (invertAmount) {
@@ -890,11 +893,13 @@
 			case UNDO_ACTION_COLORIZE:
 				for(let i=0, len=ua.data.coloureditems.length; i<len; i++) {
 					let e = ua.data.coloureditems[i];
-					e.element.style.color = e.prev_color;
-					e.element.style.borderColor = e.prev_borderColor;
-					e.element.style.backgroundColor = e.prev_backgroundColor;
+					let eStyle = e.element.style;
+					eStyle.color = e.prev_color;
+					eStyle.webkitTextFillColor = e.prev_webkitTextFillColor;
+					eStyle.borderColor = e.prev_borderColor;
+					eStyle.backgroundColor = e.prev_backgroundColor;
 					if (e.undoFilter) {
-						e.element.style.filter = e.prev_filter;
+						eStyle.filter = e.prev_filter;
 					}
 				}
 				break;
