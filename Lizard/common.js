@@ -483,8 +483,10 @@ let lzUtil = (function () {
 		if (re.test(compStyle.filter)) {
 			elm.style.filter = compStyle.filter.replace(re, "$1" + amount + "$3");	// replace amount
 		} else {
-			if (compStyle.filter != "" && compStyle.filter != "none") {
+			if (compStyle.filter !== "" && compStyle.filter !== "none") {
 				elm.style.filter = compStyle.filter;
+			} else if(elm.style.filter === "none") {
+				elm.style.filter = "";
 			}
 			elm.style.filter += filterName + "(" + amount + ")";
 		}
