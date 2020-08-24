@@ -389,7 +389,7 @@ let sourceData = (function () {
 ///
 let lzUtil = (function () {
 
-	let m_browserVersion;
+	let m_browserVersion = null;
 
 	//////////////////////////////////////////////////////////////////////
 	String.prototype.format = function (args) {
