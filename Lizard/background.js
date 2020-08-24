@@ -137,7 +137,7 @@
 	function onMenusClicked(info, tab) {
 		switch (info.menuItemId) {
 			case "mnu-reload-lizard-extension":		lzUtil.reloadLizardWebExtension();		break;
-			case "mnu-open-options-page":			browser.runtime.openOptionsPage();		break;
+			case "mnu-open-lizard-options":			browser.runtime.openOptionsPage();		break;
 		}
 	}
 
@@ -217,8 +217,8 @@
 		lzUtil.getBrowserVersion().then((version) => {
 			if(parseInt(version) < 62) {
 				browser.menus.create({
-					id: "mnu-open-options-page",
-					title: "Open Options Page",
+					id: "mnu-open-lizard-options",
+					title: "Open Lizard Options",
 					contexts: ["browser_action"],
 				});
 			}

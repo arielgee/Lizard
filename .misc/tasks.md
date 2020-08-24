@@ -33,6 +33,7 @@
 * when injecting ruleActions, the call to colorizeElement() need to be delayed so that it will affect isolated elements
 	* jsCode += `setTimeout(() => ruleActions.colorizeElement(${JSON.stringify(details)}), 250);`;
 * lizardDB - change index names to the value name
+* remove 'manage extention' menu item and eplase it with mine? => no
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
@@ -53,7 +54,6 @@
 `		onAttach self-hosted:935`
 `		onPacket resource://devtools/server/devtools-server-connection.js:379`
 `		receiveMessage resource://devtools/shared/transport/child-transport.js:66`
-* remove 'manage extention' menu item and eplase it with mine?
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
 * externilize the CssSelectorGenerator options?
 * use webNavigation in sage-like ?
