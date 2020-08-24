@@ -638,7 +638,7 @@
 	async function _add_testing_rules(selectorsForUrl = 17) {
 
 		const msg = "Congratulations! You've stumbled upon a hidden testing function.\n\n" +
-					"This will add an untold number of meaningless rules to the extension,\n" +
+					"This will add an untold number of meaningless rules to the extension's database,\n" +
 					"and it's going be exhausting to clean without deleting all the rules.\n\nContinue?\n\n\n" +
 					"* Watch the console for progress.";
 
@@ -653,7 +653,7 @@
 
 		for(let i=0; i<hosts; i++) {
 			urls.push(lzUtil.getUniqId("https://www.host", (!!(lzUtil.random1to100()%2)?6:10)) +
-										(!!(lzUtil.random1to100()%2) ? lzUtil.getUniqId(".com/path", lzUtil.random1to100()) : lzUtil.getUniqId(".net.hk/path", lzUtil.random1to100())) +
+										(!!(lzUtil.random1to100()%2) ? lzUtil.getUniqId(".com/path", lzUtil.random1to100()) : lzUtil.getUniqId(".net.hk/folder", lzUtil.random1to100())) +
 										(!!(lzUtil.random1to100()%2) ? lzUtil.getUniqId("/page", 8) : lzUtil.getUniqId("/web", 48)) +
 										(!!(lzUtil.random1to100()%2) ? ".html" : ".asp"));
 		}
@@ -669,8 +669,8 @@
 					isolate:	!!(lzUtil.random1to100()%2),
 				});
 			}
-			await pause(10);
 			console.log("%c[Lizard] _add_testing_rules(): ⏩ Added so far: " + selectorsForUrl*(i+1) + " ✔️", logStyle);
+			await pause(10);
 		}
 		loadURLsList();
 		notifyAction(m_elmNotifyUrlsList, hosts*selectorsForUrl + " rules added", 2000);

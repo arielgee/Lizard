@@ -160,7 +160,7 @@ let ruleActions = (function () {
 	//////////////////////////////////////////////////////////////////////
 	function _updateRuleStats(cssSelector) {
 		browser.runtime.sendMessage({
-			id: "msgUpdateRuleStats",			// For economical reasons the common.js was not injected
+			id: "msgUpdateRuleStats",			// msgs.ID_UPDATE_RULE_STATS -> For economical reasons the common.js was not injected
 			data: {
 				url: window.location.toString(),
 				cssSelector: cssSelector,
