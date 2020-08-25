@@ -34,6 +34,7 @@
 	* jsCode += `setTimeout(() => ruleActions.colorizeElement(${JSON.stringify(details)}), 250);`;
 * lizardDB - change index names to the value name
 * remove 'manage extention' menu item and eplase it with mine? => no
+* the flask is hidden by lists
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
@@ -41,7 +42,6 @@
 ## To-Do
 --------------
 * clear/close transaction when errors
-* the flask is hidden by lists
 * arguments.callee.name for function name
 * indexedDB
 	* v59 - not working
