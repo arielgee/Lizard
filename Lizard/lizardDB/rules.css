@@ -62,6 +62,7 @@ ol {
 	font-family: "Courier New", monospace;
 	font-size: 14px;
 	line-height: normal;
+	background-color: #ececec;
 }
 ol > li {
 	padding: 2px 0;
