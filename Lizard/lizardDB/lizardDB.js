@@ -261,6 +261,11 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	static ruleHasValue(obj) {
+		return LizardDB._ruleHasValue(obj);
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	logRules(url) {
 		this.getRules(url).then((rules) => {
 			console.log(`%cRules for: '${url}'`, "color:#45ffff;font-size:150%");
@@ -342,6 +347,15 @@ class LizardDB {
 					obj.hasOwnProperty("colorizeChildren") && (typeof(obj.colorizeChildren) === "boolean") &&
 					obj.hasOwnProperty("saturateAmount") && ( obj.saturateAmount === null || !!(obj.saturateAmount.match(/^(100)?0%$/)) ) &&
 					obj.hasOwnProperty("invertAmount") && !!(obj.invertAmount.match(/^(10)?0%$/)) );
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	static _ruleHasValue(obj) {
+		return	obj.hide ||
+				obj.remove ||
+				obj.dewidthify ||
+				obj.isolate ||
+				obj.color !== null;
 	}
 
 	//////////////////////////////////////////////////////////////////////

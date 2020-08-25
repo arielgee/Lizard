@@ -464,13 +464,8 @@
 
 		if( !!m_objValidModifiedRuleDetails && !!m_elmSelListItemURL && !!m_elmSelListItemSelector ) {
 
-			let hasValue = 	m_objValidModifiedRuleDetails.hide ||
-							m_objValidModifiedRuleDetails.remove ||
-							m_objValidModifiedRuleDetails.dewidthify ||
-							m_objValidModifiedRuleDetails.isolate ||
-							m_objValidModifiedRuleDetails.color !== null;
+			if(LizardDB.ruleHasValue(m_objValidModifiedRuleDetails)) {
 
-			if(hasValue) {
 				m_lizardDB.setRule(m_elmSelListItemURL.textContent, m_elmSelListItemSelector.textContent, m_objValidModifiedRuleDetails).then(() => {
 
 					m_strMirrorJsonRuleDetails = mirrorJsonRuleDetails(m_objValidModifiedRuleDetails);

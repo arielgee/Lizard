@@ -40,6 +40,9 @@
 
 ## To-Do
 --------------
+* clear/close transaction when errors
+* the flask is hidden by lists
+* arguments.callee.name for function name
 * indexedDB
 	* v59 - not working
 	* v64 - working
