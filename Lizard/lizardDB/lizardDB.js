@@ -52,7 +52,7 @@ class LizardDB {
 
 			url = this._normalizeUrl(url);
 			cssSelector = cssSelector.trim();
-			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: `" + url + "`, cssSelector: `" + cssSelector + "`"));
+			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: '" + url + "', cssSelector: '" + cssSelector + "'"));
 
 			let tran = this._getRulesTransaction("readwrite", (error) => {
 				console.log("[Lizard]", "setRule transaction error/abort", error.name, error.message);
@@ -90,7 +90,7 @@ class LizardDB {
 
 			url = this._normalizeUrl(url);
 			cssSelector = cssSelector.trim();
-			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: `" + url + "`, cssSelector: `" + cssSelector + "`"));
+			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: '" + url + "', cssSelector: '" + cssSelector + "'"));
 
 			let tran = this._getRulesTransaction("readwrite", (error) => {
 				console.log("[Lizard]", "updateRuleStats transaction error/abort", error.name, error.message);
@@ -125,7 +125,7 @@ class LizardDB {
 
 			url = this._normalizeUrl(url);
 			cssSelector = cssSelector.trim();
-			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: `" + url + "`, cssSelector: `" + cssSelector + "`"));
+			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: '" + url + "', cssSelector: '" + cssSelector + "'"));
 
 			let tran = this._getRulesTransaction("readwrite", (error) => {
 				console.log("[Lizard]", "deleteRule transaction error/abort", error.name, error.message);
@@ -151,7 +151,7 @@ class LizardDB {
 			if(!this.isOpen) reject(new Error("Database not open"));
 
 			url = this._normalizeUrl(url);
-			if(!!!url) reject(new Error("Mandatory parameters missing. url: `" + url + "`"));
+			if(!!!url) reject(new Error("Mandatory parameters missing. url: '" + url + "'"));
 
 			let tran = this._getRulesTransaction("readwrite", (error) => {
 				console.log("[Lizard]", "deleteRulesByUrl transaction error/abort", error.name, error.message);
@@ -209,7 +209,7 @@ class LizardDB {
 			if(!this.isOpen) reject(new Error("Database not open"));
 
 			url = this._normalizeUrl(url);
-			if(!!!url) reject(new Error("Mandatory parameters missing. url: `" + url + "`"));
+			if(!!!url) reject(new Error("Mandatory parameters missing. url: '" + url + "'"));
 
 			let tran = this._getRulesTransaction("readonly", (error) => {
 				console.log("[Lizard]", "getRules transaction error/abort", error.name, error.message);

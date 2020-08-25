@@ -529,7 +529,7 @@ let csgDependencies = (function () {
 			last = keys.length - 1;
 		}
 		else {
-			throw new TypeError("Expecting an Array or an Object, but `" + (list === null ? "null" : typeof(list)) + "` provided.");
+			throw new TypeError("Expecting an Array or an Object, but '" + (list === null ? "null" : typeof(list)) + "' provided.");
 		}
 
 		function add(row, i) {
