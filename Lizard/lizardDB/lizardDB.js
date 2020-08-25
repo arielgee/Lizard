@@ -48,15 +48,15 @@ class LizardDB {
 
 		return new Promise((resolve, reject) => {
 
-			if(!this.isOpen) reject(new Error("Database not open"));
+			if(!this.isOpen) return reject(new Error("Database not open"));
 
 			url = this._normalizeUrl(url);
 			cssSelector = cssSelector.trim();
-			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: '" + url + "', cssSelector: '" + cssSelector + "'"));
+			if(!!!url || !!!cssSelector) return reject(new Error("Mandatory parameters missing. url: '" + url + "', cssSelector: '" + cssSelector + "'"));
 
 			let tran = this._getRulesTransaction("readwrite", (error) => {
 				console.log("[Lizard]", "setRule transaction error/abort", error.name, error.message);
-				reject(error);
+				return reject(error);
 			});
 
 			this._getExistingRule(url, cssSelector, tran).then((existingRule) => {
@@ -86,15 +86,15 @@ class LizardDB {
 
 		return new Promise((resolve, reject) => {
 
-			if(!this.isOpen) reject(new Error("Database not open"));
+			if(!this.isOpen) return reject(new Error("Database not open"));
 
 			url = this._normalizeUrl(url);
 			cssSelector = cssSelector.trim();
-			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: '" + url + "', cssSelector: '" + cssSelector + "'"));
+			if(!!!url || !!!cssSelector) return reject(new Error("Mandatory parameters missing. url: '" + url + "', cssSelector: '" + cssSelector + "'"));
 
 			let tran = this._getRulesTransaction("readwrite", (error) => {
 				console.log("[Lizard]", "updateRuleStats transaction error/abort", error.name, error.message);
-				reject(error);
+				return reject(error);
 			});
 
 			this._getExistingRule(url, cssSelector, tran).then((existingRule) => {
@@ -121,15 +121,15 @@ class LizardDB {
 
 		return new Promise((resolve, reject) => {
 
-			if(!this.isOpen) reject(new Error("Database not open"));
+			if(!this.isOpen) return reject(new Error("Database not open"));
 
 			url = this._normalizeUrl(url);
 			cssSelector = cssSelector.trim();
-			if(!!!url || !!!cssSelector) reject(new Error("Mandatory parameters missing. url: '" + url + "', cssSelector: '" + cssSelector + "'"));
+			if(!!!url || !!!cssSelector) return reject(new Error("Mandatory parameters missing. url: '" + url + "', cssSelector: '" + cssSelector + "'"));
 
 			let tran = this._getRulesTransaction("readwrite", (error) => {
 				console.log("[Lizard]", "deleteRule transaction error/abort", error.name, error.message);
-				reject(error);
+				return reject(error);
 			});
 
 			const reqDelete = tran.objectStore("rules").delete([ url, cssSelector ]);
@@ -148,14 +148,14 @@ class LizardDB {
 
 		return new Promise((resolve, reject) => {
 
-			if(!this.isOpen) reject(new Error("Database not open"));
+			if(!this.isOpen) return reject(new Error("Database not open"));
 
 			url = this._normalizeUrl(url);
-			if(!!!url) reject(new Error("Mandatory parameters missing. url: '" + url + "'"));
+			if(!!!url) return reject(new Error("Mandatory parameters missing. url: '" + url + "'"));
 
 			let tran = this._getRulesTransaction("readwrite", (error) => {
 				console.log("[Lizard]", "deleteRulesByUrl transaction error/abort", error.name, error.message);
-				reject(error);
+				return reject(error);
 			});
 
 			const reqCursor = tran.objectStore("rules").index("idx_url").openCursor([ url ]);
@@ -183,11 +183,11 @@ class LizardDB {
 
 		return new Promise((resolve, reject) => {
 
-			if(!this.isOpen) reject(new Error("Database not open"));
+			if(!this.isOpen) return reject(new Error("Database not open"));
 
 			let tran = this._getRulesTransaction("readwrite", (error) => {
 				console.log("[Lizard]", "deleteAllRules transaction error/abort", error.name, error.message);
-				reject(error);
+				return reject(error);
 			});
 
 			const reqClear = tran.objectStore("rules").clear();
@@ -206,14 +206,14 @@ class LizardDB {
 
 		return new Promise((resolve, reject) => {
 
-			if(!this.isOpen) reject(new Error("Database not open"));
+			if(!this.isOpen) return reject(new Error("Database not open"));
 
 			url = this._normalizeUrl(url);
-			if(!!!url) reject(new Error("Mandatory parameters missing. url: '" + url + "'"));
+			if(!!!url) return reject(new Error("Mandatory parameters missing. url: '" + url + "'"));
 
 			let tran = this._getRulesTransaction("readonly", (error) => {
 				console.log("[Lizard]", "getRules transaction error/abort", error.name, error.message);
-				reject(error);
+				return reject(error);
 			});
 
 			const reqGet = tran.objectStore("rules").index("idx_url").getAll([ url ], 4096);
@@ -232,11 +232,11 @@ class LizardDB {
 
 		return new Promise((resolve, reject) => {
 
-			if(!this.isOpen) reject(new Error("Database not open"));
+			if(!this.isOpen) return reject(new Error("Database not open"));
 
 			let tran = this._getRulesTransaction("readonly", (error) => {
 				console.log("[Lizard]", "getAllDistinctUrls transaction error/abort", error.name, error.message);
-				reject(error);
+				return reject(error);
 			});
 
 			const reqGet = tran.objectStore("rules").getAll();
