@@ -57,6 +57,7 @@
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
 * externilize the CssSelectorGenerator options?
 * use webNavigation in sage-like ?
+* update SourceBeautifier to latest version from https://github.com/beautify-web/js-beautify
 * JSDoc
 * if url has additinal parameters (#striped)
 * work in private browsing ? private browsing in min AND amx version ?
