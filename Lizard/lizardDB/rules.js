@@ -171,8 +171,8 @@
 
 		if(m_elmListURLs.children.length > 0) {
 
-			let replay = messageBox("Delete all rules?\n\nType the word 'YES' to confirm.\n\n", "prompt");
-			if ((replay || "").toLowerCase() === "yes") {
+			let replay = messageBox("Delete all rules?\n\nType the word 'DELETE' to confirm.\n\n", "prompt");
+			if ((replay || "").toLowerCase() === "delete") {
 				m_lizardDB.deleteAllRules().then(() => {
 					notifyAction(m_elmNotifyUrlsList, "All Deleted");
 					clearURLsList();
