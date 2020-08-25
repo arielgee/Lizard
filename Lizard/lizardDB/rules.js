@@ -484,6 +484,7 @@
 					// reapply to selected list item
 					m_elmSelListItemSelector.setAttribute(ATTR_STRING_RULE, JSON.stringify(freshRule).escapeMarkup());
 
+					m_elmTextRuleDetails.value = m_strMirrorJsonRuleDetails;
 					m_elmTextRuleDetails.classList.remove("editValid");
 					notifyAction(m_elmNotifyRuleDetails, "Saved");
 

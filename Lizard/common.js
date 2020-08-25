@@ -473,7 +473,9 @@ let lzUtil = (function () {
 
 		let validFilters = [ "saturate", "invert" ];
 		if( !validFilters.includes(filterName) ) {
-			console.log("[Lizard]", "Error: invalid filter name: `" + filterName + "`. Expected: " + validFilters.map(n => "`" + n + "`").join(", "));
+			let msg = "Invalid filter name: '" + filterName + "'. Expected: " + validFilters.map(n => "'" + n + "'").join(", ");
+			console.log("[Lizard]", "Error:", msg);
+			throw new Error(msg);
 		}
 
 		let re = new RegExp("\\b(" + filterName + "\\()([^)]+)(\\))");	// match: "saturate([amount])" or "invert([amount])"
