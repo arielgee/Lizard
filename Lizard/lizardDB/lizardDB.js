@@ -117,6 +117,52 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	unsetRuleDetail(url, cssSelector, unsetDetailName) {
+
+		return new Promise((resolve, reject) => {
+
+			if(!this.isOpen) return reject(new Error("Database not open"));
+
+			let validDetailNames = ["hide", "remove", "dewidthify", "isolate", "color"];
+
+			url = this._normalizeUrl(url);
+			cssSelector = cssSelector.trim();
+			unsetDetailName = unsetDetailName.trim();
+			if(!!!url || !!!cssSelector || !validDetailNames.includes(unsetDetailName) ) {
+				return reject(new Error("Mandatory arguments missing. Arguments: " + Object.values(arguments).join(", ")));
+			}
+
+			let tran = this._getRulesTransaction("readwrite", (error) => {
+				console.log("[Lizard]", "unsetRuleDetail transaction error/abort", error.name, error.message);
+				return reject(error);
+			});
+
+			this._getExistingRule(url, cssSelector, tran).then((existingRule) => {
+
+				// if rule doesn't exist do noting
+				if(Object.keys(existingRule).length === 0) return resolve();
+
+				existingRule[unsetDetailName] = (unsetDetailName === "color" ? null : false);
+
+				let req;
+
+				if(LizardDB.ruleHasValue(existingRule)) {
+					req = tran.objectStore("rules").put(existingRule);
+				} else {
+					req = tran.objectStore("rules").delete([ url, cssSelector ]);
+				}
+
+				req.onsuccess = () => resolve(req.result);	// record key for put(), undefined for delete()
+				req.onerror = (event) => {
+					const error = event.target.error;
+					console.log("[Lizard]", "unsetRuleDetail put/delete error",error.name, error.message);
+					reject(error);
+				};
+			});
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	deleteRule(url, cssSelector) {
 
 		return new Promise((resolve, reject) => {

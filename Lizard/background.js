@@ -96,8 +96,8 @@
 				break;
 				//////////////////////////////////////////////////////////////
 
-			case msgs.ID_DELETE_RULE:
-				m_lizardDB.deleteRule(message.data.url, message.data.cssSelector);
+			case msgs.ID_UNSET_RULE_DETAIL:
+				m_lizardDB.unsetRuleDetail(message.data.url, message.data.cssSelector, message.data.detail);
 				break;
 				//////////////////////////////////////////////////////////////
 

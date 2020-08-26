@@ -49,10 +49,10 @@
 	const UNDO_ACTION_ISOLATE = "undoIsolate";
 	const UNDO_ACTION_COLORIZE = "undoColorize";
 
-	const UNDO_LIZARD_ACTION = function (typeval, ruleKey = null) {
+	const UNDO_LIZARD_ACTION = function (typeval, ruleData = null) {
 		return {
 			type: typeval,
-			ruleKey: ruleKey,
+			ruleData: ruleData,
 			data: {
 			},
 		};
@@ -581,9 +581,9 @@
 		unselectElement();
 		lockSelection(false);
 
-		let ruleKey = rememberPageAlterations(elm, { hide: true });
+		let ruleData = rememberPageAlterations(elm, { hide: true });
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_HIDE, ruleKey);
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_HIDE, ruleData);
 
 		ua.data["element"] = elm;
 		ua.data["prev_visibility"] = elm.style.visibility;
@@ -616,9 +616,9 @@
 		unselectElement();
 		lockSelection(false);
 
-		let ruleKey = rememberPageAlterations(elm, { remove: true });
+		let ruleData = rememberPageAlterations(elm, { remove: true });
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_REMOVE, ruleKey);
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_REMOVE, ruleData);
 
 		// save element and it's position
 		ua.data["element"] = elm;
@@ -642,9 +642,9 @@
 			return;
 		}
 
-		let ruleKey = rememberPageAlterations(elm, { dewidthify: true });
+		let ruleData = rememberPageAlterations(elm, { dewidthify: true });
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_DEWIDTHIFY, ruleKey);
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_DEWIDTHIFY, ruleData);
 
 		ua.data["dewidthifiedItems"] = [];
 
@@ -702,9 +702,9 @@
 		lockSelection(false);
 		removeInfoBoxes();
 
-		let ruleKey = rememberPageAlterations(elm, { isolate: true });
+		let ruleData = rememberPageAlterations(elm, { isolate: true });
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_ISOLATE, ruleKey);
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_ISOLATE, ruleData);
 
 		// save document's body and scroll position
 		ua.data["prev_body"] = document.body;
@@ -782,7 +782,7 @@
 			return;
 		}
 
-		let ruleKey = rememberPageAlterations(elm, {
+		let ruleData = rememberPageAlterations(elm, {
 			color: {
 				foreground: foreground,
 				background: background,
@@ -792,7 +792,7 @@
 			}
 		});
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_COLORIZE, ruleKey);
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_COLORIZE, ruleData);
 
 		ua.data["coloureditems"] = [];
 
@@ -850,11 +850,12 @@
 		// pop the last undo action
 		let ua = m_lizardState.undoActions.pop();
 
-		let uaRuleKey = ua.ruleKey;
-		if( (uaRuleKey instanceof Object) && uaRuleKey.hasOwnProperty("url") && uaRuleKey.hasOwnProperty("cssSelector") ) {
-			let msg = msgs.BROWSER_MESSAGE(msgs.ID_DELETE_RULE);
-			msg.data["url"] = uaRuleKey.url;
-			msg.data["cssSelector"] = uaRuleKey.cssSelector;
+		let uaRuleData = ua.ruleData;
+		if( (uaRuleData instanceof Object) && uaRuleData.hasOwnProperty("url") && uaRuleData.hasOwnProperty("cssSelector") && uaRuleData.hasOwnProperty("detail") ) {
+			let msg = msgs.BROWSER_MESSAGE(msgs.ID_UNSET_RULE_DETAIL);
+			msg.data["url"] = uaRuleData.url;
+			msg.data["cssSelector"] = uaRuleData.cssSelector;
+			msg.data["detail"] = uaRuleData.detail;
 
 			browser.runtime.sendMessage(msg);
 		}
@@ -1781,10 +1782,11 @@
 
 		browser.runtime.sendMessage(msg);
 
-		// return rule key
+		// return rule detail unset data; ruleData
 		return {
 			url: msg.data.url,
 			cssSelector: msg.data.cssSelector,
+			detail: Object.keys(details)[0],
 		};
 	}
 
