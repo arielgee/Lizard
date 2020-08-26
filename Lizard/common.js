@@ -515,11 +515,8 @@ let lzUtil = (function () {
 
 	//////////////////////////////////////////////////////////////////////
 	function toggleRememberPageAlterations() {
-
 		let msg = msgs.BROWSER_MESSAGE(msgs.ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS);
-
 		browser.runtime.sendMessage(msg);
-		_sendMessageAllLizardSessions(msg);
 	}
 
 	//////////////////////////////////////////////////////////////////////

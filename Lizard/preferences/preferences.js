@@ -21,6 +21,7 @@ let preferences = (function() {
 	let m_elmContextMenu;
 	let m_elmToolsMenu;
 	let m_elmRememberPageAlterations;
+	let m_elmLabelReqRestartSessionRpa;
 	let m_elmExpertMode;
 	let m_elmXpModeContextMenu;
 	let m_elmLabelReqRestartSessionXp;
@@ -59,6 +60,7 @@ let preferences = (function() {
 		m_elmContextMenu = document.getElementById("contextMenu");
 		m_elmToolsMenu = document.getElementById("toolsMenu");
 		m_elmRememberPageAlterations = document.getElementById("rememberPageAlterations");
+		m_elmLabelReqRestartSessionRpa = document.getElementById("restartSessionRpa");
 		m_elmExpertMode = document.getElementById("expertMode");
 		m_elmXpModeContextMenu = document.getElementById("xpModeContextMenu");
 		m_elmLabelReqRestartSessionXp = document.getElementById("restartSessionXp");
@@ -340,6 +342,7 @@ let preferences = (function() {
 	////////////////////////////////////////////////////////////////////////////////////
 	function onChangeRememberPageAlterations() {
 		prefs.setRememberPageAlterations(m_elmRememberPageAlterations.checked);
+		m_elmLabelReqRestartSessionRpa.classList.add("flash");
 		lzUtil.toggleRememberPageAlterations();
 	}
 
@@ -373,6 +376,9 @@ let preferences = (function() {
 		if (m_elmContextMenu.checked !== defPrefs.menuItemContext || m_elmToolsMenu.checked !== defPrefs.menuItemTools) {
 			m_elmLabelReqRestartExtension.classList.add("flash");
 			m_elmBtnReloadExtension.classList.add("flash");
+		}
+		if (m_elmRememberPageAlterations.checked !== defPrefs.rememberPageAlterations) {
+			m_elmLabelReqRestartSessionRpa.classList.add("flash");
 		}
 		if (m_elmExpertMode.checked !== defPrefs.expertMode) {
 			m_elmLabelReqRestartSessionXp.classList.add("flash");

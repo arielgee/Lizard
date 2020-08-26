@@ -110,12 +110,6 @@
 						break;
 						//////////////////////////////////////////////////////////////
 
-					case msgs.ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS:
-						prefs.getRememberPageAlterations().then((value) => m_lizardState.rememberPageAlterations = value );
-						resolve({ message: "toggle" });
-						break;
-						//////////////////////////////////////////////////////////////
-
 					default:
 						reject();
 						break;
