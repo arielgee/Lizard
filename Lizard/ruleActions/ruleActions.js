@@ -38,23 +38,21 @@ let ruleActions = (function () {
 		let elm = document.querySelector(cssSelector);
 		if(!!elm) {
 			_updateRuleStats(decodeURIComponent(cssSelector));
-			let cloning = _cloneIsolatedElement(elm);
+
+			let isolated = _cloneIsolatedElement(elm);
+			isolated.style.display = "table-cell";
+			isolated.style.verticalAign = "middle";
 
 			document.documentElement.removeChild(document.body);
 			document.body = document.createElement("body");
 
 			let bodyStyle = document.body.style;
-
 			bodyStyle.all = "initial";
 			bodyStyle.display = "table";
 			bodyStyle.margin = "auto";
 			bodyStyle.paddingTop = "20px";
 
-			cloning.then((isolated) => {
-				isolated.style.display = "table-cell";
-				isolated.style.verticalAign = "middle";
-				document.body.appendChild(isolated);
-			} );
+			document.body.appendChild(isolated);
 		}
 	}
 
@@ -86,21 +84,18 @@ let ruleActions = (function () {
 	//////////////////////////////////////////////////////////////////////
 	function _cloneIsolatedElement(elm) {
 
-		return new Promise((resolve) => {
+		let name, priority, css = "";
+		let style = window.getComputedStyle(elm);
 
-			let name, priority, css = "";
-			let style = window.getComputedStyle(elm);
+		for(let i=0, len=style.length; i<len; i++) {
+			name = style[i];
+			priority = style.getPropertyPriority(name);
+			css += name + ":" + style.getPropertyValue(name) + (priority.length > 0 ? ` !${priority};` : ";");
+		}
 
-			for(let i=0, len=style.length; i<len; i++) {
-				name = style[i];
-				priority = style.getPropertyPriority(name);
-				css += name + ":" + style.getPropertyValue(name) + (priority.length > 0 ? " !" : "") + priority + ";";
-			}
-
-			let e = elm.cloneNode(true);
-			e.style.cssText = css;
-			resolve(e)
-		});
+		let e = elm.cloneNode(true);
+		e.style.cssText = css;
+		return e;
 	}
 
 	//////////////////////////////////////////////////////////////////////
