@@ -534,7 +534,7 @@ let lzUtil = (function () {
 		for (let i = 0; i < style.length; i++) {
 			name = style[i];
 			priority = style.getPropertyPriority(name);
-			css += name + ":" + style.getPropertyValue(name) + (priority.length > 0 ? " !" : "") + priority + ";";
+			css += name + ":" + style.getPropertyValue(name) + (priority.length > 0 ? ` !${priority};` : ";");
 		}
 		return css;
 	}

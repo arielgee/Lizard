@@ -732,7 +732,7 @@
 			let e = elm.cloneNode(true);
 			e.style.cssText = css;
 			e.setAttribute(ATTRI_LIZARD_ISOLATED_CENTERED, "");
-			resolve(e)
+			resolve(e);
 		});
 	}
 
