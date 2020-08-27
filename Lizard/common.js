@@ -440,6 +440,20 @@ let lzUtil = (function () {
 	String.prototype.unescapeMarkup.regex = new RegExp(Object.values(String.prototype.escapeMarkup.markupReservedCharacters).join("|"), "gm");
 
 	//////////////////////////////////////////////////////////////////////
+	Date.prototype.toWebExtensionLocaleShortString = function() {
+		let options = {
+			day: "numeric",
+			month: "numeric",
+			year: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			hour12: false,
+		};
+		return this.toLocaleString(undefined, options);
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	function _sendMessageAllLizardSessions(message) {
 
 		return new Promise((resolve) => {

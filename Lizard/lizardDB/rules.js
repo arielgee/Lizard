@@ -445,8 +445,8 @@
 
 		let objRule = JSON.parse(m_elmSelListItemSelector.getAttribute(ATTR_STRING_RULE).unescapeMarkup());
 
-		m_elmRuleProperties.appendChild(createPropertyLabel("Created", (new Date(objRule.created)).toLocaleString()));
-		m_elmRuleProperties.appendChild(createPropertyLabel("Last Used", objRule.lastUsed === 0 ? "{never}" : (new Date(objRule.lastUsed)).toLocaleString()));
+		m_elmRuleProperties.appendChild(createPropertyLabel("Created", (new Date(objRule.created)).toWebExtensionLocaleShortString()));
+		m_elmRuleProperties.appendChild(createPropertyLabel("Last Used", objRule.lastUsed === 0 ? "{never}" : (new Date(objRule.lastUsed)).toWebExtensionLocaleShortString()));
 		m_elmRuleProperties.appendChild(createPropertyLabel("Hit Count", objRule.hitCount));
 
 		delete objRule.url;
