@@ -485,7 +485,7 @@
 
 				});
 			} else {
-				messageBox("This selector has no value.\n\nAll fields are either 'false' or 'null'. It's better to delete it from the 'Delete Selector' button.", "alert", false);
+				messageBox("This selector has no value.\n\nAll fields are either 'false' or 'null'. It will be better to\ndelete it from the 'Delete Selector' button.", "alert", false);
 			}
 		}
 	}
@@ -606,8 +606,11 @@
 	////////////////////////////////////////////////////////////////////////////////////
 	function messageBox(msgText, type = "alert", fail = true) {
 
+		const lineIndent = "     ";
 		const prefixMessage = "➤ ";
-		const failPrefixMessage = prefixMessage + "Failed to Complete the Operation!\n\n";
+		const failPrefixMessage = prefixMessage + "Failed to Complete the Operation!\n\n" + lineIndent;
+
+		msgText = msgText.replace(/\n([^\n])/g, `\n${lineIndent}$1`);
 
 		if(type === "alert") {
 			return alert((fail ? failPrefixMessage : prefixMessage) + msgText + "\n\n");
@@ -633,9 +636,10 @@
 	////////////////////////////////////////////////////////////////////////////////////
 	async function _add_testing_rules(selectorsForUrl = 17) {
 
-		const msg = "Congratulations! You've stumbled upon a hidden testing function.\n\n" +
-					"This will add an untold number of meaningless rules to the extension's database,\n" +
-					"and it's going be exhausting to clean without deleting all the rules.\n\nContinue?\n\n\n" +
+		const msg = "Congratulations!\n\nYou've stumbled upon a hidden testing function.\n\n" +
+					"This will add an untold number of meaningless rules to the\n" +
+					"extension's database, and it's going be exhausting to clean\n" +
+					"without deleting all the rules.\n\nContinue?\n\n" +
 					"* Watch the console for progress.";
 
 		if( !messageBox(msg, "confirm") ) return;
