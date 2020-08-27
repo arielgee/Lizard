@@ -49,12 +49,19 @@
 	const UNDO_ACTION_ISOLATE = "undoIsolate";
 	const UNDO_ACTION_COLORIZE = "undoColorize";
 
-	const UNDO_LIZARD_ACTION = function (typeval, ruleData = null) {
+	const UNDO_LIZARD_ACTION = function (typeval) {
 		return {
 			type: typeval,
-			ruleData: ruleData,
 			data: {
 			},
+		};
+	};
+
+	const SESSION_RULE = function (cssSelector, details) {
+		return {
+			saved: false,
+			cssSelector: cssSelector,
+			details: details,
 		};
 	};
 
@@ -69,6 +76,7 @@
 		strolledElements: [],
 		scrollbarWidth: -1,
 		rememberPageAlterations: false,
+		pendingSessionRules: [],
 	};
 
 
@@ -176,6 +184,8 @@
 
 	//////////////////////////////////////////////////////////////////////
 	function stopSession() {
+
+		savePendingSessionRules();
 
 		lockSelection(false);
 		removeSelectionBox();
@@ -296,6 +306,7 @@
 				decolorizeElement(event.shiftKey);
 				break;
 			case "u":
+				dropLastPageAlteration();
 				undoLastAction();
 				break;
 			case "w":
@@ -398,6 +409,7 @@
 			if(checked) {
 				showContextMenu(event.clientX, event.clientY, event.type);
 			} else {
+				dropLastPageAlteration();
 				undoLastAction();
 			}
 		});
@@ -575,13 +587,11 @@
 		unselectElement();
 		lockSelection(false);
 
-		let ruleData = rememberPageAlterations(elm, { hide: true });
+		rememberPageAlteration(elm, { hide: true });
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_HIDE, ruleData);
-
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_HIDE);
 		ua.data["element"] = elm;
 		ua.data["prev_visibility"] = elm.style.visibility;
-
 		m_lizardState.undoActions.push(ua);
 
 		elm.style.visibility = "hidden";
@@ -610,15 +620,12 @@
 		unselectElement();
 		lockSelection(false);
 
-		let ruleData = rememberPageAlterations(elm, { remove: true });
+		rememberPageAlteration(elm, { remove: true });
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_REMOVE, ruleData);
-
-		// save element and it's position
-		ua.data["element"] = elm;
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_REMOVE);
+		ua.data["element"] = elm;						// save element and it's position
 		ua.data["prev_parentNode"] = elm.parentNode;
 		ua.data["prev_nextSibling"] = elm.nextSibling;
-
 		m_lizardState.undoActions.push(ua);
 
 		elm.parentNode.removeChild(elm);
@@ -636,10 +643,9 @@
 			return;
 		}
 
-		let ruleData = rememberPageAlterations(elm, { dewidthify: true });
+		rememberPageAlteration(elm, { dewidthify: true });
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_DEWIDTHIFY, ruleData);
-
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_DEWIDTHIFY);
 		ua.data["dewidthifiedItems"] = [];
 
 		_deWidthify(elm, ua.data.dewidthifiedItems);
@@ -696,15 +702,12 @@
 		lockSelection(false);
 		removeInfoBoxes();
 
-		let ruleData = rememberPageAlterations(elm, { isolate: true });
+		rememberPageAlteration(elm, { isolate: true });
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_ISOLATE, ruleData);
-
-		// save document's body and scroll position
-		ua.data["prev_body"] = document.body;
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_ISOLATE);
+		ua.data["prev_body"] = document.body;								// save document's body and scroll position
 		ua.data["prev_scrollTop"] = document.documentElement.scrollTop;
 		ua.data["prev_scrollLeft"] = document.documentElement.scrollLeft;
-
 		m_lizardState.undoActions.push(ua);
 
 		let cloning = cloneIsolatedElement(elm);
@@ -776,7 +779,7 @@
 			return;
 		}
 
-		let ruleData = rememberPageAlterations(elm, {
+		rememberPageAlteration(elm, {
 			color: {
 				foreground: foreground,
 				background: background,
@@ -786,8 +789,7 @@
 			}
 		});
 
-		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_COLORIZE, ruleData);
-
+		let ua = UNDO_LIZARD_ACTION(UNDO_ACTION_COLORIZE);
 		ua.data["coloureditems"] = [];
 
 		_colorElement(elm, foreground, background, ua.data.coloureditems, colorizeChildren, saturateAmount, invertAmount);
@@ -843,16 +845,6 @@
 
 		// pop the last undo action
 		let ua = m_lizardState.undoActions.pop();
-
-		let uaRuleData = ua.ruleData;
-		if( (uaRuleData instanceof Object) && uaRuleData.hasOwnProperty("url") && uaRuleData.hasOwnProperty("cssSelector") && uaRuleData.hasOwnProperty("detail") ) {
-			let msg = msgs.BROWSER_MESSAGE(msgs.ID_UNSET_RULE_DETAIL);
-			msg.data["url"] = uaRuleData.url;
-			msg.data["cssSelector"] = uaRuleData.cssSelector;
-			msg.data["detail"] = uaRuleData.detail;
-
-			browser.runtime.sendMessage(msg);
-		}
 
 		switch (ua.type) {
 			case UNDO_ACTION_HIDE:
@@ -1758,30 +1750,46 @@
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function rememberPageAlterations(elm, details) {
+	function rememberPageAlteration(elm, details) {
 		if(m_lizardState.rememberPageAlterations) {
-			return saveActionAsRule(elm, details);
-		} else {
-			return null;
+			details["created"] = Date.now();
+			let rule = SESSION_RULE(CssSelectorGenerator.getCssSelector(elm, { includeTag: true }), details);
+			m_lizardState.pendingSessionRules.push(rule);
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function saveActionAsRule(elm, details) {
+	function dropLastPageAlteration() {
 
-		let msg = msgs.BROWSER_MESSAGE(msgs.ID_SAVE_ACTION_AS_RULE);
+		if( m_lizardState.rememberPageAlterations && (0 < m_lizardState.pendingSessionRules.length) ) {
+
+			let rule = m_lizardState.pendingSessionRules.pop();
+
+			if(rule.saved) {
+				let msg = msgs.BROWSER_MESSAGE(msgs.ID_UNSET_RULE_DETAIL);
+				msg.data["url"] = window.location.toString();
+				msg.data["cssSelector"] = rule.cssSelector;
+				msg.data["detail"] = Object.keys(rule.details)[0];
+
+				browser.runtime.sendMessage(msg);
+			}
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function savePendingSessionRules() {
+		let msg = msgs.BROWSER_MESSAGE(msgs.ID_SAVE_ACTIONS_AS_RULES);
 		msg.data["url"] = window.location.toString();
-		msg.data["cssSelector"] = CssSelectorGenerator.getCssSelector(elm, { includeTag: true });
-		msg.data["details"] = details;
+		msg.data["rules"] = m_lizardState.pendingSessionRules;
+
+		let markPendingAsSaved = () => {
+			for(let i=0, len=m_lizardState.pendingSessionRules.length; i<len; i++) {
+				m_lizardState.pendingSessionRules[i].saved = true;
+			}
+		};
+		setTimeout(markPendingAsSaved, 0);
 
 		browser.runtime.sendMessage(msg);
-
-		// return rule detail unset data; ruleData
-		return {
-			url: msg.data.url,
-			cssSelector: msg.data.cssSelector,
-			detail: Object.keys(details)[0],
-		};
 	}
 
 })();

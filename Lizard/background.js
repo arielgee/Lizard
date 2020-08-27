@@ -91,8 +91,8 @@
 				break;
 				//////////////////////////////////////////////////////////////
 
-			case msgs.ID_SAVE_ACTION_AS_RULE:
-				m_lizardDB.setRule(message.data.url, message.data.cssSelector, message.data.details);
+			case msgs.ID_SAVE_ACTIONS_AS_RULES:
+				saveActionsAsRules(message.data.url, message.data.rules);
 				break;
 				//////////////////////////////////////////////////////////////
 
@@ -364,6 +364,13 @@
 					index: (tabs[0].index)+1,
 				});
 			});
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function saveActionsAsRules(url, rules) {
+		for(let i=0, len=rules.length; i<len; i++) {
+			m_lizardDB.setRule(url, rules[i].cssSelector, rules[i].details);
 		}
 	}
 

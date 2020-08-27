@@ -41,6 +41,7 @@
 
 ## To-Do
 --------------
+* undo across sessions: color element, stopSession, reload, color same element, undo, stopSession, reload
 * rules.html: need to change and re-think all the terms. a rule is a selector for url.
 	* 'Delete Rule' button must be changed it's a url that is being deleted
 	* the first list is 'URLs' not 'Rule URLs'
