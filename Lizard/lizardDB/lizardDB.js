@@ -63,6 +63,7 @@ class LizardDB {
 
 				const obj = Object.assign(this._getDefaultRuleObject(url, cssSelector), existingRule);
 
+				if(this._isDate(details.created)) obj.created = details.created;
 				if(this._isBoolean(details.hide)) obj.hide = details.hide;
 				if(this._isBoolean(details.remove)) obj.remove = details.remove;
 				if(this._isBoolean(details.dewidthify)) obj.dewidthify = details.dewidthify;
@@ -376,6 +377,11 @@ class LizardDB {
 			isolate: false,
 			color: null,
 		};
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_isDate(variable) {
+		return (typeof(variable) === "number") && (variable > Date.parse("2020-01-01T00:00:00"));
 	}
 
 	//////////////////////////////////////////////////////////////////////
