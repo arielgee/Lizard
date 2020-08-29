@@ -23,12 +23,12 @@
 		<h1><img src="../icons/lizard-32.png">&nbsp;Rules&nbsp;</h1>
 
 		<div class="listHeaderLine">
-			<h3>Rule&nbsp;URLs&nbsp;</h3>
+			<h3>URLs&nbsp;</h3>
 			<div class="toolbar">
 				<input type="text" tabindex="0" placeholder="filter" id="textFilterURLs" class="textFilter">
 				<button type="button" tabindex="-1" class="toolbarButton buttonClearTextFilter" id="btnClearFilterURLs"></button>
 				<button type="button" tabindex="0" class="toolbarButton" id="btnRefreshURLs">Refresh</button>
-				<button type="button" tabindex="0" class="toolbarButton dangerous" id="btnDeleteRule">Delete Rule</button>
+				<button type="button" tabindex="0" class="toolbarButton dangerous" id="btnDeleteURL">Delete URL</button>
 				<button type="button" tabindex="0" class="toolbarButton dangerous" id="btnDeleteAllRules"><b>Delete All Rules!</b></button>
 			</div>
 		</div>
@@ -38,8 +38,10 @@
 			<div id="notifyUrlsList" class="actionNotifyOverlay"></div>
 		</div>
 
+		<div id="horizontalBarDelimiter"></div>
+
 		<!-- ####################################################################################################################### -->
-		<h3>URL:&nbsp;<a id="anchorURL" target="_blank" rel="noopener noreferrer"></a></h3>
+		<h3>URL:&nbsp;&nbsp;<a id="anchorURL" target="_blank" rel="noopener noreferrer"></a></h3>
 
 		<div id="urlRuleContainer">
 
@@ -47,7 +49,7 @@
 			<div id="elementSelectorsContainer">
 
 				<div class="listHeaderLine">
-					<h4>Element&nbsp;Selectors&nbsp;</h4>
+					<h4>Selectors&nbsp;</h4>
 					<div class="toolbar">
 						<input type="text" tabindex="0" placeholder="filter" id="textFilterSelectors" class="textFilter">
 						<button type="button" tabindex="-1" class="toolbarButton buttonClearTextFilter" id="btnClearFilterSelectors"></button>

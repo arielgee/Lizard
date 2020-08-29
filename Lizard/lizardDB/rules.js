@@ -7,7 +7,7 @@
 	let m_elmTextFilterURLs;
 	let m_elmBtnClearFilterURLs;
 	let m_elmBtnRefreshURLs;
-	let m_elmBtnDeleteRule;
+	let m_elmBtnDeleteURL;
 	let m_elmBtnDeleteAllRules;
 	let m_elmListURLs;
 	let m_elmAnchorURL;
@@ -53,7 +53,7 @@
 		m_elmTextFilterURLs = document.getElementById("textFilterURLs");
 		m_elmBtnClearFilterURLs = document.getElementById("btnClearFilterURLs");
 		m_elmBtnRefreshURLs = document.getElementById("btnRefreshURLs");
-		m_elmBtnDeleteRule = document.getElementById("btnDeleteRule");
+		m_elmBtnDeleteURL = document.getElementById("btnDeleteURL");
 		m_elmBtnDeleteAllRules = document.getElementById("btnDeleteAllRules");
 		m_elmListURLs = document.getElementById("urlsList");
 		m_elmAnchorURL = document.getElementById("anchorURL");
@@ -102,7 +102,7 @@
 		m_elmTextFilterURLs.addEventListener("keydown", onKeyDownFilterURLsText);
 		m_elmBtnClearFilterURLs.addEventListener("click", onClickBtnClearFilterURLs);
 		m_elmBtnRefreshURLs.addEventListener("click", onClickBtnRefreshURLs);
-		m_elmBtnDeleteRule.addEventListener("click", onClickBtnDeleteRule);
+		m_elmBtnDeleteURL.addEventListener("click", onClickBtnDeleteURL);
 		m_elmBtnDeleteAllRules.addEventListener("click", onClickBtnDeleteAllRules);
 		m_elmListURLs.addEventListener("mousedown", onMouseDownURLsList);
 		m_elmListURLs.addEventListener("keydown", onKeyDownList);
@@ -153,11 +153,11 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function onClickBtnDeleteRule() {
+	function onClickBtnDeleteURL() {
 
 		if(!!m_elmSelListItemURL && m_elmSelListItemURL.style.display !== "none") {
 
-			if( messageBox("Delete the following rule?\n\n'" + m_elmSelListItemURL.textContent + "'", "confirm") ) {
+			if( messageBox("Delete following URL?\n\n'" + m_elmSelListItemURL.textContent + "'", "confirm") ) {
 				m_lizardDB.deleteRulesByUrl(m_elmSelListItemURL.textContent).then(() => {
 					notifyAction(m_elmNotifyUrlsList, "Deleted");
 					loadURLsList();
@@ -485,7 +485,7 @@
 
 				});
 			} else {
-				messageBox("This selector has no value.\n\nAll fields are either 'false' or 'null'. It will be better to\ndelete it from the 'Delete Selector' button.", "alert", false);
+				messageBox("Selector has no value.\n\nAll fields are either 'false' or 'null'. It will be better to\ndelete it from the 'Delete Selector' button.", "alert", false);
 			}
 		}
 	}
@@ -608,7 +608,7 @@
 
 		const lineIndent = "     ";
 		const prefixMessage = "➤ ";
-		const failPrefixMessage = prefixMessage + "Failed to Complete the Operation!\n\n" + lineIndent;
+		const failPrefixMessage = prefixMessage + "Error\n\n" + lineIndent;
 
 		msgText = msgText.replace(/\n([^\n])/g, `\n${lineIndent}$1`);
 

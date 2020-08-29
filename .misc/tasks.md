@@ -36,25 +36,26 @@
 * remove 'manage extention' menu item and eplase it with mine? => no
 * the flask is hidden by lists
 * undo across sessions: color element, stopSession, reload, color same element, undo, stopSession, reload
+* clear/close transaction when errors
+* change 'Failed to Complete the Operation!' to something shorter like.... hmmm... 'Error'.
+* change 'This selector has no value' to 'Selector has no value'
+* if two actions performed on same element and then undo last one, the rule is deleted and the first action is forgotten
+* rules.html: need to change and re-think all the terms. a rule is a selector for url.
+>	* 'Delete Rule' button must be changed it's a url that is being deleted
+>	* the term 'Rule/s' in messageBox
+>	* the first list is 'URLs' not 'Rule URLs'
+>	* 'Element Selectors' are rules for the url in the caption
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* rules.html: need to change and re-think all the terms. a rule is a selector for url.
-	* 'Delete Rule' button must be changed it's a url that is being deleted
-	* the term 'Rule/s' in messageBox
-	* the first list is 'URLs' not 'Rule URLs'
-	* 'Element Selectors' are rules for the url in the caption
-* clear/close transaction when errors
-* change 'Failed to Complete the Operation!' to something shorter like.... hmmm... 'Error'.
-* change 'This selector has no value' to 'Selector has no value'
 * arguments.callee.name for function name
 * indexedDB
 	* v59 - not working
 	* v64 - working
-* if two actions performed on same element and then undo last one, the rule is deleted and the first action is forgotten
+* export/import rules
 * sometimes got this when _add_testing_rules()
 `	Uncaught (in promise) DOMException: IDBTransaction.objectStore: Transaction is already committing or done. lizardDB.js:72`
 `		setRule moz-extension://2078f906-1bb6-416c-94c4-047156007510/lizardDB/lizardDB.js:72`
