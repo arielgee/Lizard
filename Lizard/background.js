@@ -370,7 +370,10 @@
 	////////////////////////////////////////////////////////////////////////////////////
 	function saveActionsAsRules(url, rules) {
 		for(let i=0, len=rules.length; i<len; i++) {
-			m_lizardDB.setRule(url, rules[i].cssSelector, rules[i].details);
+			const rule = rules[i];
+			if(!rule.saved) {
+				m_lizardDB.setRule(url, rule.cssSelector, rule.details);
+			}
 		}
 	}
 

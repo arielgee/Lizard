@@ -35,13 +35,13 @@
 * lizardDB - change index names to the value name
 * remove 'manage extention' menu item and eplase it with mine? => no
 * the flask is hidden by lists
+* undo across sessions: color element, stopSession, reload, color same element, undo, stopSession, reload
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* undo across sessions: color element, stopSession, reload, color same element, undo, stopSession, reload
 * rules.html: need to change and re-think all the terms. a rule is a selector for url.
 	* 'Delete Rule' button must be changed it's a url that is being deleted
 	* the term 'Rule/s' in messageBox

@@ -1782,12 +1782,13 @@
 		msg.data["url"] = window.location.toString();
 		msg.data["rules"] = m_lizardState.pendingSessionRules;
 
-		let markPendingAsSaved = () => {
-			for(let i=0, len=m_lizardState.pendingSessionRules.length; i<len; i++) {
-				m_lizardState.pendingSessionRules[i].saved = true;
-			}
+		let setAllAsSaved = (v) => {
+			let i = v.length;
+			while(i) {
+				v[--i].saved = true;
+			};
 		};
-		setTimeout(markPendingAsSaved, 0);
+		setTimeout(setAllAsSaved, 0, m_lizardState.pendingSessionRules);
 
 		browser.runtime.sendMessage(msg);
 	}
