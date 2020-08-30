@@ -413,6 +413,6 @@ class LizardDB {
 	//////////////////////////////////////////////////////////////////////
 	_normalizeUrl(url) {
 		// A rule's URL is normalized: without query string or hash and without trailing slashes.
-		return url.split(/(\?|#).*/)[0].trim().replace(/^(.*)\/+$/, "$1");
+		return decodeURIComponent(url.split(/(\?|#).*/)[0].trim().replace(/^(.*)\/+$/, "$1"));
 	}
 };
