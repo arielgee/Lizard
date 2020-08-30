@@ -383,8 +383,10 @@
 		m_elmTextFilterURLs.value = "";
 
 		m_lizardDB.getAllDistinctUrls().then((urls) => {
+
 			for(let i=0, len=urls.length; i<len; i++) {
-				m_elmListURLs.appendChild(createListItem(urls[i], "url"));
+				const item = m_elmListURLs.appendChild(createListItem(urls[i], "url"));
+				fetchUrlTitleLazy(item, 20*i);
 			}
 
 			if(!!m_elmListURLs.firstElementChild) {
@@ -640,6 +642,17 @@
 		elmOverlay.textContent = textOverlay;
 		elmOverlay.style.opacity = "50%";
 		setTimeout(() => elmOverlay.style.opacity = "0", timeout);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function fetchUrlTitleLazy(item, timeout) {
+		let fetching = () => {
+			fetch(item.textContent)
+				.then(response => response.text() )
+				.then(text => item.title = (/<title>(.*?)<\/title>/m).exec(text)[1] )
+				.catch(() => item.title = "{Error: failed to get the page title}" );
+		}
+		setTimeout(fetching, timeout);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
