@@ -157,10 +157,13 @@
 
 		if(!!m_elmSelListItemURL && m_elmSelListItemURL.style.display !== "none") {
 
+			// select the previous list item
+			let idxNewSel = ([].indexOf.call(m_elmListURLs.children, m_elmSelListItemURL)) - 1;
+
 			if( messageBox("Delete following URL?\n\n'" + m_elmSelListItemURL.textContent + "'", "confirm") ) {
 				m_lizardDB.deleteRulesByUrl(m_elmSelListItemURL.textContent).then(() => {
 					notifyAction(m_elmNotifyUrlsList, "Deleted");
-					loadURLsList();
+					loadURLsList(idxNewSel);
 				});
 			}
 		}
@@ -305,10 +308,13 @@
 
 		if(!!m_elmSelListItemURL && !!m_elmSelListItemSelector && m_elmSelListItemSelector.style.display !== "none") {
 
+			// select the previous list item
+			let idxNewSel = ([].indexOf.call(m_elmListSelectors.children, m_elmSelListItemSelector)) - 1;
+
 			m_lizardDB.deleteRule(m_elmSelListItemURL.textContent, m_elmSelListItemSelector.textContent).then(() => {
 				notifyAction(m_elmNotifySelectorsList, "Deleted");
 				if(!!m_elmSelListItemURL) {
-					loadSelectorsList(m_elmSelListItemURL.textContent);
+					loadSelectorsList(m_elmSelListItemURL.textContent, idxNewSel);
 				}
 			});
 		}
@@ -371,7 +377,7 @@
 	/************************************************************************************************************/
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function loadURLsList() {
+	function loadURLsList(idxNewSelection = -1) {
 
 		clearURLsList();
 		m_elmTextFilterURLs.value = "";
@@ -382,8 +388,9 @@
 			}
 
 			if(!!m_elmListURLs.firstElementChild) {
-				m_elmListURLs.firstElementChild.focus();
-				selectURLsListItem(m_elmListURLs.firstElementChild);
+				let selItem = (idxNewSelection < 0 ? m_elmListURLs.firstElementChild : m_elmListURLs.children.item(idxNewSelection));
+				selItem.focus();
+				selectURLsListItem(selItem);
 			} else {
 				clearAnchorURL();
 				clearSelectorsList();
@@ -393,7 +400,7 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function loadSelectorsList(url, focusFirstItem = true) {
+	function loadSelectorsList(url, idxNewSelection = -1, focusItem = true) {
 
 		clearSelectorsList();
 		m_elmTextFilterSelectors.value = "";
@@ -407,15 +414,17 @@
 			}
 
 			if(!!m_elmListSelectors.firstElementChild) {
-				if(focusFirstItem) {
-					m_elmListSelectors.firstElementChild.focus();
+
+				let selItem = (idxNewSelection < 0 ? m_elmListSelectors.firstElementChild : m_elmListSelectors.children.item(idxNewSelection));
+				if(focusItem) {
+					selItem.focus();
 				} else {
-					m_elmListSelectors.firstElementChild.scrollTop = 0;
+					selItem.scrollTop = 0;
 				}
-				selectSelectorsListItem(m_elmListSelectors.firstElementChild);
+				selectSelectorsListItem(selItem);
 			} else {
 				clearRuleDetails();
-				loadURLsList();		// URL no longer exists if it has no selectors
+				loadURLsList(([].indexOf.call(m_elmListURLs.children, m_elmSelListItemURL)) - 1);	// URL w/o selectors dosn't exists, select previous list item
 			}
 		});
 	}
@@ -430,7 +439,7 @@
 
 		m_elmAnchorURL.href = m_elmAnchorURL.textContent = m_elmSelListItemURL.textContent;
 		m_elmAnchorURL.title = `URL No. ${[...m_elmSelListItemURL.parentElement.children].indexOf(m_elmSelListItemURL)+1}`;
-		loadSelectorsList(m_elmSelListItemURL.textContent, false);
+		loadSelectorsList(m_elmSelListItemURL.textContent, -1, false);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
