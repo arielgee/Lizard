@@ -16,6 +16,7 @@
 	let m_elmTextFilterSelectors;
 	let m_elmBtnClearFilterSelectors;
 	let m_elmBtnRefreshSelectors;
+	let m_elmBtnJumpToElement;
 	let m_elmBtnDeleteSelector;
 	let m_elmListSelectors;
 	let m_elmNotifySelectorsList;
@@ -63,6 +64,7 @@
 		m_elmTextFilterSelectors = document.getElementById("textFilterSelectors");
 		m_elmBtnClearFilterSelectors = document.getElementById("btnClearFilterSelectors");
 		m_elmBtnRefreshSelectors = document.getElementById("btnRefreshSelectors");
+		m_elmBtnJumpToElement = document.getElementById("btnJumpToElement");
 		m_elmBtnDeleteSelector = document.getElementById("btnDeleteSelector");
 		m_elmListSelectors = document.getElementById("selectorsList");
 		m_elmNotifySelectorsList = document.getElementById("notifySelectorsList");
@@ -112,6 +114,7 @@
 		m_elmTextFilterSelectors.addEventListener("keydown", onKeyDownFilterSelectorsText);
 		m_elmBtnClearFilterSelectors.addEventListener("click", onClickBtnClearFilterSelectors);
 		m_elmBtnRefreshSelectors.addEventListener("click", onClickBtnRefreshSelectors);
+		m_elmBtnJumpToElement.addEventListener("click", onClickBtnJumpToElement);
 		m_elmBtnDeleteSelector.addEventListener("click", onClickBtnDeleteSelector);
 		m_elmListSelectors.addEventListener("mousedown", onMouseDownSelectorsList);
 		m_elmListSelectors.addEventListener("keydown", onKeyDownList);
@@ -301,6 +304,16 @@
 			loadSelectorsList(m_elmSelListItemURL.textContent);
 			notifyAction(m_elmNotifySelectorsList, "Refreshed");
 		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onClickBtnJumpToElement() {
+
+		let msg = msgs.BROWSER_MESSAGE(msgs.ID_JUMP_TO_ELEMENT);
+		msg.data["url"] = m_elmSelListItemURL.textContent;
+		msg.data["cssSelector"] = m_elmSelListItemSelector.textContent;
+
+		browser.runtime.sendMessage(msg);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////

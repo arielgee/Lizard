@@ -46,13 +46,16 @@
 >	* the first list is 'URLs' not 'Rule URLs'
 >	* 'Element Selectors' are rules for the url in the caption
 * add url title to Db => fatch to title of the listItem
+* jump from selctor to element in page URL => done
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* jump from selctor to element in page URL ???
+* jump to issues:
+	* tabIdSameTabViewer: is not initilizaed when rules is closed or when using tab to navigate else where and then pressing 'jump to' again
+	* m_elmHighlighted: need to change it somehow when its dark and there is no difference of colors with the overlay (mida	)
 * arguments.callee.name for function name
 * indexedDB
 	* v59 - not working

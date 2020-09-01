@@ -15,6 +15,7 @@ let msgs = (function () {
 	const ID_UNSET_RULE_DETAIL = "msgUnsetRuleDetail";
 	const ID_UPDATE_RULE_STATS = "msgUpdateRuleStats";
 	const ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS = "msgToggleRememberPageAlterations";
+	const ID_JUMP_TO_ELEMENT = "msgJumpToElement";
 
 	const BROWSER_MESSAGE = (msgId) => {
 		return {
@@ -35,6 +36,7 @@ let msgs = (function () {
 		ID_UNSET_RULE_DETAIL: ID_UNSET_RULE_DETAIL,
 		ID_UPDATE_RULE_STATS: ID_UPDATE_RULE_STATS,
 		ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS: ID_TOGGLE_REMEMBER_PAGE_ALTERATIONS,
+		ID_JUMP_TO_ELEMENT: ID_JUMP_TO_ELEMENT,
 
 		BROWSER_MESSAGE: BROWSER_MESSAGE,
 	};

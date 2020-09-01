@@ -37,6 +37,13 @@
 	let m_lizardToggleStateMenuID = -1;
 	let m_lastInjectTime = 0;
 
+	let m_webNavJumpToElement = {
+		windowId: -1,
+		tabId: -1,
+		cssSelector: "",
+		tabIdSameTabViewer: -1,
+	};
+
 	let m_lizardDB = null;
 
 	initialization();
@@ -105,6 +112,11 @@
 				m_lizardDB.updateRuleStats(message.data.url, message.data.cssSelector);
 				break;
 				//////////////////////////////////////////////////////////////
+
+			case msgs.ID_JUMP_TO_ELEMENT:
+				jumpToElement(message.data.url, message.data.cssSelector);
+				break;
+				//////////////////////////////////////////////////////////////
 		}
 	}
 
@@ -163,7 +175,13 @@
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function onWebNavCommitted(details) {
-		applySavedRules(details.tabId, details.url.toString());
+
+		if(details.windowId === m_webNavJumpToElement.windowId && details.tabId === m_webNavJumpToElement.tabId) {
+			m_webNavJumpToElement.windowId = m_webNavJumpToElement.tabId = -1;
+			highlightElement(details.tabId, m_webNavJumpToElement.cssSelector);
+		} else {
+			applySavedRules(details.tabId, details.url.toString());
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -374,6 +392,44 @@
 			if(!rule.saved) {
 				m_lizardDB.setRule(url, rule.cssSelector, rule.details);
 			}
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	async function jumpToElement(url, cssSelector) {
+
+		let tabViewer;
+
+		try {
+
+			// try to use same tab
+			tabViewer = await browser.tabs.update(m_webNavJumpToElement.tabIdSameTabViewer, { active: true, url: url });
+
+		} catch {
+
+			// tab not found
+			let tabs = await browser.tabs.query({ active: true, currentWindow: true });
+			tabViewer = await browser.tabs.create({ url: url, index: (tabs[0].index)+1 });
+		}
+
+		m_webNavJumpToElement.windowId = tabViewer.windowId;
+		m_webNavJumpToElement.tabId = tabViewer.id;
+		m_webNavJumpToElement.cssSelector = cssSelector;
+		m_webNavJumpToElement.tabIdSameTabViewer = tabViewer.id;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	async function highlightElement(tabId, cssSelector) {
+
+		try {
+			await browser.tabs.executeScript(tabId, { runAt: "document_start", file: "ruleActions/elementHighlight.js" });
+
+			let jsCode = `elementHighlight.highlight("${encodeURIComponent(cssSelector)}")`;
+
+			browser.tabs.executeScript(tabId, { runAt: "document_idle", code: jsCode });
+
+		} catch {
+			// 'Error: Missing host permission for the tab' when tab is 'saved' after Fx load
 		}
 	}
 
