@@ -34,6 +34,8 @@
 		]
 	};
 
+	const WEB_NAV_USER_TRANSITION_TYPES = [ "link", "typed", "reload", "generated", "form_submit", "manual_subframe" ];
+
 	let m_lizardToggleStateMenuID = -1;
 	let m_lastInjectTime = 0;
 
@@ -187,9 +189,9 @@
 
 			applySavedRules(details.tabId, details.url.toString());
 
-			// tabIdSameTabViewer: tab used and reused by jump-to-element to highlightElement()
-			// if tab is used for any other navigation then stop reusing it
-			if(details.tabId === m_webNavJumpToElement.tabIdReusedElementHighlight) {
+			// tabIdReusedElementHighlight: tab used and reused by jump-to-element to highlightElement()
+			// if tab is used for any user initiated navigation then stop reusing it
+			if(details.tabId === m_webNavJumpToElement.tabIdReusedElementHighlight && WEB_NAV_USER_TRANSITION_TYPES.includes(details.transitionType)) {
 				m_webNavJumpToElement.tabIdReusedElementHighlight = -1;
 			}
 		}
