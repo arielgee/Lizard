@@ -2,42 +2,45 @@
 
 let ruleActions = (function () {
 
+	let m_cssSelector = null;
+
 	//////////////////////////////////////////////////////////////////////
-	function hideElement(cssSelectorEncoded) {
-		let cssSelector = decodeURIComponent(cssSelectorEncoded);
-		let elm = document.querySelector(cssSelector);
+	function initCssSelector(cssSelectorEncoded) {
+		m_cssSelector = decodeURIComponent(cssSelectorEncoded);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function hideElement() {
+		let elm = document.querySelector(m_cssSelector);
 		if(!!elm) {
-			_updateRuleStats(cssSelector);
+			_updateRuleStats(m_cssSelector);
 			elm.style.visibility = "hidden";
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function removeElement(cssSelectorEncoded) {
-		let cssSelector = decodeURIComponent(cssSelectorEncoded);
-		let elm = document.querySelector(cssSelector);
+	function removeElement() {
+		let elm = document.querySelector(m_cssSelector);
 		if(!!elm) {
-			_updateRuleStats(decodeURIComponent(cssSelector));
+			_updateRuleStats(m_cssSelector);
 			elm.parentNode.removeChild(elm);
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function dewidthifyElement(cssSelectorEncoded) {
-		let cssSelector = decodeURIComponent(cssSelectorEncoded);
-		let elm = document.querySelector(cssSelector);
+	function dewidthifyElement() {
+		let elm = document.querySelector(m_cssSelector);
 		if(!!elm) {
-			_updateRuleStats(decodeURIComponent(cssSelector));
+			_updateRuleStats(m_cssSelector);
 			_dewidthify(elm);
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function isolateElement(cssSelectorEncoded) {
-		let cssSelector = decodeURIComponent(cssSelectorEncoded);
-		let elm = document.querySelector(cssSelector);
+	function isolateElement() {
+		let elm = document.querySelector(m_cssSelector);
 		if(!!elm) {
-			_updateRuleStats(decodeURIComponent(cssSelector));
+			_updateRuleStats(m_cssSelector);
 
 			let isolated = _cloneIsolatedElement(elm);
 			isolated.style.display = "table-cell";
@@ -57,12 +60,11 @@ let ruleActions = (function () {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function colorizeElement(details) {
-		let cssSelector = decodeURIComponent(details.cssSelectorEncoded);
-		let elm = document.querySelector(cssSelector);
+	function colorizeElement(color) {
+		let elm = document.querySelector(m_cssSelector);
 		if(!!elm) {
-			_updateRuleStats(cssSelector);
-			_colorizeElement(elm, details.foreground, details.background, details.colorizeChildren, details.saturateAmount, details.invertAmount);
+			_updateRuleStats(m_cssSelector);
+			_colorizeElement(elm, color.foreground, color.background, color.colorizeChildren, color.saturateAmount, color.invertAmount);
 		}
 	}
 
@@ -171,6 +173,7 @@ let ruleActions = (function () {
 
 	/********************************************************************/
 	return {
+		initCssSelector: initCssSelector,
 		hideElement: hideElement,
 		removeElement: removeElement,
 		dewidthifyElement: dewidthifyElement,

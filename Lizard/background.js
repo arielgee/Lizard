@@ -467,35 +467,27 @@
 			for(let i=0, len=rules.length; i<len; i++) {
 
 				const rule = rules[i];
-				const cssSelectorEncoded = encodeURIComponent(rule.cssSelector);
+
+				jsCode += `ruleActions.initCssSelector("${encodeURIComponent(rule.cssSelector)}");`;
 
 				if(rule.hide) {
-					jsCode += `ruleActions.hideElement("${cssSelectorEncoded}");`;
+					jsCode += "ruleActions.hideElement();";
 				}
 
 				if(rule.remove) {
-					jsCode += `ruleActions.removeElement("${cssSelectorEncoded}");`;
+					jsCode += "ruleActions.removeElement();";
 				}
 
 				if(rule.dewidthify) {
-					jsCode += `ruleActions.dewidthifyElement("${cssSelectorEncoded}");`;
+					jsCode += "ruleActions.dewidthifyElement();";
 				}
 
 				if(rule.isolate) {
-					jsCode += `ruleActions.isolateElement("${cssSelectorEncoded}");`;
+					jsCode += "ruleActions.isolateElement();";
 				}
 
 				if(rule.color !== null) {
-					const color = rule.color;
-					let details = {
-						cssSelectorEncoded: cssSelectorEncoded,
-						foreground: color.foreground,
-						background: color.background,
-						colorizeChildren: color.colorizeChildren,
-						saturateAmount: color.saturateAmount,		// can be null
-						invertAmount: color.invertAmount,
-					};
-					jsCode += `ruleActions.colorizeElement(${JSON.stringify(details)});`;
+					jsCode += `ruleActions.colorizeElement(${JSON.stringify(rule.color)});`;
 				}
 			}
 
