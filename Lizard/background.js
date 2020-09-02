@@ -41,7 +41,7 @@
 		windowId: -1,
 		tabId: -1,
 		cssSelector: "",
-		tabIdSameTabViewer: -1,
+		tabIdReusedElementHighlight: -1,
 	};
 
 	let m_lizardDB = null;
@@ -114,7 +114,7 @@
 				//////////////////////////////////////////////////////////////
 
 			case msgs.ID_JUMP_TO_ELEMENT:
-				jumpToElement(message.data.url, message.data.cssSelector);
+				jumpToElement(message.data.url, message.data.cssSelector, message.data.newTab, message.data.newWin);
 				break;
 				//////////////////////////////////////////////////////////////
 		}
@@ -177,10 +177,21 @@
 	function onWebNavCommitted(details) {
 
 		if(details.windowId === m_webNavJumpToElement.windowId && details.tabId === m_webNavJumpToElement.tabId) {
+
+			// clear ids for next web navigation
 			m_webNavJumpToElement.windowId = m_webNavJumpToElement.tabId = -1;
+
 			highlightElement(details.tabId, m_webNavJumpToElement.cssSelector);
+
 		} else {
+
 			applySavedRules(details.tabId, details.url.toString());
+
+			// tabIdSameTabViewer: tab used and reused by jump-to-element to highlightElement()
+			// if tab is used for any other navigation then stop reusing it
+			if(details.tabId === m_webNavJumpToElement.tabIdReusedElementHighlight) {
+				m_webNavJumpToElement.tabIdReusedElementHighlight = -1;
+			}
 		}
 	}
 
@@ -396,18 +407,24 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	async function jumpToElement(url, cssSelector) {
+	async function jumpToElement(url, cssSelector, newTab, newWin) {
 
-		let tabViewer;
+		let tabViewer = null;
 
-		try {
+		if(!newTab && !newWin) {
 
-			// try to use same tab
-			tabViewer = await browser.tabs.update(m_webNavJumpToElement.tabIdSameTabViewer, { active: true, url: url });
+			// try to reuse same tab
+			try {
+				tabViewer = await browser.tabs.update(m_webNavJumpToElement.tabIdReusedElementHighlight, { active: true, url: url });
+			} catch {}
 
-		} catch {
+		} else if(newWin && !newTab) {
 
-			// tab not found
+			tabViewer = (await browser.windows.create({ url: url })).tabs[0];
+		}
+
+		// tab not found - open a new tab
+		if(tabViewer === null) {
 			let tabs = await browser.tabs.query({ active: true, currentWindow: true });
 			tabViewer = await browser.tabs.create({ url: url, index: (tabs[0].index)+1 });
 		}
@@ -415,7 +432,7 @@
 		m_webNavJumpToElement.windowId = tabViewer.windowId;
 		m_webNavJumpToElement.tabId = tabViewer.id;
 		m_webNavJumpToElement.cssSelector = cssSelector;
-		m_webNavJumpToElement.tabIdSameTabViewer = tabViewer.id;
+		m_webNavJumpToElement.tabIdReusedElementHighlight = tabViewer.id;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////

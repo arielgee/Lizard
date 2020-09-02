@@ -307,11 +307,13 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function onClickBtnJumpToElement() {
+	function onClickBtnJumpToElement(event) {
 
 		let msg = msgs.BROWSER_MESSAGE(msgs.ID_JUMP_TO_ELEMENT);
 		msg.data["url"] = m_elmSelListItemURL.textContent;
 		msg.data["cssSelector"] = m_elmSelListItemSelector.textContent;
+		msg.data["newTab"] = event.ctrlKey;
+		msg.data["newWin"] = event.shiftKey;
 
 		browser.runtime.sendMessage(msg);
 	}
