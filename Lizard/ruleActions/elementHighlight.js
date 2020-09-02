@@ -28,6 +28,7 @@ let elementHighlight = (function () {
 			m_styleElementOverlay.right = "0";
 			m_styleElementOverlay.bottom = "0";
 			m_styleElementOverlay.zIndex = "2147483641";
+			m_styleElementOverlay.pointerEvents = "none";
 			m_styleElementOverlay.boxSizing = "border-box";
 			m_styleElementOverlay.borderColor = "rgba(0, 0, 0, 0.85)";
 			m_styleElementOverlay.borderStyle = "solid";

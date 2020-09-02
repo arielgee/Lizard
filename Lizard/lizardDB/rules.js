@@ -163,7 +163,7 @@
 			// select the previous list item
 			let idxNewSel = ([].indexOf.call(m_elmListURLs.children, m_elmSelListItemURL)) - 1;
 
-			if( messageBox("Delete following URL?\n\n'" + m_elmSelListItemURL.textContent + "'", "confirm") ) {
+			if( messageBox("Delete following URL and all of its associated rules?\n\n'" + m_elmSelListItemURL.textContent + "'", "confirm") ) {
 				m_lizardDB.deleteRulesByUrl(m_elmSelListItemURL.textContent).then(() => {
 					notifyAction(m_elmNotifyUrlsList, "Deleted");
 					loadURLsList(idxNewSel);
