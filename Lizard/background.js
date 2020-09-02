@@ -416,6 +416,7 @@
 			// try to reuse same tab
 			try {
 				tabViewer = await browser.tabs.update(m_webNavJumpToElement.tabIdReusedElementHighlight, { active: true, url: url });
+				browser.windows.update(tabViewer.windowId, { focused: true });
 			} catch {}
 
 		} else if(newWin && !newTab) {
