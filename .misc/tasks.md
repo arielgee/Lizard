@@ -48,7 +48,7 @@
 * add url title to Db => fatch to title of the listItem
 * jump from selctor to element in page URL => done
 * this url fucks-up the tabIdReusedElementHighlight: https://mida.org.il/2020/08/29/ההדלפות-החקירות-והמיליונים-עשר-טענות
-* inject file, inject code that initialize file code. In file addEventListener() to "DOMContentLoaded" and continue from there
+* inject file, inject code that initialize file code. In file addEventListener() to "DOMContentLoaded" and continue from there => BAD IDEA - REVERTED. If page is loading fast (local IIS) the the event handler is not called
 * jumpTo issues: tabIdReusedElementHighlight is not initilized when using tab to navigate else where and then pressing 'jump to' again
 * jumpTo issues: tabIdReusedElementHighlight is not initilizaed when rules,HTML is closed	=> LEAVE IT, IT'S NOT THAT BAD
 * allow editing of selectors => NO
@@ -58,6 +58,7 @@
 
 ## To-Do
 --------------
+* when example.html is width:7000px the Highlighted-overlay is not all the way to the right
 * ctrl+s saves the rule's details
 * some indication that a page has alterations (optional)
 * indication color depend on the body's color? contrast? or maybe box-shadow?

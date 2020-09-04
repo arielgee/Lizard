@@ -443,10 +443,10 @@
 
 		try {
 
-			let jsCode = `elementHighlight.initialize("${encodeURIComponent(cssSelector)}")`;
+			let jsCode = `elementHighlight.highlight("${encodeURIComponent(cssSelector)}")`;
 
 			await browser.tabs.executeScript(tabId, { runAt: "document_start", file: "ruleActions/elementHighlight.js" });
-			browser.tabs.executeScript(tabId, { runAt: "document_start", code: jsCode });
+			browser.tabs.executeScript(tabId, { runAt: "document_end", code: jsCode });
 
 		} catch {
 			// 'Error: Missing host permission for the tab' when tab is 'saved' after Fx load
