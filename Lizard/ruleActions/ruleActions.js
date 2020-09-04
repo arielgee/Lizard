@@ -5,7 +5,7 @@ let ruleActions = (function () {
 	let m_cssSelector = null;
 
 	//////////////////////////////////////////////////////////////////////
-	function initCssSelector(cssSelectorEncoded) {
+	function setCssSelector(cssSelectorEncoded) {
 		m_cssSelector = decodeURIComponent(cssSelectorEncoded);
 	}
 
@@ -173,7 +173,7 @@ let ruleActions = (function () {
 
 	/********************************************************************/
 	return {
-		initCssSelector: initCssSelector,
+		setCssSelector: setCssSelector,
 		hideElement: hideElement,
 		removeElement: removeElement,
 		dewidthifyElement: dewidthifyElement,

@@ -470,26 +470,26 @@
 
 				const rule = rules[i];
 
-				jsCode += `ruleActions.initCssSelector("${encodeURIComponent(rule.cssSelector)}");`;
-
-				if(rule.hide) {
-					jsCode += "ruleActions.hideElement();";
-				}
+				jsCode += `ruleActions.setCssSelector("${encodeURIComponent(rule.cssSelector)}");`;
 
 				if(rule.remove) {
 					jsCode += "ruleActions.removeElement();";
+				}
+
+				if(rule.hide) {
+					jsCode += "ruleActions.hideElement();";
 				}
 
 				if(rule.dewidthify) {
 					jsCode += "ruleActions.dewidthifyElement();";
 				}
 
-				if(rule.isolate) {
-					jsCode += "ruleActions.isolateElement();";
-				}
-
 				if(rule.color !== null) {
 					jsCode += `ruleActions.colorizeElement(${JSON.stringify(rule.color)});`;
+				}
+
+				if(rule.isolate) {
+					jsCode += "ruleActions.isolateElement();";
 				}
 			}
 
