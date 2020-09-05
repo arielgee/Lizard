@@ -6,6 +6,8 @@ let elementHighlight = (function () {
 	let m_elmHighlighted = null;
 	let m_styleElementOverlay = null;
 
+	let m_observerSizeChange = null;
+
 	//////////////////////////////////////////////////////////////////////
 	function highlight(cssSelectorEncoded) {
 
@@ -18,10 +20,17 @@ let elementHighlight = (function () {
 			m_elmHtml = document.documentElement;
 
 			window.addEventListener("unload", _onUnload);
-			window.addEventListener("resize", _onWindowResize, false);
-			document.addEventListener("visibilitychange", _onVisibilityChange, false);
+			window.addEventListener("load", _onDimensionsChange, false);
+			window.addEventListener("resize", _onDimensionsChange, false);
+			document.addEventListener("visibilitychange", _onDimensionsChange, false);
+
+			m_observerSizeChange = new MutationObserver(_onDimensionsChange);
+			m_observerSizeChange.observe(document.body, { subtree: true, childList: true });
 
 			_createOverlay();
+
+		} else {
+			_createNotFoundOverlay();
 		}
 	}
 
@@ -31,19 +40,20 @@ let elementHighlight = (function () {
 
 	//////////////////////////////////////////////////////////////////////
 	function _onUnload() {
+
+		m_observerSizeChange.takeRecords();
+		m_observerSizeChange.disconnect();
+		m_observerSizeChange = null;
+
 		window.removeEventListener("unload", _onUnload);
-		window.removeEventListener("resize", _onWindowResize, false);
-		document.removeEventListener("visibilitychange", _onVisibilityChange, false);
+		window.removeEventListener("load", _onDimensionsChange, false);
+		window.removeEventListener("resize", _onDimensionsChange, false);
+		document.removeEventListener("visibilitychange", _onDimensionsChange, false);
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function _onWindowResize() {
-		_setOverlayBorders();
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	function _onVisibilityChange() {
-		if(document.hidden === false) {
+	function _onDimensionsChange() {
+		if(!document.hidden) {
 			_setOverlayBorders();
 		}
 	}
@@ -74,7 +84,7 @@ let elementHighlight = (function () {
 		m_elmHtml.style.position = "relative";
 		m_elmHtml.appendChild(elmOverlay);
 
-		setTimeout(_setOverlayBorders, 5);
+		_setOverlayBorders();
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -88,6 +98,33 @@ let elementHighlight = (function () {
 		m_styleElementOverlay.borderRightWidth = (m_elmHtml.offsetWidth - (leftPagePosition + elmRect.width)) + "px";
 		m_styleElementOverlay.borderBottomWidth = (m_elmHtml.offsetHeight - (topPagePosition + elmRect.height)) + "px";
 		m_styleElementOverlay.borderLeftWidth = leftPagePosition + "px";
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function _createNotFoundOverlay() {
+
+		window.customElements.define("not-found-overlay", class extends HTMLElement {} );
+		let elmOverlay = document.createElement("not-found-overlay");
+		let styleOverlay = elmOverlay.style;
+
+		styleOverlay.all = "initial";
+		styleOverlay.position = "fixed"
+		styleOverlay.top = "0";
+		styleOverlay.left = "0";
+		styleOverlay.width = "100%";
+		styleOverlay.height = "100%";
+		styleOverlay.zIndex = "2147483641";
+		styleOverlay.pointerEvents = "none";
+		styleOverlay.backgroundColor = "rgba(0, 0, 0, 0.85)";
+		styleOverlay.color = "white";
+		styleOverlay.fontFamily = "Tahoma, Verdana, Segoe, sans-serif";
+		styleOverlay.fontSize = "9vw";
+		styleOverlay.lineHeight = "2.5";
+		styleOverlay.textAlign = "center";
+
+		elmOverlay.textContent = "Not Found";
+
+		document.documentElement.appendChild(elmOverlay);
 	}
 
 	/********************************************************************/
