@@ -13,6 +13,8 @@ let elementHighlight = (function () {
 
 		let cssSelector = decodeURIComponent(cssSelectorEncoded);
 
+		document.body["highlightOverlay"] = true;
+
 		m_elmHighlighted = document.querySelector(cssSelector);
 
 		if(!!m_elmHighlighted) {

@@ -135,6 +135,11 @@
 			return;
 		}
 
+		if (document.body.highlightOverlay === true) {
+			alert("\tOops!\n\n\tYou will need to refresh this page before starting a Lizard session.\t");
+			return;
+		}
+
 		if (m_lizardState.scrollbarWidth === -1) determineScrollbarWidth();
 
 		document.addEventListener("mousemove", onMouseMove, true);
