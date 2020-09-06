@@ -123,6 +123,7 @@
 		m_elmBtnSave.addEventListener("click", onClickBtnSave);
 		m_elmBtnRevert.addEventListener("click", onClickBtnRevert);
 		m_elmTextRuleDetails.addEventListener("input", onInputChangeRuleDetailsText);
+		m_elmTextRuleDetails.addEventListener("keydown", onKeyDownTextRuleDetails);
 	}
 
 
@@ -348,15 +349,6 @@
 	/************************************************************************************************************/
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function onInputChangeRuleDetailsText() {
-		clearTimeout(m_textAreaChangeDebouncer);
-		m_textAreaChangeDebouncer = setTimeout(() => {
-			validateRuleDetailsText();
-			m_textAreaChangeDebouncer = null;
-		}, 200);
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////
 	function onClickBtnSave() {
 
 		if(!!m_elmSelListItemSelector) {
@@ -386,6 +378,22 @@
 		}
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////
+	function onInputChangeRuleDetailsText() {
+		clearTimeout(m_textAreaChangeDebouncer);
+		m_textAreaChangeDebouncer = setTimeout(() => {
+			validateRuleDetailsText();
+			m_textAreaChangeDebouncer = null;
+		}, 200);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onKeyDownTextRuleDetails(event) {
+		if(event.ctrlKey && event.code === "KeyS") {
+			onClickBtnSave();
+			event.preventDefault();
+		}
+	}
 
 	/************************************************************************************************************/
 	/************************************************************************************************************/
