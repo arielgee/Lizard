@@ -71,8 +71,6 @@ let elementHighlight = (function () {
 		m_styleElementOverlay.position = "absolute"
 		m_styleElementOverlay.top = "0";
 		m_styleElementOverlay.left = "0";
-		m_styleElementOverlay.right = "0";
-		m_styleElementOverlay.bottom = "0";
 		m_styleElementOverlay.zIndex = "2147483641";
 		m_styleElementOverlay.pointerEvents = "none";
 		m_styleElementOverlay.boxSizing = "border-box";
@@ -94,9 +92,12 @@ let elementHighlight = (function () {
 		const topPagePosition = window.pageYOffset + elmRect.top;
 		const leftPagePosition = window.pageXOffset + elmRect.left;
 
+		m_styleElementOverlay.width = m_elmHtml.scrollWidth + "px";
+		m_styleElementOverlay.height = m_elmHtml.scrollHeight + "px";
+
 		m_styleElementOverlay.borderTopWidth = topPagePosition + "px";
-		m_styleElementOverlay.borderRightWidth = (m_elmHtml.offsetWidth - (leftPagePosition + elmRect.width)) + "px";
-		m_styleElementOverlay.borderBottomWidth = (m_elmHtml.offsetHeight - (topPagePosition + elmRect.height)) + "px";
+		m_styleElementOverlay.borderRightWidth = (m_elmHtml.scrollWidth - (leftPagePosition + elmRect.width)) + "px";
+		m_styleElementOverlay.borderBottomWidth = (m_elmHtml.scrollHeight - (topPagePosition + elmRect.height)) + "px";
 		m_styleElementOverlay.borderLeftWidth = leftPagePosition + "px";
 	}
 
@@ -111,18 +112,18 @@ let elementHighlight = (function () {
 		styleOverlay.position = "fixed"
 		styleOverlay.top = "0";
 		styleOverlay.left = "0";
-		styleOverlay.width = "100%";
-		styleOverlay.height = "100%";
+		styleOverlay.minWidth = "100%";
+		styleOverlay.minHeight = "100%";
 		styleOverlay.zIndex = "2147483641";
 		styleOverlay.pointerEvents = "none";
 		styleOverlay.backgroundColor = "rgba(0, 0, 0, 0.85)";
 		styleOverlay.color = "white";
 		styleOverlay.fontFamily = "Tahoma, Verdana, Segoe, sans-serif";
-		styleOverlay.fontSize = "9vw";
-		styleOverlay.lineHeight = "2.5";
+		styleOverlay.fontSize = "7vw";
+		styleOverlay.lineHeight = "4";
 		styleOverlay.textAlign = "center";
 
-		elmOverlay.textContent = "Not Found";
+		elmOverlay.textContent = "😕 Element not found.";
 
 		document.documentElement.appendChild(elmOverlay);
 	}

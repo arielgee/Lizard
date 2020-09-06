@@ -52,13 +52,13 @@
 * jumpTo issues: tabIdReusedElementHighlight is not initilized when using tab to navigate else where and then pressing 'jump to' again
 * jumpTo issues: tabIdReusedElementHighlight is not initilizaed when rules,HTML is closed	=> LEAVE IT, IT'S NOT THAT BAD
 * allow editing of selectors => NO
+* when example.html is width:7000px the Highlighted-overlay is not all the way to the right
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* when example.html is width:7000px the Highlighted-overlay is not all the way to the right
 * ctrl+s saves the rule's details
 * some indication that a page has alterations (optional)
 * indication color depend on the body's color? contrast? or maybe box-shadow?
