@@ -2,6 +2,8 @@
 
 let preferences = (function() {
 
+	const URL_RULES_DASHBOARD = browser.extension.getURL("../lizardDB/rules.html");
+
 	let m_elmHelpBoxOnStart;
 	let m_elmWheelToWiderNarrower;
 	let m_elmLabelReqRestartSessionMw;
@@ -22,6 +24,7 @@ let preferences = (function() {
 	let m_elmToolsMenu;
 	let m_elmRememberPageAlterations;
 	let m_elmLabelReqRestartSessionRpa;
+	let m_elmBtnManageAlterationsRules;
 	let m_elmExpertMode;
 	let m_elmXpModeContextMenu;
 	let m_elmLabelReqRestartSessionXp;
@@ -61,6 +64,7 @@ let preferences = (function() {
 		m_elmToolsMenu = document.getElementById("toolsMenu");
 		m_elmRememberPageAlterations = document.getElementById("rememberPageAlterations");
 		m_elmLabelReqRestartSessionRpa = document.getElementById("restartSessionRpa");
+		m_elmBtnManageAlterationsRules = document.getElementById("btnManageAlterationRules");
 		m_elmExpertMode = document.getElementById("expertMode");
 		m_elmXpModeContextMenu = document.getElementById("xpModeContextMenu");
 		m_elmLabelReqRestartSessionXp = document.getElementById("restartSessionXp");
@@ -112,6 +116,7 @@ let preferences = (function() {
 		m_elmContextMenu.addEventListener("change", onChangeContextMenu);
 		m_elmToolsMenu.addEventListener("change", onChangeToolsMenu);
 		m_elmRememberPageAlterations.addEventListener("change", onChangeRememberPageAlterations);
+		m_elmBtnManageAlterationsRules.addEventListener("click", onClickBtnManageAlterationsRules);
 		m_elmExpertMode.addEventListener("change", onChangeExpertMode);
 		m_elmXpModeContextMenu.addEventListener("change", onChangeXpModeContextMenu);
 
@@ -142,6 +147,7 @@ let preferences = (function() {
 		m_elmContextMenu.removeEventListener("change", onChangeContextMenu);
 		m_elmToolsMenu.removeEventListener("change", onChangeToolsMenu);
 		m_elmRememberPageAlterations.removeEventListener("change", onChangeRememberPageAlterations);
+		m_elmBtnManageAlterationsRules.removeEventListener("click", onClickBtnManageAlterationsRules);
 		m_elmExpertMode.removeEventListener("change", onChangeExpertMode);
 		m_elmXpModeContextMenu.removeEventListener("change", onChangeXpModeContextMenu);
 
@@ -215,6 +221,7 @@ let preferences = (function() {
 
 		prefs.getRememberPageAlterations().then((checked) => {
 			m_elmRememberPageAlterations.checked = checked;
+			lzUtil.disableElementTree(m_elmBtnManageAlterationsRules.parentElement.parentElement, !checked);
 		});
 
 		prefs.getExpertMode().then((checked) => {
@@ -341,9 +348,34 @@ let preferences = (function() {
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function onChangeRememberPageAlterations() {
-		prefs.setRememberPageAlterations(m_elmRememberPageAlterations.checked);
+
+		const checked = m_elmRememberPageAlterations.checked;
+
+		prefs.setRememberPageAlterations(checked);
 		m_elmLabelReqRestartSessionRpa.classList.add("flash");
+		lzUtil.disableElementTree(m_elmBtnManageAlterationsRules.parentElement.parentElement, !checked);
 		lzUtil.toggleRememberPageAlterations();
+
+		if(!checked) {
+			browser.tabs.query({ url: URL_RULES_DASHBOARD }).then((tabs) => {
+				for(let i=0, len=tabs.length; i<len; i++) {
+					browser.tabs.remove(tabs[i].id);
+				}
+			});
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	async function onClickBtnManageAlterationsRules() {
+
+		const tabs = await browser.tabs.query({ url: URL_RULES_DASHBOARD });
+
+		if(tabs.length > 0) {
+			browser.tabs.update(tabs[0].id, { active: true, url: URL_RULES_DASHBOARD });
+			browser.windows.update(tabs[0].windowId, { focused: true });
+		} else {
+			browser.tabs.create({ url: URL_RULES_DASHBOARD });
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////

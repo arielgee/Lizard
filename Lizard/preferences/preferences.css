@@ -299,6 +299,7 @@ input[type="color"]::-moz-focus-inner {
 label.disabled,
 input[type="radio"].disabled,
 input[type="checkbox"].disabled,
+.preferenceButton.disabled,
 .preference.subPref.disabled {
 	color: var(--foreground-color-disabled-control);
 	border-color: var(--foreground-color-disabled-control);
@@ -335,4 +336,10 @@ input[type="color"].disabled {
 body.noCaptionStyleV68 .caption,
 body.noCaptionStyleV68 .caption + .prefSeperator {
 	display: none;
+}
+
+#btnManageAlterationRules {
+	width: unset;
+	padding-left: 20px;
+	padding-right: 20px;
 }
