@@ -19,18 +19,24 @@ let elementHighlight = (function () {
 
 		if(!!m_elmHighlighted) {
 
-			m_elmHtml = document.documentElement;
+			const elmRect = m_elmHighlighted.getBoundingClientRect();
 
-			window.addEventListener("unload", _onUnload);
-			window.addEventListener("load", _onDimensionsChange, false);
-			window.addEventListener("resize", _onDimensionsChange, false);
-			document.addEventListener("visibilitychange", _onDimensionsChange, false);
+			if(elmRect.width < 10 || elmRect.height < 10) {
+				_createNotFoundOverlay("Element too small.");
+			} else {
 
-			m_observerSizeChange = new MutationObserver(_onDimensionsChange);
-			m_observerSizeChange.observe(document.body, { subtree: true, childList: true });
+				m_elmHtml = document.documentElement;
 
-			_createOverlay();
+				window.addEventListener("unload", _onUnload);
+				window.addEventListener("load", _onDimensionsChange, false);
+				window.addEventListener("resize", _onDimensionsChange, false);
+				document.addEventListener("visibilitychange", _onDimensionsChange, false);
 
+				m_observerSizeChange = new MutationObserver(_onDimensionsChange);
+				m_observerSizeChange.observe(document.body, { subtree: true, childList: true });
+
+				_createOverlay();
+			}
 		} else {
 			_createNotFoundOverlay();
 		}
@@ -104,7 +110,7 @@ let elementHighlight = (function () {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function _createNotFoundOverlay() {
+	function _createNotFoundOverlay(text = "Element not found.") {
 
 		window.customElements.define("not-found-overlay", class extends HTMLElement {} );
 		let elmOverlay = document.createElement("not-found-overlay");
@@ -125,7 +131,7 @@ let elementHighlight = (function () {
 		styleOverlay.lineHeight = "4";
 		styleOverlay.textAlign = "center";
 
-		elmOverlay.textContent = "😕 Element not found.";
+		elmOverlay.textContent = "😕 " + text;
 
 		document.documentElement.appendChild(elmOverlay);
 	}
