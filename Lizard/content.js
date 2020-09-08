@@ -35,6 +35,7 @@
 	const ID_LIZARD_HELP_FOOTER_LINK = "lizardHelpBoxFooterLink";
 	const ID_LIZARD_VERSION_NOTICE_BOX = "lizardVersionNoticeBox";
 	const ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK = "lizardVersionNotice19OptionsLink";
+	const ID_LIZARD_VER_NOTICE_120_OPTIONS_LINK = "lizardVersionNotice120ptionsLink";
 	const ID_LIZARD_VERSION_NOTICE_BOX_CLOSE = "lizardVersionNoticeBoxClose";
 	const ID_LIZARD_CONTEXT_MENU_BOX = "lizardContextMenuBox";
 
@@ -1701,21 +1702,27 @@
 
 		// make sure all versions are numeric
 		if(lzUtil.versionNumericCompare(prevVersion, "1.9") < 0) {
-			fmt += "<div class='{0} noticeText'>&#x2756; New in Version 1.9</div>";
-			fmt += "<div class='{0} noticeText'>&emsp;&#x25cf; Check out the new <b class='{0}'>Expert Mode</b> in the <span id='{2}' class='{0} noticeLink'>Options page</span>!</div>";
+			fmt += "<div class='{0} noticeText'>❖ New in Version 1.9</div>";
+			fmt += "<div class='{0} noticeText'>&emsp;● Check out the new <b class='{0}'>Expert Mode</b> in the <span id='{2}' class='{0} noticeLink'>Options page</span>!</div>";
 			fmt += "<div class='{0} noticeSep'></div>";
 		}
 
 		if(lzUtil.versionNumericCompare(prevVersion, "1.10") < 0) {
-			fmt += "<div class='{0} noticeText'>&#x2756; New in Version 1.10</div>";
-			fmt += "<div class='{0} noticeText'>&emsp;&#x25cf; <b class='{0}'>DeWidthify</b> an element using the hotkey 'E'.</div>";
-			fmt += "<div class='{0} noticeText'>&emsp;&#x25cf; Select the <b class='{0}'>Preceding</b> sibling element using the hotkey 'P'.</div>";
-			fmt += "<div class='{0} noticeText'>&emsp;&#x25cf; Select the <b class='{0}'>Following</b> sibling element using the hotkey 'F'.</div>";
+			fmt += "<div class='{0} noticeText'>❖ New in Version 1.10</div>";
+			fmt += "<div class='{0} noticeText'>&emsp;● <b class='{0}'>DeWidthify</b> an element using the hotkey 'E'.</div>";
+			fmt += "<div class='{0} noticeText'>&emsp;● Select the <b class='{0}'>Preceding</b> sibling element using the hotkey 'P'.</div>";
+			fmt += "<div class='{0} noticeText'>&emsp;● Select the <b class='{0}'>Following</b> sibling element using the hotkey 'F'.</div>";
 			fmt += "<div class='{0} noticeSep'></div>";
 		}
 
 		// nothing to write home about
 		//if(lzUtil.versionNumericCompare(prevVersion, "1.11") < 0) {}
+
+		if(lzUtil.versionNumericCompare(prevVersion, "1.20") < 0) {
+			fmt += "<div class='{0} noticeText'>❖ New in Version 1.20</div>";
+			fmt += "<div class='{0} noticeText'>&emsp;● New experimental feature: see <b class='{0}'>Remember page alterations</b> in the <span id='{3}' class='{0} noticeLink'>Options page</span>.</div>";
+			fmt += "<div class='{0} noticeSep'></div>";
+		}
 
 		// Do not display if nothing to display
 		if(fmt.length > 0) {
@@ -1725,12 +1732,16 @@
 			let noticeBox = document.createElement("div");
 			noticeBox.id = ID_LIZARD_VERSION_NOTICE_BOX;
 			noticeBox.className = CLS_LIZARD_ELEMENT;
-			noticeBox.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, ID_LIZARD_VERSION_NOTICE_BOX_CLOSE, ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK]);
+			noticeBox.innerHTML = fmt.format([CLS_LIZARD_ELEMENT, ID_LIZARD_VERSION_NOTICE_BOX_CLOSE, ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK, ID_LIZARD_VER_NOTICE_120_OPTIONS_LINK]);
 			document.body.appendChild(noticeBox);
 
 			document.getElementById(ID_LIZARD_VERSION_NOTICE_BOX_CLOSE).addEventListener("click", onCloseVersionNoticeBox, false);
 
 			let elm = document.getElementById(ID_LIZARD_VER_NOTICE_19_OPTIONS_LINK);
+			if (elm) {
+				elm.addEventListener("click", onLizardOptionsPage, false);
+			}
+			elm = document.getElementById(ID_LIZARD_VER_NOTICE_120_OPTIONS_LINK);
 			if (elm) {
 				elm.addEventListener("click", onLizardOptionsPage, false);
 			}
