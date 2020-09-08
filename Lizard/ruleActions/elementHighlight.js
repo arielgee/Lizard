@@ -76,10 +76,10 @@ let elementHighlight = (function () {
 		m_styleElementOverlay.zIndex = "2147483641";
 		m_styleElementOverlay.pointerEvents = "none";
 		m_styleElementOverlay.boxSizing = "border-box";
-		m_styleElementOverlay.borderColor = "rgba(0, 0, 0, 0.85)";
+		m_styleElementOverlay.borderColor = "rgba(0, 0, 0, 0.92)";
 		m_styleElementOverlay.borderStyle = "solid";
 
-		m_styleElementOverlay.backgroundColor = "rgba(255, 0, 0, 0.10)";
+		m_styleElementOverlay.backgroundColor = "rgba(255, 0, 0, 0.2)";
 
 		m_elmHtml.style.position = "relative";
 		m_elmHtml.appendChild(elmOverlay);

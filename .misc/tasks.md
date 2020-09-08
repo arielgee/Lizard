@@ -54,6 +54,7 @@
 * allow editing of selectors => NO
 * when example.html is width:7000px the Highlighted-overlay is not all the way to the right
 * ctrl+s saves the rule's details
+* indication color depend on the body's color? contrast? or maybe box-shadow?
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
@@ -61,7 +62,6 @@
 ## To-Do
 --------------
 * some indication that a page has alterations (optional)
-* indication color depend on the body's color? contrast? or maybe box-shadow?
 * show/hide indication depending of result of actions (if the querySelector(m_cssSelector) did not found an element)
 * jumpTo issues: m_elmHighlighted: need to change it somehow when its dark and there is no difference of colors with the overlay (mida	)
 * arguments.callee.name for function name
