@@ -135,7 +135,7 @@
 			return;
 		}
 
-		if (document.body.highlightOverlay === true) {
+		if (document.body.lizardHighlightOverlay === true) {
 			alert("\tOops!\n\n\tYou will need to refresh this page before starting a Lizard session.\t");
 			return;
 		}

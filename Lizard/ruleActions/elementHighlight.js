@@ -13,7 +13,7 @@ let elementHighlight = (function () {
 
 		let cssSelector = decodeURIComponent(cssSelectorEncoded);
 
-		document.body["highlightOverlay"] = true;
+		document.body["lizardHighlightOverlay"] = true;
 
 		m_elmHighlighted = document.querySelector(cssSelector);
 
