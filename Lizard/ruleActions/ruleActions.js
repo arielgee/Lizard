@@ -11,7 +11,7 @@ let ruleActions = (function () {
 
 	//////////////////////////////////////////////////////////////////////
 	function hideElement() {
-		let elm = document.querySelector(m_cssSelector);
+		const elm = document.querySelector(m_cssSelector);
 		if(!!elm) {
 			_updateRuleStats(m_cssSelector);
 			elm.style.visibility = "hidden";
@@ -20,7 +20,7 @@ let ruleActions = (function () {
 
 	//////////////////////////////////////////////////////////////////////
 	function removeElement() {
-		let elm = document.querySelector(m_cssSelector);
+		const elm = document.querySelector(m_cssSelector);
 		if(!!elm) {
 			_updateRuleStats(m_cssSelector);
 			elm.parentNode.removeChild(elm);
@@ -29,7 +29,7 @@ let ruleActions = (function () {
 
 	//////////////////////////////////////////////////////////////////////
 	function dewidthifyElement() {
-		let elm = document.querySelector(m_cssSelector);
+		const elm = document.querySelector(m_cssSelector);
 		if(!!elm) {
 			_updateRuleStats(m_cssSelector);
 			_dewidthify(elm);
@@ -38,7 +38,7 @@ let ruleActions = (function () {
 
 	//////////////////////////////////////////////////////////////////////
 	function isolateElement() {
-		let elm = document.querySelector(m_cssSelector);
+		const elm = document.querySelector(m_cssSelector);
 		if(!!elm) {
 			_updateRuleStats(m_cssSelector);
 
@@ -61,7 +61,7 @@ let ruleActions = (function () {
 
 	//////////////////////////////////////////////////////////////////////
 	function colorizeElement(color) {
-		let elm = document.querySelector(m_cssSelector);
+		const elm = document.querySelector(m_cssSelector);
 		if(!!elm) {
 			_updateRuleStats(m_cssSelector);
 			_colorizeElement(elm, color.foreground, color.background, color.colorizeChildren, color.saturateAmount, color.invertAmount);
