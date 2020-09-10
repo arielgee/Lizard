@@ -694,8 +694,8 @@
 
 		const msg = "Congratulations!\n\nYou've stumbled upon a hidden testing function.\n\n" +
 					"This will add an untold number of meaningless rules to the\n" +
-					"extension's database, and it's going be exhausting to clean\n" +
-					"without deleting all the rules.\n\nContinue?\n\n" +
+					"extension's database, and it's going be exhausting to delete\n" +
+					"them without deleting all the rules.\n\nContinue?\n\n" +
 					"* Watch the console for progress.";
 
 		if( !messageBox(msg, "confirm") ) return;

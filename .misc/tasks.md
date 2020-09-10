@@ -65,11 +65,11 @@
 
 ## To-Do
 --------------
+* export/import rules
 * arguments.callee.name for function name
 * indexedDB
 	* v59 - not working
 	* v64 - working
-* export/import rules
 * sometimes got this when _add_testing_rules()
 `	Uncaught (in promise) DOMException: IDBTransaction.objectStore: Transaction is already committing or done. lizardDB.js:72`
 `		setRule moz-extension://2078f906-1bb6-416c-94c4-047156007510/lizardDB/lizardDB.js:72`
