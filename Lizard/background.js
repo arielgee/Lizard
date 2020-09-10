@@ -46,6 +46,10 @@
 		tabIdReusedElementHighlight: -1,
 	};
 
+	let m_webNavReloadWithoutAlterations = {
+		windowId: -1,
+		tabId: -1,
+	}
 	let m_lizardDB = null;
 
 	initialization();
@@ -150,6 +154,7 @@
 	////////////////////////////////////////////////////////////////////////////////////
 	function onMenusClicked(info, tab) {
 		switch (info.menuItemId) {
+			case "mnu-reload-page-wo-alterations":	reloadPageWithoutAlterations();			break;
 			case "mnu-reload-lizard-extension":		lzUtil.reloadLizardWebExtension();		break;
 			case "mnu-open-lizard-options":			browser.runtime.openOptionsPage();		break;
 		}
@@ -172,6 +177,12 @@
 				break;
 				//////////////////////////////////////////////////////////////
 
+			case "kb-reload-page-wo-alterations":
+				reloadPageWithoutAlterations();
+				break;
+				//////////////////////////////////////////////////////////////
+
+
 		}
 	}
 
@@ -184,6 +195,11 @@
 			m_webNavJumpToElement.windowId = m_webNavJumpToElement.tabId = -1;
 
 			highlightElement(details.tabId, m_webNavJumpToElement.cssSelector);
+
+		} else if(details.windowId === m_webNavReloadWithoutAlterations.windowId && details.tabId === m_webNavReloadWithoutAlterations.tabId) {
+
+			// clear ids for next web navigation
+			m_webNavReloadWithoutAlterations.windowId = m_webNavReloadWithoutAlterations.tabId = -1;
 
 		} else {
 
@@ -217,6 +233,13 @@
 
 			browser.webNavigation.onCommitted.removeListener(onWebNavCommitted, WEB_NAV_FILTER);
 		}
+
+		browser.menus.update("mnu-reload-page-wo-alterations", { enabled: rememberPageAlters });
+		try {
+			// In Fx versions before v63 parameter "updateProperties" doesn't support "visible" for menus.update
+			browser.menus.update("mnu-reload-page-wo-alterations", { visible: rememberPageAlters });
+		} catch {}
+
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -236,6 +259,12 @@
 					});
 				}
 			});
+		});
+
+		browser.menus.create({
+			id: "mnu-reload-page-wo-alterations",
+			title: "Reload Current Page w/o Alterations",
+			contexts: ["browser_action"],
 		});
 
 		browser.menus.create({
@@ -498,5 +527,16 @@
 				browser.tabs.executeScript(tabId, { runAt: "document_idle", code: jsCode });
 			}
 		});
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	async function reloadPageWithoutAlterations() {
+
+		let tab = (await browser.tabs.query({ active: true, currentWindow: true }))[0];
+
+		m_webNavReloadWithoutAlterations.windowId = tab.windowId;
+		m_webNavReloadWithoutAlterations.tabId = tab.id;
+
+		browser.tabs.reload(tab.id);
 	}
 })();

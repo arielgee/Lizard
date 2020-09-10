@@ -58,13 +58,13 @@
 * some indication that a page has alterations (optional)	=> NO
 * show/hide indication depending of result of actions (if the querySelector(m_cssSelector) did not found an element)
 * jumpTo issues: m_elmHighlighted: need to change it somehow when its dark and there is no difference of colors with the overlay (mida	)
+* browserAction menuitem 'reload page without page alterations'
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* browserAction menuitem 'reload page without page alterations'
 * arguments.callee.name for function name
 * indexedDB
 	* v59 - not working
