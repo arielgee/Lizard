@@ -64,7 +64,7 @@
 
 ## To-Do
 --------------
-* disable extention from browserAction contextMenu ?
+* browserAction menuitem 'reload page without page alterations'
 * arguments.callee.name for function name
 * indexedDB
 	* v59 - not working

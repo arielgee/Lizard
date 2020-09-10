@@ -48,7 +48,18 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function onDOMContentLoaded() {
+	async function onDOMContentLoaded() {
+
+		if((await lzUtil.unsupportedExtensionFeatures()).includes("rememberPageAlterations")) {
+
+			// the body has only one child element
+			document.body.removeChild(document.body.firstElementChild);
+
+			let elmPara = document.createElement("p");
+			elmPara.textContent = "This page is part of the 'Remember page alterations' feature and is only available for Firefox version 64.0 and above.";
+			document.body.appendChild(elmPara);
+			return;
+		}
 
 		// URLs
 		m_elmTextFilterURLs = document.getElementById("textFilterURLs");
