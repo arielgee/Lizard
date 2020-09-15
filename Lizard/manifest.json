@@ -18,6 +18,7 @@
 		"webNavigation",
 		"notifications",
 		"clipboardWrite",
+		"downloads",
 		"storage"
 	],
 

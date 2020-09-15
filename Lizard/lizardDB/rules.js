@@ -27,6 +27,8 @@
 	let m_elmTextRuleDetails;
 	let m_elmNotifyRuleDetails;
 
+	let m_elmInputImport;
+	let m_elmBtnExport;
 
 	let m_lizardDB = new LizardDB();
 
@@ -87,6 +89,10 @@
 		m_elmTextRuleDetails = document.getElementById("textRuleDetails");
 		m_elmNotifyRuleDetails = document.getElementById("notifyRuleDetails");
 
+		// Import/Export
+		m_elmInputImport = document.getElementById("inputImport");
+		m_elmBtnExport = document.getElementById("btnExport");
+
 		addEventListeners();
 
 		m_lizardDB.open().then(() => loadURLsList() );
@@ -135,6 +141,10 @@
 		m_elmBtnRevert.addEventListener("click", onClickBtnRevert);
 		m_elmTextRuleDetails.addEventListener("input", onInputChangeRuleDetailsText);
 		m_elmTextRuleDetails.addEventListener("keydown", onKeyDownTextRuleDetails);
+
+		// Import/Export
+		m_elmInputImport.addEventListener("change", onChangeImport);
+		m_elmBtnExport.addEventListener("click", onClickExport);
 	}
 
 
@@ -403,6 +413,89 @@
 		if(event.ctrlKey && event.code === "KeyS") {
 			onClickBtnSave();
 			event.preventDefault();
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	async function onChangeImport(event) {
+
+		document.body.classList.add("inProgress");
+
+		let file = event.target.files[0];
+		let rules = await importJsonFile.run(file);
+
+		if(rules instanceof Array) {
+
+			let count = 0;
+
+			for(let i=0, len=rules.length; i<len; i++) {
+
+				const rule = rules[i];
+
+				if(	rule.hasOwnProperty("url") && (typeof(rule.url) === "string") &&
+					rule.hasOwnProperty("cssSelector") && (typeof(rule.cssSelector) === "string")) {
+
+					const url = rule.url;
+					const cssSelector = rule.cssSelector;
+
+					// remove from object so it can be passed as a parameter to isRuleObjectValid() and setRule()
+					delete rule.url;
+					delete rule.cssSelector;
+
+					if(LizardDB.isRuleObjectValid(rule) && LizardDB.ruleHasValue(rule)) {
+						await m_lizardDB.setRule(url, cssSelector, rule);
+						count += 1;
+					}
+				}
+			}
+
+			if(count > 0) {
+				loadURLsList();
+				messageBox(`${count} valid rules were successfully imported from file.\n\n'${file.name}'\n\n✱ Duplicate rules are merged and their details values are overwritten.`, "alert", false);
+			} else {
+				messageBox("No valid rules were found in file", "alert");
+			}
+		} else {
+			messageBox("File may not be a valid lizard-rules file (json).", "alert");
+		}
+
+		m_elmInputImport.value = "";		// forget last import name
+		document.body.classList.remove("inProgress");
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	async function onClickExport() {
+
+		try {
+
+			document.body.classList.add("inProgress");
+
+			let rules = await m_lizardDB.getAllRules()
+
+			// remove misc properties before exporting
+			for(let i=0, len=rules.length; i<len; i++) {
+
+				const rule = rules[i];
+
+				delete rule.created;
+				delete rule.hitCount
+				delete rule.lastUsed;
+			}
+
+			if(rules.length > 0) {
+				let result = await exportJsonFile.run(rules, "lizard-rules");
+
+				if( !!result.fileName && result.fileName.length > 0) {
+					messageBox(`${rules.length} rules were successfully exported to file.\n\n'${result.fileName}'`, "alert", false);
+				}
+			} else {
+				messageBox("There isn't any rule to exported.", "alert", false);
+			}
+
+		} catch (error) {
+			console.log("[Lizard]", "Export failed", error);
+		} finally {
+			document.body.classList.remove("inProgress");
 		}
 	}
 
@@ -695,6 +788,8 @@
 
 		if( !messageBox(msg, "confirm") ) return;
 
+		document.body.classList.add("inProgress");
+
 		const logStyle = "font-size:150%;color:red;"
 
 		console.log("%c[Lizard] _add_testing_rules(): ▶️ Started. Wait for it...", logStyle);
@@ -726,5 +821,6 @@
 		loadURLsList();
 		notifyAction(m_elmNotifyUrlsList, hosts*selectorsForUrl + " rules added", 2000);
 		console.log("%c[Lizard] _add_testing_rules(): ⏹️ Done.", logStyle);
+		document.body.classList.remove("inProgress");
 	}
 })();

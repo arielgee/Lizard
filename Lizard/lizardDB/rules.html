@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="rules.css"/>
 	<script src="../common.js"></script>
 	<script src="lizardDB.js"></script>
+	<script src="importExportJson.js"></script>
 	<script src="rules.js"></script>
 </head>
 
@@ -89,6 +90,12 @@
 		<div id="footer">
 			<div id="endNotes">
 				<p>✱ <b>Jump to Element</b> may not work on animated or dynamically created elements.</p>
+				<p>✱ <b>Import</b> will seamlessly merge duplicate rules. Their rule details values will be overwritten.</p>
+			</div>
+			<div id="footerControls">
+				<label id="labelImport" tabindex="0" class="dashboardButton" for="inputImport">Import...</label>
+				<button type="button" tabindex="0" class="dashboardButton" id="btnExport">Export...</button>
+				<input type="file" id="inputImport" accept="application/json,.lizard-rules"/>
 			</div>
 		</div>
 	</div>

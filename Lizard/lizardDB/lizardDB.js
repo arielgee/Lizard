@@ -303,6 +303,29 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	getAllRules() {
+
+		return new Promise((resolve, reject) => {
+
+			if(!this.isOpen) return reject(new Error("Database not open"));
+
+			let tran = this._getRulesTransaction("readonly", (error) => {
+				console.log("[Lizard]", "getAllRules transaction error/abort", error.name, error.message);
+				return reject(error);
+			});
+
+			const reqGet = tran.objectStore("rules").getAll();
+
+			reqGet.onsuccess = () => resolve(reqGet.result);
+			reqGet.onerror = (event) => {
+				const error = event.target.error;
+				console.log("[Lizard]", "getAllRules getAll error",error.name, error.message);
+				reject(error);
+			};
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	static isRuleObjectValid(obj) {
 		return LizardDB._isRuleObjectValue(obj);
 	}
