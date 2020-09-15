@@ -303,6 +303,11 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	static isRuleObjectValid(obj) {
+		return LizardDB._isRuleObjectValue(obj);
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	static isColorObjectValid(obj) {
 		return LizardDB._isColorObjectValue(obj);
 	}
@@ -390,8 +395,18 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	static _isRuleObjectValue(obj) {
+		return	Object.keys(obj).length === 5 &&
+				obj.hasOwnProperty("hide") && (typeof(obj.hide) === "boolean") &&
+				obj.hasOwnProperty("remove") && (typeof(obj.remove) === "boolean") &&
+				obj.hasOwnProperty("dewidthify") && (typeof(obj.dewidthify) === "boolean") &&
+				obj.hasOwnProperty("isolate") && (typeof(obj.isolate) === "boolean") &&
+				obj.hasOwnProperty("color") && LizardDB._isColorObjectValue(obj.color);
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	static _isColorObjectValue(obj) {
-		return (obj === null) ||
+		return	(obj === null) ||
 				( typeof(obj) === "object" &&
 					Object.keys(obj).length === 5 &&
 					obj.hasOwnProperty("foreground") && !!(obj.foreground.match(/^#[0-9a-f]{6}$/i)) &&

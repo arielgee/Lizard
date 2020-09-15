@@ -571,12 +571,7 @@
 				return;		// JSON parsing error
 			}
 
-			let isValid =	Object.keys(obj).length === 5 &&
-							obj.hasOwnProperty("hide") && (typeof(obj.hide) === "boolean") &&
-							obj.hasOwnProperty("remove") && (typeof(obj.remove) === "boolean") &&
-							obj.hasOwnProperty("dewidthify") && (typeof(obj.dewidthify) === "boolean") &&
-							obj.hasOwnProperty("isolate") && (typeof(obj.isolate) === "boolean") &&
-							obj.hasOwnProperty("color") && LizardDB.isColorObjectValid(obj.color);
+			let isValid = LizardDB.isRuleObjectValid(obj);
 
 			m_objValidModifiedRuleDetails = isValid ? obj : null;
 			m_elmTextRuleDetails.classList.add( isValid ? "editValid" : "editError" );
@@ -668,7 +663,7 @@
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function mirrorJsonRuleDetails(objRule) {
-		return m_strMirrorJsonRuleDetails = JSON.stringify(objRule, null, "  ");
+		return m_strMirrorJsonRuleDetails = JSON.stringify(objRule, null, 2);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -696,7 +691,7 @@
 					"This will add an untold number of meaningless rules to the\n" +
 					"extension's database, and it's going be exhausting to delete\n" +
 					"them without deleting all the rules.\n\nContinue?\n\n" +
-					"* Watch the console for progress.";
+					"✱ Watch the console for progress.";
 
 		if( !messageBox(msg, "confirm") ) return;
 
