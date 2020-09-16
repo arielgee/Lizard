@@ -813,6 +813,7 @@
 			element: elm,
 			prev_color: elmStyle.color,
 			prev_webkitTextFillColor: elmStyle.webkitTextFillColor,
+			prev_webkitTextStrokeColor: elmStyle.webkitTextStrokeColor,
 			prev_borderColor: elmStyle.borderColor,
 			prev_backgroundColor: elmStyle.backgroundColor,
 			prev_filter: elmStyle.filter,
@@ -821,6 +822,7 @@
 
 		elmStyle.color = foreground;
 		elmStyle.webkitTextFillColor = foreground;
+		elmStyle.webkitTextStrokeColor = foreground;
 		elmStyle.borderColor = foreground;
 		elmStyle.backgroundColor = background;
 		if (colorImages) {
@@ -889,6 +891,7 @@
 					let eStyle = e.element.style;
 					eStyle.color = e.prev_color;
 					eStyle.webkitTextFillColor = e.prev_webkitTextFillColor;
+					eStyle.webkitTextStrokeColor = e.prev_webkitTextStrokeColor;
 					eStyle.borderColor = e.prev_borderColor;
 					eStyle.backgroundColor = e.prev_backgroundColor;
 					if (e.undoFilter) {

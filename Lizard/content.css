@@ -32,6 +32,8 @@
 	-moz-user-input: auto !important;
 	-moz-binding: none !important;
 	-moz-user-focus: none !important;
+	-webkit-text-fill-color: currentColor !important;
+	-webkit-text-stroke-width: 0 !important;
 }
 
 
