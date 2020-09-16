@@ -390,6 +390,7 @@ let preferences = (function() {
 		let defPrefs = prefs.restoreDefaults();
 
 		lzUtil.disableElementTree(m_elmViewCssMatchRules.parentElement.parentElement, defPrefs.viewSourceType === prefs.SOURCE_TYPE.HTML);
+		lzUtil.disableElementTree(m_elmBtnManageAlterationsRules.parentElement.parentElement, !defPrefs.rememberPageAlterations);
 		lzUtil.disableElementTree(m_elmXpModeContextMenu.parentElement.parentElement, !defPrefs.xpModeContextMenu);
 
 		if (m_elmWheelToWiderNarrower.checked !== defPrefs.wheelToWiderNarrower) {
