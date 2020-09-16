@@ -55,10 +55,13 @@
 			"suggested_key": {
 				"default": "Ctrl+Shift+Down"
 			},
-			"description": "Reload Lizard Extension"
+			"description": "Reload Extension"
 		},
 		"kb-reload-page-wo-alterations": {
 			"description": "Reload Current Page w/o Alterations"
+		},
+		"kb-manage-alterations-rules": {
+			"description": "Manage Alterations Rules..."
 		}
 	},
 

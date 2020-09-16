@@ -52,6 +52,8 @@
 	}
 	let m_lizardDB = null;
 
+	let m_rememberPageAlterationsMenusCreated = false;
+
 	initialization();
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -157,6 +159,7 @@
 			case "mnu-reload-page-wo-alterations":	reloadPageWithoutAlterations();			break;
 			case "mnu-reload-lizard-extension":		lzUtil.reloadLizardWebExtension();		break;
 			case "mnu-open-lizard-options":			browser.runtime.openOptionsPage();		break;
+			case "mnu-manage-alterations-rules":	lzUtil.openRulesDashboard();			break;
 		}
 	}
 
@@ -182,7 +185,10 @@
 				break;
 				//////////////////////////////////////////////////////////////
 
-
+			case "kb-manage-alterations-rules":
+				lzUtil.openRulesDashboard();
+				break;
+				//////////////////////////////////////////////////////////////
 		}
 	}
 
@@ -234,21 +240,23 @@
 			browser.webNavigation.onCommitted.removeListener(onWebNavCommitted, WEB_NAV_FILTER);
 		}
 
-		browser.menus.update("mnu-reload-page-wo-alterations", { enabled: rememberPageAlters });
-		try {
-			// In Fx versions before v63 parameter "updateProperties" doesn't support "visible" for menus.update
-			browser.menus.update("mnu-reload-page-wo-alterations", { visible: rememberPageAlters });
-		} catch {}
-
+		if(m_rememberPageAlterationsMenusCreated) {
+			const updateProps = { enabled: rememberPageAlters, visible: rememberPageAlters };
+			browser.menus.update("mnu-reload-page-wo-alterations", updateProps);
+			browser.menus.update("mnu-manage-alterations-rules", updateProps);
+			browser.menus.update("mnu-separator-remember-page-alterations", updateProps);
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	function createMenus() {
 
+		let menus_contexts;
+
 		prefs.getMenuItemContext().then((inContext) => {
 			prefs.getMenuItemTools().then((inTools) => {
 
-				let menus_contexts = (inContext ? PAGE_CONTEXT : []).concat(inTools ? TOOLS_MENU_CONTEXT : []);
+				menus_contexts = (inContext ? PAGE_CONTEXT : []).concat(inTools ? TOOLS_MENU_CONTEXT : []);
 
 				if(menus_contexts.length > 0) {
 					m_lizardToggleStateMenuID = browser.menus.create({
@@ -261,27 +269,49 @@
 			});
 		});
 
-		browser.menus.create({
-			id: "mnu-reload-page-wo-alterations",
-			title: "Reload Current Page w/o Alterations",
-			contexts: ["browser_action"],
-		});
+		lzUtil.unsupportedExtensionFeatures().then(async (unsupportedFeatures) => {
 
-		browser.menus.create({
-			id: "mnu-reload-lizard-extension",
-			title: "Reload Lizard Extension",
-			contexts: ["browser_action"],
-		});
+			// all but the last create() must await so that the menu-items order will be maintained.
 
-		// getBrowserVersion() must first be called from here or it will fail when called from content.js
-		lzUtil.getBrowserVersion().then((version) => {
+			menus_contexts = ["browser_action"];
+
+			if( !unsupportedFeatures.includes("rememberPageAlterations") ) {
+				await browser.menus.create({
+					id: "mnu-reload-page-wo-alterations",
+					title: "Reload Current Page w/o Alterations",
+					contexts: menus_contexts,
+				});
+
+				await browser.menus.create({
+					id: "mnu-manage-alterations-rules",
+					title: "Manage Alterations Rules...",
+					contexts: menus_contexts,
+				});
+
+				await browser.menus.create({
+					id: "mnu-separator-remember-page-alterations",
+					type: "separator",
+					contexts: menus_contexts,
+				});
+
+				m_rememberPageAlterationsMenusCreated = true;
+			}
+
+			// getBrowserVersion() must first be called from here or it will fail when called from content.js - EDIT: I can't remember/understand why
+			let version = await lzUtil.getBrowserVersion();
 			if(parseInt(version) < 62) {
-				browser.menus.create({
+				await browser.menus.create({
 					id: "mnu-open-lizard-options",
-					title: "Open Lizard Options",
-					contexts: ["browser_action"],
+					title: "Open Extension Options",
+					contexts: menus_contexts,
 				});
 			}
+
+			browser.menus.create({
+				id: "mnu-reload-lizard-extension",
+				title: "Reload Extension",
+				contexts: menus_contexts,
+			});
 		});
 	}
 
