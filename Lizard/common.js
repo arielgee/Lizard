@@ -391,6 +391,8 @@ let sourceData = (function () {
 ///
 let lzUtil = (function () {
 
+	const URL_RULES_DASHBOARD = browser.extension.getURL("../lizardDB/rules.html");
+
 	let m_browserVersion = null;
 
 	//////////////////////////////////////////////////////////////////////
@@ -740,7 +742,22 @@ let lzUtil = (function () {
 		});
 	}
 
+	//////////////////////////////////////////////////////////////////////
+	async function openRulesDashboard() {
+
+		const tabs = await browser.tabs.query({ url: URL_RULES_DASHBOARD });
+
+		if(tabs.length > 0) {
+			browser.tabs.update(tabs[0].id, { active: true, url: URL_RULES_DASHBOARD });
+			browser.windows.update(tabs[0].windowId, { focused: true });
+		} else {
+			browser.tabs.create({ url: URL_RULES_DASHBOARD });
+		}
+	}
+
 	return {
+		URL_RULES_DASHBOARD: URL_RULES_DASHBOARD,
+
 		applyCssFilter: applyCssFilter,
 		reloadLizardWebExtension: reloadLizardWebExtension,
 		reloadLizardWebExtensionAndTab: reloadLizardWebExtensionAndTab,
@@ -758,5 +775,6 @@ let lzUtil = (function () {
 		unsupportedExtensionFeatures: unsupportedExtensionFeatures,
 		numberOfVItemsInViewport: numberOfVItemsInViewport,
 		writeTextToClipboard: writeTextToClipboard,
+		openRulesDashboard: openRulesDashboard,
 	}
 })();

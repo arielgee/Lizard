@@ -59,17 +59,6 @@
 * show/hide indication depending of result of actions (if the querySelector(m_cssSelector) did not found an element)
 * jumpTo issues: m_elmHighlighted: need to change it somehow when its dark and there is no difference of colors with the overlay (mida	)
 * browserAction menuitem 'reload page without page alterations'
----
-
-## REMEMBER: Update showVersionNotice() For Each New Version!
-
-## To-Do
---------------
-* export/import rules
-* arguments.callee.name for function name
-* indexedDB
-	* v59 - not working
-	* v64 - working
 * sometimes got this when _add_testing_rules()
 `	Uncaught (in promise) DOMException: IDBTransaction.objectStore: Transaction is already committing or done. lizardDB.js:72`
 `		setRule moz-extension://2078f906-1bb6-416c-94c4-047156007510/lizardDB/lizardDB.js:72`
@@ -80,6 +69,17 @@
 `		onAttach self-hosted:935`
 `		onPacket resource://devtools/server/devtools-server-connection.js:379`
 `		receiveMessage resource://devtools/shared/transport/child-transport.js:66`
+* arguments.callee.name for function name		=> NOT TO BE USED
+* export/import rules
+---
+
+## REMEMBER: Update showVersionNotice() For Each New Version!
+
+## To-Do
+--------------
+* indexedDB
+	* v59 - not working
+	* v64 - working
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
 * externilize the CssSelectorGenerator options?
 * use webNavigation in sage-like ?

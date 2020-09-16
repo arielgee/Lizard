@@ -2,8 +2,6 @@
 
 let preferences = (function() {
 
-	const URL_RULES_DASHBOARD = browser.extension.getURL("../lizardDB/rules.html");
-
 	let m_elmHelpBoxOnStart;
 	let m_elmWheelToWiderNarrower;
 	let m_elmLabelReqRestartSessionMw;
@@ -357,7 +355,7 @@ let preferences = (function() {
 		lzUtil.toggleRememberPageAlterations();
 
 		if(!checked) {
-			browser.tabs.query({ url: URL_RULES_DASHBOARD }).then((tabs) => {
+			browser.tabs.query({ url: lzUtil.URL_RULES_DASHBOARD }).then((tabs) => {
 				for(let i=0, len=tabs.length; i<len; i++) {
 					browser.tabs.remove(tabs[i].id);
 				}
@@ -366,16 +364,8 @@ let preferences = (function() {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	async function onClickBtnManageAlterationsRules() {
-
-		const tabs = await browser.tabs.query({ url: URL_RULES_DASHBOARD });
-
-		if(tabs.length > 0) {
-			browser.tabs.update(tabs[0].id, { active: true, url: URL_RULES_DASHBOARD });
-			browser.windows.update(tabs[0].windowId, { focused: true });
-		} else {
-			browser.tabs.create({ url: URL_RULES_DASHBOARD });
-		}
+	function onClickBtnManageAlterationsRules() {
+		lzUtil.openRulesDashboard();
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
