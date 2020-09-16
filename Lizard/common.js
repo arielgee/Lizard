@@ -632,11 +632,7 @@ let lzUtil = (function () {
 	//////////////////////////////////////////////////////////////////////
 	function disableElementTree(elm, value) {
 
-		if (elm.nodeType !== Node.ELEMENT_NODE) {
-			return;
-		}
-
-		for (let i in elm.children) {
+		for(let i=0, len=elm.children.length; i<len; i++) {
 			disableElementTree(elm.children[i], value);
 		}
 

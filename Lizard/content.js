@@ -675,9 +675,9 @@
 
 		for(let i=0, len=elm.children.length; i<len; i++) {
 
-			let c = elm.children[i];
+			const c = elm.children[i];
 
-			if(c.nodeType === Node.ELEMENT_NODE && !(c.classList.contains(CLS_LIZARD_ELEMENT))) {
+			if(!(c.classList.contains(CLS_LIZARD_ELEMENT))) {
 				_deWidthify(c, uaItems);
 			}
 		}
@@ -832,9 +832,9 @@
 
 		for(let i=0, len=elm.children.length; i<len && deep; i++) {
 
-			let c = elm.children[i];
+			const c = elm.children[i];
 
-			if(c.nodeType === Node.ELEMENT_NODE && !(c.classList.contains(CLS_LIZARD_ELEMENT))) {
+			if(!(c.classList.contains(CLS_LIZARD_ELEMENT))) {
 				_colorElement(c, foreground, background, uaItems, true, saturateAmount, invertAmount);
 			}
 		}

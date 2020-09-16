@@ -71,6 +71,7 @@
 `		receiveMessage resource://devtools/shared/transport/child-transport.js:66`
 * arguments.callee.name for function name		=> NOT TO BE USED
 * export/import rules
+* when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. they are ALL elements. (seee: _deWidthify)
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
@@ -80,7 +81,6 @@
 * indexedDB
 	* v59 - not working
 	* v64 - working
-* when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. there are ALL elements. (seee: _deWidthify)
 * externilize the CssSelectorGenerator options?
 * use webNavigation in sage-like ?
 * update SourceBeautifier to latest version from https://github.com/beautify-web/js-beautify
