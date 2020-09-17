@@ -53,13 +53,23 @@
 	async function onDOMContentLoaded() {
 
 		if((await lzUtil.unsupportedExtensionFeatures()).includes("rememberPageAlterations")) {
+			pageErrorMessage(["This page is part of the 'Remember page alterations' feature and is only available for Firefox version 64.0 and above."]);
+			return;
+		}
 
-			// the body has only one child element
-			document.body.removeChild(document.body.firstElementChild);
+		if((await browser.tabs.getCurrent()).incognito || (await browser.windows.getCurrent()).incognito) {
 
-			let elmPara = document.createElement("p");
-			elmPara.textContent = "This page is part of the 'Remember page alterations' feature and is only available for Firefox version 64.0 and above.";
-			document.body.appendChild(elmPara);
+			const lines = [
+				"For now and due to Firefox restrictions the 'Alteration Rules' page cannot be used in Private Browsing tabs or windows.",
+				"This behavior might change in the upcoming versions.",
+				"Open 'Alteration Rules' in a regular window (non-private).",
+			];
+			const clickableLine = {
+				index: 2,
+				onClock: () => browser.windows.create({ url: lzUtil.URL_RULES_DASHBOARD, incognito: false })
+			};
+
+			pageErrorMessage(lines, clickableLine);
 			return;
 		}
 
@@ -775,6 +785,44 @@
 				.catch(() => item.title = "{Error: failed to get the page title}" );
 		}
 		setTimeout(fetching, timeout);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function pageErrorMessage(lines, clickableLine = { index: null, onClock: undefined }) {
+
+		while(!!document.body.firstElementChild) {
+			document.body.removeChild(document.body.firstElementChild);
+		}
+
+		let left = document.createElement("div");
+		left.style.float = "left";
+		left.style.fontSize = left.style.lineHeight= "32px"
+		left.textContent = "⛔️";
+
+		let right = document.createElement("div");
+		right.style.fontSize = "18px"
+		right.style.marginLeft = "55px";
+		for(let i=0, len=lines.length; i<len; i++) {
+			const p = document.createElement("p");
+			p.style.margin = "12px 0";
+			p.textContent = lines[i];
+			right.appendChild(p);
+		}
+		right.firstElementChild.style.paddingTop = "7px";
+
+		const idx = parseInt(clickableLine.index);
+		if(!isNaN(idx) && idx > -1 && idx < right.children.length) {
+			const clickLine = right.children[idx];
+			clickLine.style.textDecoration = "underline";
+			clickLine.style.color = "blue";
+			clickLine.style.cursor = "pointer";
+			clickLine.onclick = clickableLine.onClock;
+		}
+
+		let container = document.createElement("div");
+		container.appendChild(left);
+		container.appendChild(right);
+		document.body.appendChild(container);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////

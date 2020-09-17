@@ -73,21 +73,21 @@
 * export/import rules
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. they are ALL elements. (seee: _deWidthify)
 * when coloring the HTML the cssSelector is empty => fixed; provided custom options to CssSelectorGenerator.getCssSelector()
+* externilize the CssSelectorGenerator options? => not relevent
+* update SourceBeautifier to latest version from https://github.com/beautify-web/js-beautify => NO
+* JSDoc
+* if url has additinal parameters (#striped)
+* work in private browsing ? private browsing in min AND amx version ?
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
+* incognito mode: rules.js not working with indexedDB its a content scripts. move db actions to background.js?
 * indexedDB
 	* v59 - not working
 	* v64 - working
-* externilize the CssSelectorGenerator options?
-* use webNavigation in sage-like ?
-* update SourceBeautifier to latest version from https://github.com/beautify-web/js-beautify
-* JSDoc
-* if url has additinal parameters (#striped)
-* work in private browsing ? private browsing in min AND amx version ?
 * min version in manifest is v56. I'm using v59. I created VScroll buttons for view-source in window but it HAS VScroll? will it have them in v56?
 * handle return Promise from prefs functions
 * remove the showVersionNotice ???
