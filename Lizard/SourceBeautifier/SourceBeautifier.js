@@ -336,9 +336,9 @@ let SourceBeautifier = (function () {
 						}
 						if (input_char === '\n' || input_char === '\r') {
 							content += '\n';
-							/*  Don't change tab indention for unformatted blocks.  If using code for html editing, this will greatly affect <pre> tags if they are specified in the 'unformatted array'
+							/* Don't change tab indention for unformatted blocks. If using code for html editing, this will greatly affect <pre> tags if they are specified in the 'unformatted array'
 							for (let i=0; i<this.indent_level; i++) {
-							  content += this.indent_string;
+								content += this.indent_string;
 							}
 							space = false; //...and make sure other indentation is erased
 							*/
@@ -528,8 +528,8 @@ let SourceBeautifier = (function () {
 							let _level = white.match(/[^\n\r]*$/)[0].split(multi_parser.indent_string).length - 1;
 							let reindent = multi_parser.get_full_indent(script_indent_level - _level);
 							text = text.replace(/^\s*/, indentation)
-								   .replace(/\r\n|\r|\n/g, '\n' + reindent)
-								   .replace(/\s*$/, '');
+								.replace(/\r\n|\r|\n/g, '\n' + reindent)
+								.replace(/\s*$/, '');
 						}
 						if (text) {
 							multi_parser.print_token(text);
