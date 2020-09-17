@@ -53,7 +53,7 @@
 	async function onDOMContentLoaded() {
 
 		try { browser.extension; }
-		catch {
+		catch(_) {
 			pageErrorMessage([
 				"This page has apparently failed in the most basic manner.",
 				"Are you trying to manually access 'Alteration Rules' in a private window while the extension is not allowed to run in private windows?",

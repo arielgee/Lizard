@@ -478,7 +478,7 @@
 			try {
 				tabViewer = await browser.tabs.update(m_webNavJumpToElement.tabIdReusedElementHighlight, { active: true, url: url });
 				browser.windows.update(tabViewer.windowId, { focused: true });
-			} catch {}
+			} catch(_) {}
 
 		} else if(newWin && !newTab) {
 
@@ -507,7 +507,7 @@
 			await browser.tabs.executeScript(tabId, { runAt: "document_start", file: "ruleActions/elementHighlight.js" });
 			browser.tabs.executeScript(tabId, { runAt: "document_end", code: jsCode });
 
-		} catch {
+		} catch(_) {
 			// 'Error: Missing host permission for the tab' when tab is 'saved' after Fx load
 		}
 	}
