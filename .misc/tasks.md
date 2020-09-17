@@ -84,11 +84,11 @@
 
 ## To-Do
 --------------
+* min version in manifest is v56. I'm using v59. I created VScroll buttons for view-source in window but it HAS VScroll? will it have them in v56?
 * incognito mode: rules.js not working with indexedDB its a content scripts. move db actions to background.js?
 * indexedDB
 	* v59 - not working
 	* v64 - working
-* min version in manifest is v56. I'm using v59. I created VScroll buttons for view-source in window but it HAS VScroll? will it have them in v56?
 * handle return Promise from prefs functions
 * remove the showVersionNotice ???
 * Implemented Debouncer to prevent double injectLizardScripts() in sendToggleLizardStateMessage()
