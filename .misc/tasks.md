@@ -72,6 +72,7 @@
 * arguments.callee.name for function name		=> NOT TO BE USED
 * export/import rules
 * when using element.children there is no need to check for: nodeType === Node.ELEMENT_NODE. they are ALL elements. (seee: _deWidthify)
+* when coloring the HTML the cssSelector is empty => fixed; provided custom options to CssSelectorGenerator.getCssSelector()
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!

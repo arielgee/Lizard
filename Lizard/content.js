@@ -1159,7 +1159,7 @@
 
 		if (elm) {
 			try {
-				let selector = CssSelectorGenerator.getCssSelector(elm);
+				let selector = getCssSelector(elm);
 				viewSourceInPage("CSS Selector", selector, true);
 
 				// +++ CSS Selector is displayed only in page
@@ -1772,7 +1772,7 @@
 	function rememberPageAlteration(elm, details) {
 		if(m_lizardState.rememberPageAlterations) {
 			details["created"] = Date.now();
-			let rule = SESSION_RULE(CssSelectorGenerator.getCssSelector(elm, { includeTag: true }), details);
+			let rule = SESSION_RULE(getCssSelector(elm, { includeTag: true }), details);
 			m_lizardState.pendingSessionRules.push(rule);
 		}
 	}
@@ -1810,6 +1810,12 @@
 		setTimeout(setAllAsSaved, 0, m_lizardState.pendingSessionRules);
 
 		browser.runtime.sendMessage(msg);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	function getCssSelector(elm, customOptions = {}) {
+		const options = Object.assign({}, { root: document }, customOptions);
+		return CssSelectorGenerator.getCssSelector(elm, options);
 	}
 
 })();
