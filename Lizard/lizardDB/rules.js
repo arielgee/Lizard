@@ -52,24 +52,30 @@
 	////////////////////////////////////////////////////////////////////////////////////
 	async function onDOMContentLoaded() {
 
+		try { browser.extension; }
+		catch {
+			pageErrorMessage([
+				"This page has apparently failed in the most basic manner.",
+				"Are you trying to manually access 'Alteration Rules' in a private window while the extension is not allowed to run in private windows?",
+				"Allow Lizard to run in private windows from the Manage Extension page.",
+			]);
+			return;
+		}
+
 		if((await lzUtil.unsupportedExtensionFeatures()).includes("rememberPageAlterations")) {
 			pageErrorMessage(["This page is part of the 'Remember page alterations' feature and is only available for Firefox version 64.0 and above."]);
 			return;
 		}
 
-		if((await browser.tabs.getCurrent()).incognito || (await browser.windows.getCurrent()).incognito) {
-
-			const lines = [
+		if ((await browser.tabs.getCurrent()).incognito || (await browser.windows.getCurrent()).incognito) {
+			pageErrorMessage([
 				"For now and due to Firefox restrictions the 'Alteration Rules' page cannot be used in Private Browsing tabs or windows.",
 				"This behavior might change in the upcoming versions.",
-				"Open 'Alteration Rules' in a regular window (non-private).",
-			];
-			const clickableLine = {
+				"Open 'Alteration Rules' in a regular window (non-private)."
+			], {
 				index: 2,
 				onClock: () => browser.windows.create({ url: lzUtil.URL_RULES_DASHBOARD, incognito: false })
-			};
-
-			pageErrorMessage(lines, clickableLine);
+			});
 			return;
 		}
 
