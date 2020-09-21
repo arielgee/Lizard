@@ -37,7 +37,7 @@
 	const WEB_NAV_USER_TRANSITION_TYPES = [ "link", "typed", "reload", "generated", "form_submit", "manual_subframe" ];
 
 	let m_lizardToggleStateMenuID = -1;
-	let m_lastInjectTime = 0;
+	let m_scriptInjectThrottler = false;
 
 	let m_webNavJumpToElement = {
 		windowId: -1,
@@ -342,17 +342,19 @@
 
 			//console.log("[Lizard]", error);
 
-			// This is UGLY but it works. if the user double clicks (2 very fast clicks) on the lizard button (or the keyboard command) the
-			// injectLizardScripts() is called twice and an error is raised due to the redeclaration and onErrorToggleSessionState() is called.
-			if ((Date.now() - m_lastInjectTime) > 500) {
+			// If user double clicks (2 very fast clicks) on the lizard button (or the keyboard command) the injectLizardScripts() may
+			// be called twice and an error is raised due to the redeclaration and onErrorToggleSessionState() is called.
+			if(!m_scriptInjectThrottler) {
 
 				// scripts were not injected
 
-				m_lastInjectTime = Date.now();
+				m_scriptInjectThrottler = true;
 
+				const m_injectTime = Date.now();
 				injectLizardScripts(tab.id).then(() => {
-					console.log("[lizard]", "Injection time(millisec):", Date.now()-m_lastInjectTime);
+					console.log("[lizard]", "Injection time(millisec):", Date.now()-m_injectTime);
 					browser.tabs.sendMessage(tab.id, msg).catch(onErrorToggleSessionState);
+					m_scriptInjectThrottler = false;
 				}, onErrorToggleSessionState);
 			}
 		});
