@@ -1722,7 +1722,7 @@
 		//if(lzUtil.versionNumericCompare(prevVersion, "1.11") < 0) {}
 
 		if(lzUtil.versionNumericCompare(prevVersion, "1.20") < 0) {
-			fmt += "<div class='{0} noticeText'>❖ New in Version 1.20</div>";
+			fmt += "<div class='{0} noticeText'>❖ New in Version 1.20 (Firefox version 64.0 and above)</div>";
 			fmt += "<div class='{0} noticeText'>&emsp;● New experimental feature: see <b class='{0}'>Remember page alterations</b> in the <span id='{3}' class='{0} noticeLink'>Options page</span>.</div>";
 			fmt += "<div class='{0} noticeSep'></div>";
 		}

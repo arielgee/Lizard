@@ -81,16 +81,16 @@
 * min version in manifest is v56. I'm using v59. I created VScroll buttons for view-source in window but it HAS VScroll? will it have them in v56? => BUTTONS ARE VISIBLE IN v56
 * handle return Promise from prefs functions
 * Implemented Debouncer to prevent double injectLizardScripts() in sendToggleLizardStateMessage() => Throttler not Debouncer
+* remove the showVersionNotice ???	=> NO
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* remove VScroll buttons for view-source in window ?
-* incognito mode: rules.js not working with indexedDB its a content scripts. move db actions to background.js?
 * indexedDB
 	* v59 - not working
 	* v64 - working
-* remove the showVersionNotice ???
+* remove VScroll buttons for view-source in window?
+* incognito mode: rules.js not working with indexedDB its a content scripts. move db actions to background.js?
 * I Fucked Up: I Forgot about showVersionNotice() in version 1.11 (nothing to do, just a note for next version)
