@@ -88,6 +88,7 @@
 
 ## To-Do
 --------------
+* extension.getURL() is deprecated. Use runtime.getURL().
 * indexedDB
 	* v59 - not working
 	* v64 - working
