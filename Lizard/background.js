@@ -350,9 +350,9 @@
 
 				m_scriptInjectThrottler = true;
 
-				const m_injectTime = Date.now();
+				const injectTime = Date.now();
 				injectLizardScripts(tab.id).then(() => {
-					console.log("[lizard]", "Injection time(millisec):", Date.now()-m_injectTime);
+					console.log("[lizard]", "Injection time(millisec):", Date.now()-injectTime);
 					browser.tabs.sendMessage(tab.id, msg).catch(onErrorToggleSessionState);
 					m_scriptInjectThrottler = false;
 				}, onErrorToggleSessionState);
