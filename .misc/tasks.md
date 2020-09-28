@@ -82,13 +82,13 @@
 * handle return Promise from prefs functions
 * Implemented Debouncer to prevent double injectLizardScripts() in sendToggleLizardStateMessage() => Throttler not Debouncer
 * remove the showVersionNotice ???	=> NO
+* extension.getURL() is deprecated. Use runtime.getURL().
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* extension.getURL() is deprecated. Use runtime.getURL().
 * indexedDB
 	* v59 - not working
 	* v64 - working
