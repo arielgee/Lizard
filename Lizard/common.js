@@ -391,7 +391,7 @@ let sourceData = (function () {
 ///
 let lzUtil = (function () {
 
-	const URL_RULES_DASHBOARD = browser.extension.getURL("../lizardDB/rules.html");
+	const URL_RULES_DASHBOARD = browser.runtime.getURL("../lizardDB/rules.html");
 
 	let m_browserVersion = null;
 

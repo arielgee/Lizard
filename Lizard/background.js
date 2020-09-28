@@ -437,7 +437,7 @@
 	////////////////////////////////////////////////////////////////////////////////////
 	function openViewSourcePage(id, newWindow) {
 
-		let viewSourceURL = browser.extension.getURL("viewSource/viewSource.html?id=" + id);
+		let viewSourceURL = browser.runtime.getURL("viewSource/viewSource.html?id=" + id);
 
 		if (newWindow) {
 			browser.windows.create({
