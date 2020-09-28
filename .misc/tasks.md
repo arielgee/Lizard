@@ -92,6 +92,6 @@
 * indexedDB
 	* v59 - not working
 	* v64 - working
-* remove VScroll buttons for view-source in window?
+* remove VScroll buttons for view-source in window? => LEAVE IT
 * incognito mode: rules.js not working with indexedDB its a content scripts. move db actions to background.js?
 * I Fucked Up: I Forgot about showVersionNotice() in version 1.11 (nothing to do, just a note for next version)

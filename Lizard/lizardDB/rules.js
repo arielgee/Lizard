@@ -778,7 +778,7 @@
 	////////////////////////////////////////////////////////////////////////////////////
 	function notifyAction(elmOverlay, textOverlay, timeout = 1000) {
 		elmOverlay.textContent = textOverlay;
-		elmOverlay.style.opacity = "50%";
+		elmOverlay.style.opacity = "0.5";
 		setTimeout(() => elmOverlay.style.opacity = "0", timeout);
 	}
 
