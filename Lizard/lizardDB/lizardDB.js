@@ -206,14 +206,16 @@ class LizardDB {
 			});
 
 			const reqCursor = tran.objectStore("rules").index("idx_url").openCursor([ url ]);
+			let affectedCount = 0;
 
 			reqCursor.onsuccess = () => {
 				let cursor = reqCursor.result;
 				if(cursor) {
 					cursor.delete();
+					affectedCount += 1;
 					cursor.continue();
 				} else {
-					resolve();
+					resolve({ affectedCount: affectedCount });
 				}
 			};
 
