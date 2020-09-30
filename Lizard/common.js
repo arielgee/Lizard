@@ -751,6 +751,17 @@ let lzUtil = (function () {
 		}
 	}
 
+	//////////////////////////////////////////////////////////////////////
+	function patternToRegExp(pattern, reReplacement) {
+
+		let patternParts = pattern.split("*");		// split by wildcard
+
+		for(let i=0, len=patternParts.length; i<len; i++) {
+			patternParts[i] = lzUtil.escapeRegExp(patternParts[i]);
+		}
+		return patternParts.join(reReplacement);
+	}
+
 	return {
 		URL_RULES_DASHBOARD: URL_RULES_DASHBOARD,
 
@@ -772,5 +783,6 @@ let lzUtil = (function () {
 		numberOfVItemsInViewport: numberOfVItemsInViewport,
 		writeTextToClipboard: writeTextToClipboard,
 		openRulesDashboard: openRulesDashboard,
+		patternToRegExp: patternToRegExp,
 	}
 })();
