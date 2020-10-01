@@ -56,6 +56,22 @@
 
 	initialization();
 
+	let _testing_LizardDB_V2 = (async () => {
+
+		let lizardDB_V2 = new LizardDB_V2();
+
+		await lizardDB_V2.open();
+
+		let result;
+
+		result = await lizardDB_V2.setRule("http://localhost/example/ExampleEX.html", "XXX", { hide: true });
+		result = await lizardDB_V2.setRule("http://localhost/example/ExampleEX.html", "YYY", { hide: true });
+		result = await lizardDB_V2.setRule("http://localhost/example/ExampleEX_X.html", "XXX", { hide: true });
+		result = await lizardDB_V2.setRule("http://localhost/example/ExampleEX_XX.html", "XXX", { hide: true });
+		result = await lizardDB_V2.setRule("http://localhost/example/ExampleEX_XX.html", "ZZZ", { hide: true });
+		console.log("[Lizard m_lizardDB_V2]", result);
+	})();
+
 	////////////////////////////////////////////////////////////////////////////////////
 	async function initialization() {
 

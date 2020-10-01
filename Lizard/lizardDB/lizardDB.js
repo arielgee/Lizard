@@ -456,3 +456,238 @@ class LizardDB {
 		return decodeURIComponent(url.split(/(\?|#).*/)[0].trim().replace(/^(.*)\/+$/, "$1"));
 	}
 };
+/*#######################################################################################################*/
+/*#######################################################################################################*/
+/*#######################################################################################################*/
+/*#######################################################################################################*/
+/*#######################################################################################################*/
+/*#######################################################################################################*/
+/*#######################################################################################################*/
+/*#######################################################################################################*/
+class LizardDB_V2 {
+	constructor() {
+		this.m_databaseName = "lizardDB";
+		this.m_dbRequest = null;
+		this.m_db = null;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	open() {
+
+		return new Promise((resolve, reject) => {
+
+			this._onDBRequestUpgradeNeeded = this._onDBRequestUpgradeNeeded.bind(this);
+
+			this.m_dbRequest = window.indexedDB.open(this.m_databaseName, 1);
+
+			this.m_dbRequest.addEventListener("upgradeneeded", this._onDBRequestUpgradeNeeded);
+
+			this.m_dbRequest.onsuccess = () => {
+				this.m_db = this.m_dbRequest.result;
+				resolve();
+			};
+
+			this.m_dbRequest.onerror = (event) => {
+				const error = event.target.error;
+				console.log("[Lizard]", "open error", error.name, error.message);
+				reject(error);
+			};
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	close() {
+		if(this.isOpen) {
+			this.m_db.close();
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	get isOpen() {
+		return (!!this.m_db && this.m_db.name === this.m_databaseName)
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	setRule(url, cssSelector, details = {}) {
+
+		return new Promise((resolve, reject) => {
+
+			if(!this.isOpen) return reject(new Error("Database not open"));
+
+			url = this._normalizeUrl(url);
+			cssSelector = cssSelector.trim();
+			if(!!!url || !!!cssSelector) return reject(new Error("Mandatory parameters missing. url: '" + url + "', cssSelector: '" + cssSelector + "'"));
+
+			let tran = this._getTransaction("readwrite", (error) => {
+				console.log("[Lizard]", "setRule transaction error/abort", error.name, error.message);
+				return reject(error);
+			});
+
+			this._getRuleLocation(url, tran).then((existingRL) => {
+
+				const objRL = Object.assign(this._getNewRuleLocationObject(url), existingRL);
+
+				this._putRuleLocation(objRL, tran).then((idRuleLocation) => {
+
+					this._getRuleDetails(idRuleLocation, cssSelector, tran).then((existingRD) => {
+
+						const objRD = Object.assign(this._getNewRuleDetailsObject(idRuleLocation, cssSelector), existingRD);
+
+						if(this._isDate(details.created)) objRD.created = details.created;
+						if(this._isBoolean(details.hide)) objRD.hide = details.hide;
+						if(this._isBoolean(details.remove)) objRD.remove = details.remove;
+						if(this._isBoolean(details.dewidthify)) objRD.dewidthify = details.dewidthify;
+						if(this._isBoolean(details.isolate)) objRD.isolate = details.isolate;
+						if(LizardDB_V2._isColorObjectValue(details.color)) objRD.color = details.color;
+
+						this._putRuleDetails(objRD, tran).then((keyPath) => resolve(keyPath) );
+					});
+				});
+			}).catch((error) => {
+				console.log("[Lizard]", "setRule error", error.name, error.message);
+				return reject(error);
+			});
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_onDBRequestUpgradeNeeded(event) {
+
+		let db = this.m_dbRequest.result;
+
+		if(!!!db || db.name !== this.m_databaseName) throw new Error("Database not open");
+
+		db.onerror = (event) => console.log("[Lizard]", "upgradeNeeded error", event.target.error.name, event.target.error.message);
+
+		let storePageRule = db.createObjectStore("rule_location", { keyPath: "idRuleLocation", autoIncrement: true });
+		storePageRule.createIndex("idx_url", [ "url" ], { unique: true });
+
+		let storeRuleDetails = db.createObjectStore("rule_details", { keyPath: [ "idRuleLocation", "cssSelector" ] });
+		storeRuleDetails.createIndex("idx_idRuleLocation", [ "idRuleLocation" ], { unique: false });
+		storeRuleDetails.createIndex("idx_cssSelector", [ "cssSelector" ], { unique: false });
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_getTransaction(mode = "", failCallback) {
+		let tran = this.m_db.transaction([ "rule_location", "rule_details" ], mode);
+		tran.onerror = tran.onabort = (event) => { failCallback(event.target.error); };
+		return tran;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_getRuleLocation(url, transaction) {
+
+		return new Promise((resolve, reject) => {
+
+			const req = transaction.objectStore("rule_location").index("idx_url").get([ url ]);
+
+			req.onsuccess = () => resolve(!!req.result ? req.result : {});
+			req.onerror = (event) => {
+				const error = event.target.error;
+				console.log("[Lizard]", "_getRuleLocation get error",error.name, error.message);
+				reject(error);
+			};
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_putRuleLocation(obj, transaction) {
+
+		return new Promise((resolve, reject) => {
+
+			const req = transaction.objectStore("rule_location").put(obj);
+
+			req.onsuccess = () => resolve(req.result);
+			req.onerror = (event) => {
+				const error = event.target.error;
+				console.log("[Lizard]", "_putRuleLocation put error",error.name, error.message);
+				reject(error);
+			};
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_getRuleDetails(idRuleLocation, cssSelector, transaction) {
+
+		return new Promise((resolve, reject) => {
+
+			const req = transaction.objectStore("rule_details").get([ idRuleLocation, cssSelector ]);
+
+			req.onsuccess = () => resolve(!!req.result ? req.result : {});
+			req.onerror = (event) => {
+				const error = event.target.error;
+				console.log("[Lizard]", "_getRuleDetails get error",error.name, error.message);
+				reject(error);
+			};
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_putRuleDetails(obj, transaction) {
+
+		return new Promise((resolve, reject) => {
+
+			const req = transaction.objectStore("rule_details").put(obj);
+
+			req.onsuccess = () => resolve(req.result);
+			req.onerror = (event) => {
+				const error = event.target.error;
+				console.log("[Lizard]", "_putRuleDetails put error",error.name, error.message);
+				reject(error);
+			};
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_getNewRuleLocationObject(url) {
+		return {
+			//idRuleLocation:
+			url: url,
+			created: Date.now(),
+		};
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_getNewRuleDetailsObject(idRuleLocation, cssSelector) {
+		return {
+			idRuleLocation: idRuleLocation,
+			cssSelector: cssSelector,
+			created: Date.now(),
+			lastUsed: 0,
+			hitCount: 0,
+			hide: false,
+			remove: false,
+			dewidthify: false,
+			isolate: false,
+			color: null,
+		};
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_isDate(variable) {
+		return (typeof(variable) === "number") && (variable > Date.parse("2020-01-01T00:00:00"));
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_isBoolean(variable) {
+		return (typeof(variable) === "boolean");
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	static _isColorObjectValue(obj) {
+		return	(obj === null) ||
+				( typeof(obj) === "object" &&
+					Object.keys(obj).length === 5 &&
+					obj.hasOwnProperty("foreground") && !!(obj.foreground.match(/^#[0-9a-f]{6}$/i)) &&
+					obj.hasOwnProperty("background") && !!(obj.background.match(/^#[0-9a-f]{6}$/i)) &&
+					obj.hasOwnProperty("colorizeChildren") && (typeof(obj.colorizeChildren) === "boolean") &&
+					obj.hasOwnProperty("saturateAmount") && ( obj.saturateAmount === null || !!(obj.saturateAmount.match(/^(100)?0%$/)) ) &&
+					obj.hasOwnProperty("invertAmount") && !!(obj.invertAmount.match(/^(10)?0%$/)) );
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	_normalizeUrl(url) {
+		// A rule's URL is normalized: without query string or hash and without trailing slashes.
+		return decodeURIComponent(url.split(/(\?|#).*/)[0].trim().replace(/^(.*)\/+$/, "$1"));
+	}
+};
