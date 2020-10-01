@@ -89,6 +89,7 @@
 
 ## To-Do
 --------------
+* support url patterns in rules
 * indexedDB
 	* v59 - not working
 	* v64 - working
