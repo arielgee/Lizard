@@ -64,13 +64,48 @@
 
 		let result;
 
-		result = await lizardDB_V2.setRule("http://localhost/example/ExampleEX.html", "XXX", { hide: true });
+		result = await lizardDB_V2.setRule("http://localhost/example/ExampleEX.html", "XXX", { hide: true, isolate: true });
 		result = await lizardDB_V2.setRule("http://localhost/example/ExampleEX.html", "YYY", { hide: true });
 		result = await lizardDB_V2.setRule("http://localhost/example/ExampleEX_X.html", "XXX", { hide: true });
 		result = await lizardDB_V2.setRule("http://localhost/example/ExampleEX_XX.html", "XXX", { hide: true });
 		result = await lizardDB_V2.setRule("http://localhost/example/ExampleEX_XX.html", "ZZZ", { hide: true });
-		console.log("[Lizard m_lizardDB_V2]", result);
-	})();
+		result = await lizardDB_V2.setRule("http://localhost/a/ExampleEX_XX.html", "ccc", { dewidthify: true });
+		//console.log("[Lizard setRule]", result);
+
+		result = await lizardDB_V2.updateRuleStats("http://localhost/example/ExampleEX.html", "XXX");
+		console.log("[Lizard updateRuleStats]", result);
+
+		// result = await lizardDB_V2.deleteRule("http://localhost/example/ExampleEX.html", "XXX");
+		// console.log("[Lizard deleteRuleDetails]", result);
+		// result = await lizardDB_V2.deleteRule("http://localhost/example/ExampleEX.html", "YYY");
+		// console.log("[Lizard deleteRuleDetails]", result);
+
+		// result = await lizardDB_V2.unsetRuleDetail("http://localhost/example/ExampleEX.html", "XXX", "isolate");
+		// console.log("[Lizard unsetRuleDetail]", result);
+		// result = await lizardDB_V2.unsetRuleDetail("http://localhost/example/ExampleEX.html", "XXX", "hide");
+		// console.log("[Lizard unsetRuleDetail]", result);
+
+		// result = await lizardDB_V2.deleteRulesByUrl("http://localhost/example/ExampleEX.html");
+		// console.log("[Lizard deleteRulesByUrl]", result);
+
+		// // result = await lizardDB_V2.deleteAllRules();
+		// // console.log("[Lizard deleteAllRules]", result);
+
+		// result = await lizardDB_V2.getRules("http://localhost/example/ExampleEX.html");
+		// console.log("[Lizard getRules]", result);
+
+		// result = await lizardDB_V2.getAllDistinctUrls();
+		// console.log("[Lizard getAllDistinctUrls]", result);
+
+		result = await lizardDB_V2.getAllRules();
+		console.log("[Lizard] getAllRules", result);
+		result = await lizardDB_V2.getAllRulesEx();
+		console.log("[Lizard] getAllRulesEx", result);
+
+		result = lizardDB_V2.logRules("http://localhost/example/ExampleEX_XX.html");
+		console.log("[Lizard] logRules", result);
+
+	});
 
 	////////////////////////////////////////////////////////////////////////////////////
 	async function initialization() {

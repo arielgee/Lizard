@@ -89,6 +89,7 @@
 
 ## To-Do
 --------------
+* change export format to match DB
 * support url patterns in rules
 * indexedDB
 	* v59 - not working
