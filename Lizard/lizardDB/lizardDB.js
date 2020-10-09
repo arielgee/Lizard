@@ -726,7 +726,10 @@ class LizardDB {
 			this._getRuleUrl(url, tran).then((foundUrl) => {
 
 				if(foundUrl.hasOwnProperty("idRuleUrl")) {
-					this._getAllRuleDetailsByUrlId(foundUrl.idRuleUrl, tran).then((rules) => resolve(rules));
+					this._getAllRuleDetailsByUrlId(foundUrl.idRuleUrl, tran).then((rules) => {
+						rules.forEach(r => delete r.idRuleUrl);
+						resolve(rules);
+					});
 				} else {
 					resolve([]);
 				}
