@@ -449,25 +449,29 @@
 				const rule = rules[i];
 
 				if(	rule.hasOwnProperty("url") && (typeof(rule.url) === "string") &&
-					rule.hasOwnProperty("cssSelector") && (typeof(rule.cssSelector) === "string")) {
+					rule.hasOwnProperty("details") && (rule.details instanceof Array) ) {
 
 					const url = rule.url;
-					const cssSelector = rule.cssSelector;
 
-					// remove from object so it can be passed as a parameter to isRuleObjectValid() and setRule()
-					delete rule.url;
-					delete rule.cssSelector;
+					for(let j=0, len=rule.details.length; j<len; j++) {
 
-					if(LizardDB.isRuleObjectValid(rule) && LizardDB.ruleHasValue(rule)) {
-						await m_lizardDB.setRule(url, cssSelector, rule);
-						count += 1;
+						const details = rule.details[j];
+						const cssSelector = details.cssSelector;
+
+						// remove from object so it can be passed as a parameter to isRuleObjectValid() and setRule()
+						delete details.cssSelector;
+
+						if(LizardDB.isRuleObjectValid(details) && LizardDB.ruleHasValue(details)) {
+							await m_lizardDB.setRule(url, cssSelector, details);
+							count++;
+						}
 					}
 				}
 			}
 
 			if(count > 0) {
 				loadURLsList();
-				messageBox(`${count} valid rules were successfully imported from file.\n\n'${file.name}'\n\n✱ Duplicate rules are merged and their details values are overwritten.`, "alert", false);
+				messageBox(`${count} valid rules for ${rules.length} URLs were successfully imported from file.\n\n'${file.name}'\n\n✱ Duplicate rules are merged and their details values are overwritten.`, "alert", false);
 			} else {
 				messageBox("No valid rules were found in file", "alert");
 			}
@@ -486,23 +490,30 @@
 
 			document.body.classList.add("inProgress");
 
-			let rules = await m_lizardDB.getAllRules()
+			let rules = await m_lizardDB.getAllRulesEx();
+
+			let ruleCount = 0;
 
 			// remove misc properties before exporting
 			for(let i=0, len=rules.length; i<len; i++) {
+				for(let j=0, len=rules[i].details.length; j<len; j++) {
 
-				const rule = rules[i];
+					const details = rules[i].details[j];
 
-				delete rule.created;
-				delete rule.hitCount
-				delete rule.lastUsed;
+					delete details.idRuleUrl;
+					delete details.created;
+					delete details.hitCount
+					delete details.lastUsed;
+
+					ruleCount++;
+				}
 			}
 
 			if(rules.length > 0) {
 				let result = await exportJsonFile.run(rules, "lizard-rules");
 
 				if( !!result.fileName && result.fileName.length > 0) {
-					messageBox(`${rules.length} rules were successfully exported to file.\n\n'${result.fileName}'`, "alert", false);
+					messageBox(`${ruleCount} rules for ${rules.length} URLs were successfully exported to file.\n\n'${result.fileName}'`, "alert", false);
 				}
 			} else {
 				messageBox("There isn't any rule to exported.", "alert", false);
@@ -525,7 +536,7 @@
 		clearURLsList();
 		m_elmTextFilterURLs.value = "";
 
-		m_lizardDB.getAllDistinctUrls().then((urls) => {
+		m_lizardDB.getAllUrls().then((urls) => {
 
 			for(let i=0, len=urls.length; i<len; i++) {
 				const item = m_elmListURLs.appendChild(createListItem(urls[i], "url"));

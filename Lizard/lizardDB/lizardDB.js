@@ -726,9 +726,11 @@ class LizardDB {
 			this._getRuleUrl(url, tran).then((foundUrl) => {
 
 				if(foundUrl.hasOwnProperty("idRuleUrl")) {
-					this._getAllRuleDetailsByUrlId(foundUrl.idRuleUrl, tran).then((rules) => {
-						rules.forEach(r => delete r.idRuleUrl);
-						resolve(rules);
+					this._getAllRuleDetailsByUrlId(foundUrl.idRuleUrl, tran).then((details) => {
+						for(let i=0, len=details.length; i<len; i++) {
+							delete details[i].idRuleUrl;
+						}
+						resolve(details);
 					});
 				} else {
 					resolve([]);
@@ -741,14 +743,13 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	// change to getAllUrls()
-	getAllDistinctUrls() {
+	getAllUrls() {
 
 		return new Promise((resolve, reject) => {
 
 			if(!this.isOpen) return reject(new Error("Database not open"));
 
-			const tran = this._getTransaction("readonly", (error) => reject(error));
+			const tran = this._getTransaction("readonly", (error) => reject(error), [ "rule_url" ]);
 
 			this._getAllRuleUrl(tran).then((urls) => {
 
@@ -780,6 +781,7 @@ class LizardDB {
 					const details = await this._getAllRuleDetailsByUrlId(urls[i].idRuleUrl, tran);
 
 					for(let j=0, len=details.length; j<len; j++) {
+						delete details[j].idRuleUrl;
 						rules.push(Object.assign({}, details[j], { url: urls[i].url }))
 					}
 				}
@@ -870,8 +872,8 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	_getTransaction(mode = "", failCallback) {
-		const tran = this.m_db.transaction([ "rule_url", "rule_details" ], mode);
+	_getTransaction(mode = "", failCallback, storeNames = [ "rule_url", "rule_details" ]) {
+		const tran = this.m_db.transaction(storeNames, mode);
 		tran.onerror = tran.onabort = (event) => {
 			const error = event.target.error;
 			console.log("[Lizard]", "Transaction error/abort - ", error.name, error.message);

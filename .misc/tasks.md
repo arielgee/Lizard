@@ -89,6 +89,8 @@
 
 ## To-Do
 --------------
+* replace x += 1 with x++ ; dummass
+* terminology: table1: urls, table2: rules. (rename all 'details')
 * change export format to match DB
 * support url patterns in rules
 * indexedDB
