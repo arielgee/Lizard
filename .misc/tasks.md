@@ -83,6 +83,7 @@
 * Implemented Debouncer to prevent double injectLizardScripts() in sendToggleLizardStateMessage() => Throttler not Debouncer
 * remove the showVersionNotice ???	=> NO
 * extension.getURL() is deprecated. Use runtime.getURL().
+* change export format to match DB
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
@@ -91,7 +92,7 @@
 --------------
 * replace x += 1 with x++ ; dummass
 * terminology: table1: urls, table2: rules. (rename all 'details')
-* change export format to match DB
+* allow user to choose if imported rules will overrides or be merged
 * support url patterns in rules
 * indexedDB
 	* v59 - not working

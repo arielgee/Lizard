@@ -780,37 +780,6 @@ class LizardDB {
 
 					const details = await this._getAllRuleDetailsByUrlId(urls[i].idRuleUrl, tran);
 
-					for(let j=0, len=details.length; j<len; j++) {
-						delete details[j].idRuleUrl;
-						rules.push(Object.assign({}, details[j], { url: urls[i].url }))
-					}
-				}
-				resolve(rules);
-
-			}).catch((error) => {
-				console.log("[Lizard]", "getAllRules error",error.name, error.message);
-				reject(error);
-			});
-		});
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	getAllRulesEx() {
-
-		return new Promise((resolve, reject) => {
-
-			if(!this.isOpen) return reject(new Error("Database not open"));
-
-			const tran = this._getTransaction("readonly", (error) => reject(error));
-
-			this._getAllRuleUrl(tran).then(async (urls) => {
-
-				const rules = [];
-
-				for(let i=0, len=urls.length; i<len; i++) {
-
-					const details = await this._getAllRuleDetailsByUrlId(urls[i].idRuleUrl, tran);
-
 					rules.push( {
 						url: urls[i].url,
 						details: details,
