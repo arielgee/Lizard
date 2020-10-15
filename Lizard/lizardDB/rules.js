@@ -52,30 +52,7 @@
 	////////////////////////////////////////////////////////////////////////////////////
 	async function onDOMContentLoaded() {
 
-		try { browser.extension; }
-		catch(_) {
-			pageErrorMessage([
-				"This page has apparently failed in the most basic manner.",
-				"Are you trying to manually access 'Alteration Rules' in a private window while the extension is not allowed to run in private windows?",
-				"Allow Lizard to run in private windows from the Manage Extension page.",
-			]);
-			return;
-		}
-
-		if((await lzUtil.unsupportedExtensionFeatures()).includes("rememberPageAlterations")) {
-			pageErrorMessage(["This page is part of the 'Remember page alterations' feature and is only available for Firefox version 64.0 and above."]);
-			return;
-		}
-
-		if ((await browser.tabs.getCurrent()).incognito || (await browser.windows.getCurrent()).incognito) {
-			pageErrorMessage([
-				"For now and due to Firefox restrictions the 'Alteration Rules' page cannot be used in Private Browsing tabs or windows.",
-				"This behavior might change in the upcoming versions.",
-				"Open 'Alteration Rules' in a regular window (non-private)."
-			], {
-				index: 2,
-				onClock: () => browser.windows.create({ url: lzUtil.URL_RULES_DASHBOARD, incognito: false })
-			});
+		if(await pageLoadError()) {
 			return;
 		}
 
@@ -443,31 +420,31 @@
 		document.body.classList.add("inProgress");
 
 		let file = event.target.files[0];
-		let rules = await importJsonFile.run(file);
+		let urlRules = await importJsonFile.run(file);
 
-		if(rules instanceof Array) {
+		if(urlRules instanceof Array) {
 
 			let count = 0;
 
-			for(let i=0, len=rules.length; i<len; i++) {
+			for(let i=0, len=urlRules.length; i<len; i++) {
 
-				const rule = rules[i];
+				const urlRule = urlRules[i];
 
-				if(	rule.hasOwnProperty("url") && (typeof(rule.url) === "string") &&
-					rule.hasOwnProperty("details") && (rule.details instanceof Array) ) {
+				if(	urlRule.hasOwnProperty("url") && (typeof(urlRule.url) === "string") &&
+					urlRule.hasOwnProperty("rules") && (urlRule.rules instanceof Array) ) {
 
-					const url = rule.url;
+					const url = urlRule.url;
 
-					for(let j=0, len=rule.details.length; j<len; j++) {
+					for(let j=0, len=urlRule.rules.length; j<len; j++) {
 
-						const details = rule.details[j];
-						const cssSelector = details.cssSelector;
+						const rule = urlRule.rules[j];
+						const cssSelector = rule.cssSelector;
 
 						// remove from object so it can be passed as a parameter to isRuleObjectValid() and setRule()
-						delete details.cssSelector;
+						delete rule.cssSelector;
 
-						if(LizardDB.isRuleObjectValid(details) && LizardDB.ruleHasValue(details)) {
-							await m_lizardDB.setRule(url, cssSelector, details);
+						if(LizardDB.isRuleObjectValid(rule) && LizardDB.ruleHasValue(rule)) {
+							await m_lizardDB.setRule(url, cssSelector, rule);
 							count++;
 						}
 					}
@@ -476,7 +453,7 @@
 
 			if(count > 0) {
 				loadURLsList();
-				messageBox(`${count} valid rules for ${rules.length} URLs were successfully imported from file.\n\n'${file.name}'\n\n✱ Duplicate rules are merged and their details values are overwritten.`, "alert", false);
+				messageBox(`${count} valid rules for ${urlRules.length} URLs were successfully imported from file.\n\n'${file.name}'\n\n✱ Duplicate rules are merged and their details values are overwritten.`, "alert", false);
 			} else {
 				messageBox("No valid rules were found in file", "alert");
 			}
@@ -495,30 +472,31 @@
 
 			document.body.classList.add("inProgress");
 
-			let rules = await m_lizardDB.getAllRules();
+			const urlRules = await m_lizardDB.getAllUrlRules();
 
-			let ruleCount = 0;
+			if(urlRules.length > 0) {
 
-			// remove misc properties before exporting
-			for(let i=0, len=rules.length; i<len; i++) {
-				for(let j=0, len=rules[i].details.length; j<len; j++) {
+				let ruleCount = 0;
 
-					const details = rules[i].details[j];
+				// remove misc properties before exporting
+				for(let i=0, len=urlRules.length; i<len; i++) {
+					for(let j=0, len=urlRules[i].rules.length; j<len; j++) {
 
-					delete details.idRuleUrl;
-					delete details.created;
-					delete details.hitCount
-					delete details.lastUsed;
+						const rule = urlRules[i].rules[j];
 
-					ruleCount++;
+						delete rule._id_url;
+						delete rule.created;
+						delete rule.hitCount
+						delete rule.lastUsed;
+
+						ruleCount++;
+					}
 				}
-			}
 
-			if(rules.length > 0) {
-				let result = await exportJsonFile.run(rules, "lizard-rules");
+				let result = await exportJsonFile.run(urlRules, "lizard-rules");
 
 				if( !!result.fileName && result.fileName.length > 0) {
-					messageBox(`${ruleCount} rules for ${rules.length} URLs were successfully exported to file.\n\n'${result.fileName}'`, "alert", false);
+					messageBox(`${ruleCount} rules for ${urlRules.length} URLs were successfully exported to file.\n\n'${result.fileName}'`, "alert", false);
 				}
 			} else {
 				messageBox("There isn't any rule to exported.", "alert", false);
@@ -807,6 +785,41 @@
 				.catch(() => item.title = "{Error: failed to get the page title}" );
 		}
 		setTimeout(fetching, timeout);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	async function pageLoadError() {
+
+		try {
+			browser.extension;
+		}
+		catch(_) {
+			pageErrorMessage([
+				"This page has apparently failed in the most basic manner.",
+				"Are you trying to manually access 'Alteration Rules' in a private window while the extension is not allowed to run in private windows?",
+				"Allow Lizard to run in private windows from the Manage Extension page.",
+			]);
+			return true;
+		}
+
+		if((await lzUtil.unsupportedExtensionFeatures()).includes("rememberPageAlterations")) {
+			pageErrorMessage(["This page is part of the 'Remember page alterations' feature and is only available for Firefox version 64.0 and above."]);
+			return true;
+		}
+
+		if((await browser.tabs.getCurrent()).incognito || (await browser.windows.getCurrent()).incognito) {
+			pageErrorMessage([
+				"For now and due to Firefox restrictions the 'Alteration Rules' page cannot be used in Private Browsing tabs or windows.",
+				"This behavior might change in the upcoming versions.",
+				"Open 'Alteration Rules' in a regular window (non-private)."
+			], {
+				index: 2,
+				onClock: () => browser.windows.create({ url: lzUtil.URL_RULES_DASHBOARD, incognito: false })
+			});
+			return true;
+		}
+
+		return false;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////

@@ -84,14 +84,15 @@
 * remove the showVersionNotice ???	=> NO
 * extension.getURL() is deprecated. Use runtime.getURL().
 * change export format to match DB
+* terminology: table1: urls, table2: rules. (rename all 'details')
+* replace x += 1 with x++ ; dummass
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* replace x += 1 with x++ ; dummass
-* terminology: table1: urls, table2: rules. (rename all 'details')
+* add order property to S01_rules and use instead on created. also save to export
 * allow user to choose if imported rules will overrides or be merged
 * support url patterns in rules
 * indexedDB
