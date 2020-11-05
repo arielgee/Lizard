@@ -28,6 +28,7 @@
 	text-align: left !important;
 	line-height: normal !important;
 	user-select: none !important;
+	box-shadow: none !important;
 	-moz-user-select: none !important;
 	-moz-user-input: auto !important;
 	-moz-binding: none !important;
