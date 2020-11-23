@@ -92,6 +92,7 @@
 
 ## To-Do
 --------------
+* help user (on-boarding) when Alteration Rules is loaded empty (first run only?)
 * add order property to S01_rules and use instead on created. also save to export
 * allow user to choose if imported rules will overrides or be merged
 * support url patterns in rules
