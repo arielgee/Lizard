@@ -78,6 +78,7 @@
 		scrollbarWidth: -1,
 		rememberPageAlterations: false,
 		pendingSessionRules: [],
+		lastEscapeKeyDown: 0,
 	};
 
 
@@ -347,6 +348,10 @@
 				break;
 			case "escape":
 				removeInfoBoxes();
+				if( (Date.now() - m_lizardState.lastEscapeKeyDown) < 750 ) {
+					stopSession();
+				}
+				m_lizardState.lastEscapeKeyDown = Date.now();
 				break;
 			case "contextmenu":
 				showContextMenu(m_lizardState.currentElement.offsetLeft+1, m_lizardState.currentElement.offsetTop+1, event.type);
@@ -1379,7 +1384,7 @@
 			"<div class='{0} {1}'><span class='{0} {2}'>B</span><span class='{0} {3}'>Blink</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>V</span><span class='{0} {3}'>View source ({10})</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>S</span><span class='{0} {3}'>CSS Selector</span></div>" +
-			"<div class='{0} {1}'><span class='{0} {2}'>Q</span><span class='{0} {3}'>Quit</span></div>" +
+			"<div class='{0} {1}'><span class='{0} {2}'>Q</span><span class='{0} {3}'>Quit (or: Esc twice)</span></div>" +
 			"<div class='{0} {1}'><span class='{0} {2}'>F1</span><span class='{0} {3}'>Show help</span></div>" +
 			"<div class='{0} {11}'><span id='{12}' class='{0} {13}'>Options page</span></div>";
 
