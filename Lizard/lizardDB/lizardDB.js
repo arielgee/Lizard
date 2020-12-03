@@ -65,7 +65,7 @@ class LizardDB {
 
 					this._getRuleObject(idUrl, cssSelector, tran).then((foundRule) => {
 
-						// if rule dosn't exist foundRule is empty object
+						// if rule doesn't exist foundRule is empty object
 						const objRule = Object.assign(this._getNewRuleObject(idUrl, cssSelector), foundRule);
 
 						if(this._isDate(details.created)) objRule.created = details.created;

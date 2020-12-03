@@ -65,7 +65,6 @@ a[target="_blank"]::after {
 }
 
 ol {
-	border-radius: 4px;
 	border: 1px solid #000000;
 	padding: 0 5px 0 50px;
 	overflow-y: scroll;
@@ -175,6 +174,7 @@ h1 > img {
 #urlsList {
 	height: 230px;
 	overflow-x: hidden;
+	margin: 5px 0 14px;
 }
 
 #anchorURL {
@@ -207,14 +207,13 @@ h1 > img {
 #selectorsList,
 #ruleDetails {
 	height: 350px;
-	margin: 14px 0;
+	margin: 5px 0 14px;
 }
 
 #ruleDetails {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	border-radius: 4px 4px 0 0;
 	border: 1px solid #000000;
 }
 

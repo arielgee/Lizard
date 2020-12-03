@@ -92,6 +92,7 @@
 
 ## To-Do
 --------------
+* _normalizeUrl() cast to lower case ?
 * support for manually edit of urls and selectors
 * help user (on-boarding) when 'Alteration Rules' is loaded empty (first run only?)
 * add order property to S01_rules and use instead on created. also save to export
