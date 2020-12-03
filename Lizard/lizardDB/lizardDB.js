@@ -278,6 +278,33 @@ class LizardDB {
 		});
 	}
 
+	/*
+	+
+	+ Will be used if and when 'RulesByURLPattern' will be implemented.
+	+
+	//////////////////////////////////////////////////////////////////////
+	getRulesByURLPattern(url) {
+
+		return new Promise((resolve, reject) => {
+
+			this.getAllUrlRules().then((objUrlRules) => {
+
+				const wildcardReplacement = "[^/.]{1,256}";
+
+				let matchedUrlRules = objUrlRules.filter(urlRule => !!(url.match(lzUtil.patternToRegExp(urlRule.url, wildcardReplacement))) );
+
+				if(matchedUrlRules.length > 0 && matchedUrlRules[0].hasOwnProperty("rules")) {
+					resolve(matchedUrlRules[0].rules);
+				} else {
+					resolve([]);
+				}
+			}).catch((error) => {
+				reject(error)
+			});
+		});
+	}
+	*/
+
 	//////////////////////////////////////////////////////////////////////
 	getAllUrls() {
 

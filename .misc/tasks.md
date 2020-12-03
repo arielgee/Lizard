@@ -92,13 +92,20 @@
 
 ## To-Do
 --------------
-* help user (on-boarding) when Alteration Rules is loaded empty (first run only?)
+* support for manually edit of urls and selectors
+* help user (on-boarding) when 'Alteration Rules' is loaded empty (first run only?)
 * add order property to S01_rules and use instead on created. also save to export
 * allow user to choose if imported rules will overrides or be merged
-* support url patterns in rules
 * indexedDB
 	* v59 - not working
 	* v64 - working
 * remove VScroll buttons for view-source in window? => LEAVE IT
 * incognito mode: rules.js not working with indexedDB its a content scripts. move db actions to background.js?
 * I Fucked Up: I Forgot about showVersionNotice() in version 1.11 (nothing to do, just a note for next version)
+
+## RulesByURLPattern - notes
+--------------------------------
+* support url patterns in rules
+	* Uncomment LizardDB.updateUrl() in lizard.js
+	* Uncomment LizardDB.getRulesByURLPattern() in lizard.js
+	* Replace 'm_lizardDB.getRules()' with new' m_lizardDB.getRulesByURLPattern()' in background.applySavedRules()

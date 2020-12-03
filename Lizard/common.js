@@ -752,14 +752,14 @@ let lzUtil = (function () {
 	}
 
 	//////////////////////////////////////////////////////////////////////
-	function patternToRegExp(pattern, reReplacement) {
+	function patternToRegExp(pattern, reReplacement, flags = "gi") {
 
 		let patternParts = pattern.split("*");		// split by wildcard
 
 		for(let i=0, len=patternParts.length; i<len; i++) {
 			patternParts[i] = lzUtil.escapeRegExp(patternParts[i]);
 		}
-		return patternParts.join(reReplacement);
+		return new RegExp(patternParts.join(reReplacement) + reReplacement, flags);
 	}
 
 	return {

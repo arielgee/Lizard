@@ -342,7 +342,7 @@ class LizardDB {
 
 				const wildcardReplacement = "[^/.]{1,256}";
 
-				resolve(rules.filter(rule => !!(url.match(new RegExp(lzUtil.patternToRegExp(rule.url, wildcardReplacement), "gi"))) ));
+				resolve(rules.filter(rule => !!(url.match(lzUtil.patternToRegExp(rule.url, wildcardReplacement))) ));
 			}).catch((error) => {
 				reject(error)
 			});
