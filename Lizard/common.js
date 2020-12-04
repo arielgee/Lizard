@@ -762,6 +762,18 @@ let lzUtil = (function () {
 		return new RegExp(patternParts.join(reReplacement) + reReplacement, flags);
 	}
 
+	//////////////////////////////////////////////////////////////////////
+	function validURL(url, objRetErr) {
+		try {
+			let oUrl = new URL(url);
+			if( !!(oUrl.protocol.match(/^(https?|ftp|file):$/i)) ) return oUrl;
+			throw new Error("Unsupported URL protocol");
+		} catch (error) {
+			if(typeof(objRetErr) === "object") objRetErr.error = error;
+			return null;
+		}
+	}
+
 	return {
 		URL_RULES_DASHBOARD: URL_RULES_DASHBOARD,
 
@@ -784,5 +796,6 @@ let lzUtil = (function () {
 		writeTextToClipboard: writeTextToClipboard,
 		openRulesDashboard: openRulesDashboard,
 		patternToRegExp: patternToRegExp,
+		validURL: validURL,
 	}
 })();

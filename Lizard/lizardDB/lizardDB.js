@@ -44,6 +44,49 @@ class LizardDB {
 	}
 
 	//////////////////////////////////////////////////////////////////////
+	isExistsUrl(url) {
+
+		return new Promise((resolve, reject) => {
+
+			if(!this.isOpen) return reject(new Error("Database not open"));
+
+			url = this._normalizeUrl(url);
+			if(!!!url) return reject(new Error(`Mandatory parameters missing. url: '${url}'`));
+
+			const tran = this._getTransaction("readonly", (error) => reject(error), [ "S01_urls" ]);
+
+			this._getUrlObject(url, tran).then((foundUrl) => {
+				resolve({ exists: (Object.keys(foundUrl).length > 0) })
+			}).catch((error) => {
+				console.log("[Lizard]", "isExistsUrl error", error.name, error.message);
+				reject(error);
+			});
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	isExistsUrlCssSelector(url, cssSelector) {
+
+		return new Promise((resolve, reject) => {
+
+			if(!this.isOpen) return reject(new Error("Database not open"));
+
+			url = this._normalizeUrl(url);
+			cssSelector = cssSelector.trim();
+			if(!!!url || !!!cssSelector) return reject(new Error(`Mandatory parameters missing. url: '${url}', cssSelector: '${cssSelector}'`));
+
+			const tran = this._getTransaction("readonly", (error) => reject(error));
+
+			this._getUrlRule(url, cssSelector, tran).then((foundRule) => {
+				resolve({ exists: (Object.keys(foundRule).length > 0) });
+			}).catch((error) => {
+				console.log("[Lizard]", "isExistsUrlCssSelector error", error.name, error.message);
+				reject(error);
+			});
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
 	setRule(url, cssSelector, details = {}) {
 
 		return new Promise((resolve, reject) => {
@@ -80,6 +123,102 @@ class LizardDB {
 				});
 			}).catch((error) => {
 				console.log("[Lizard]", "setRule error", error.name, error.message);
+				reject(error);
+			});
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	updateUrl(url, newUrlText) {
+
+		return new Promise((resolve, reject) => {
+
+			if(!!!lzUtil.validURL(newUrlText)) {
+				const error = new Error("New URL text is not a valid URL");
+				error.name = "LizardDB-error";
+				console.log("[Lizard]", "updateUrl error", error.name, error.message);
+				return reject(error);
+			}
+
+			if(!this.isOpen) return reject(new Error("Database not open"));
+
+			url = this._normalizeUrl(url);
+			if(!!!url || typeof(newUrlText) !== "string") return reject(new Error(`Mandatory parameters missing. url: '${url}', newUrlText: <not string>`));
+
+			const tran = this._getTransaction("readwrite", (error) => reject(error));
+
+			this._getUrlObject(newUrlText, tran).then(async (objUrl) => {
+
+				// not empty if exists
+				if(Object.keys(objUrl).length > 0) {
+					const error = new Error("New URL text already exists in db");
+					error.name = "LizardDB-error";
+					console.log("[Lizard]", "updateUrl error", error.name, error.message);
+					reject(error);
+				} else {
+
+					const foundUrl = await this._getUrlObject(url, tran);
+
+					if(foundUrl.hasOwnProperty("url")) {
+						foundUrl.url = newUrlText;
+						this._putUrlObject(foundUrl, tran).then((key) => resolve({ ruleKey: key }));
+					} else {
+						const error = new Error("URL object not found");
+						error.name = "LizardDB-error";
+						console.log("[Lizard]", "updateUrl error", error.name, error.message);
+						reject(error);
+					}
+				}
+			}).catch((error) => {
+				console.log("[Lizard]", "updateUrl error", error.name, error.message);
+				reject(error);
+			});
+		});
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	updateCssSelector(url, cssSelector, newCssSelectorText) {
+
+		return new Promise((resolve, reject) => {
+
+			if(!this.isOpen) return reject(new Error("Database not open"));
+
+			url = this._normalizeUrl(url);
+			cssSelector = cssSelector.trim();
+			if(!!!url || !!!cssSelector || typeof(newCssSelectorText) !== "string") {
+				return reject(new Error(`Mandatory arguments missing. url: '${url}', cssSelector: '${cssSelector}', newCssSelectorText: <not string>`));
+			}
+
+			const tran = this._getTransaction("readwrite", (error) => reject(error));
+
+			this._getUrlRule(url, newCssSelectorText, tran).then(async (objRule) => {
+
+				// not empty if exists
+				if(Object.keys(objRule).length > 0) {
+					const error = new Error("New cssSelector text for URL already exists in db");
+					error.name = "LizardDB-error";
+					console.log("[Lizard]", "updateCssSelector error", error.name, error.message);
+					reject(error);
+				} else {
+
+					const foundRule = await this._getUrlRule(url, cssSelector, tran);
+
+					if(foundRule.hasOwnProperty("rule")) {
+
+						const oldRule = foundRule.rule;
+						const updatedRule = this._getNewRuleObject(oldRule._id_url, newCssSelectorText);
+
+						await this._deleteRuleObject(oldRule._id_url, oldRule.cssSelector, tran);
+						this._putRuleObject(updatedRule, tran).then((key) => resolve({ ruleKey: key }));
+					} else {
+						const error = new Error("Rule object to update was not found");
+						error.name = "LizardDB-error";
+						console.log("[Lizard]", "updateCssSelector error", error.name, error.message);
+						reject(error);
+					}
+				}
+			}).catch((error) => {
+				console.log("[Lizard]", "updateCssSelector error", error.name, error.message);
 				reject(error);
 			});
 		});
