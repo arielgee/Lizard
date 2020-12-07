@@ -1,7 +1,9 @@
 
 + Summary
 --------------------------------------------------------------
-Select and remove annoying or unnecessary elements from a page. Great for printing and readability.
+Select and remove annoying or unnecessary elements from a page.
+
+Great for printing and readability.
 
 
 + Product Page Description (About this extension)
@@ -22,7 +24,7 @@ The feature also includes a dashboard to manage the alteration rules and can be 
 ◼ <b>PERMISSION JUSTIFICATION</b>
 &emsp;● 'Access your data for all websites' – Select and modify page elements.
 &emsp;● 'Input data to the clipboard' – Support for clipboard Copy operations.
-&emsp;● 'Download files and read and modify the browser’s download history' – Export alteration rules to file.
+&emsp;● 'Download files and read and modify the browser’s download history' – Export functionality.
 &emsp;● 'Display notifications to you' – Notifications.
 &emsp;● 'Access browser tabs' – Select and modify page elements.
 &emsp;● 'Access browser activity during navigation' – Reapply page alteration rules.
