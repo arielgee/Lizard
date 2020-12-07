@@ -86,13 +86,13 @@
 * change export format to match DB
 * terminology: table1: urls, table2: rules. (rename all 'details')
 * replace x += 1 with x++ ; dummass
+* _normalizeUrl() cast to lower case => NO An Internet address is only case sensitive for everything after the domain name.
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* _normalizeUrl() cast to lower case ?
 * support for manually edit of urls and selectors
 * help user (on-boarding) when 'Alteration Rules' is loaded empty (first run only?)
 * add order property to S01_rules and use instead on created. also save to export

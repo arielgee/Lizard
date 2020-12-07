@@ -1,32 +1,63 @@
-Basic Information:
-  Summary:
-    Select and remove annoying or unnecessary elements from a page. Great for printing and readability.
-  Tags:
-    aardvark, blink, click to remove, colorize, css selector, decolorize, dewidthify, element hiding helper for adblock plus, element zapper, greasemonkey, hacktheweb, hide, isolate, platypus, remove, remove it permanently, rip, stylish, tampermonkey, view source
 
-Add-on Details:
-  Description:
-    Quickly removing annoying or unnecessary elements from a page is pretty much the basic idea for this extension. Additional features allow for various manipulation of web elements.
-
-    Pretty similar to the 'Aardvark' and 'Element Hiding Helper for Adblock Plus' extensions.
-
-    Start a Lizard session using the toolbar button or the Ctrl+Shift+L shortcut. The help box that will popup will provide you with all the information you'll need. It can also redirect you to the Options page (bottom link) for some tinkering.
++ Summary
+--------------------------------------------------------------
+Select and remove annoying or unnecessary elements from a page. Great for printing and readability.
 
 
-Version Notes:
-  <b>Changes</b>
-  <ul>
-    <li>Fixed compatibility issue with Firefox 68.0 regarding bug 1379466 (https://bugzilla.mozilla.org/show_bug.cgi?id=1379466).</li>
-    <li>Changes to the Options page layout. Minor modifications for Firefox 68.0.</li>
-    <li>Bugs fixed.</li>
-  </ul>
++ Product Page Description (About this extension)
+--------------------------------------------------------------
+Quickly removing annoying or unnecessary elements from a page is pretty much the basic idea for this extension. Additional features allow for various manipulation of web elements.
 
-  <b>Unresolved</b>
-  <ul>
-    <li>Minor issue: The 'Lizard Release Notes' box displayed on the start of the first session after version update appears empty.</li>
-    <li>Doesn't play nice with frames.</li>
-  </ul>
+Pretty similar to the 'Aardvark' and 'Element Hiding Helper for Adblock Plus' extensions.
 
-Version Notes for next time:
-  Code improvements - tightening the bolts.
-  Under the hoods Performance enhancements.
+Start a Lizard session using the toolbar button or the <i>Ctrl+Shift+L</i> shortcut. The help box that will popup will provide you with all the information you'll need. It can also redirect you to the Options page (bottom link) for some tinkering.
+
+◼ <b>REMEMBER PAGE ALTERATIONS</b>
+As of Lizard v1.20 changes to elements (removed, color, etc.) will be remembered and applied automatically when you revisit the web page.
+
+This experimental feature can be activated from the extension Options page and is only available for Firefox version 64.0 and above.
+
+The feature also includes a dashboard to manage the alteration rules and can be accessed from the Options page or from the toolbar button context menu.
+
+◼ <b>PERMISSION JUSTIFICATION</b>
+&emsp;● 'Access your data for all websites' – Select and modify page elements.
+&emsp;● 'Input data to the clipboard' – Support for clipboard Copy operations.
+&emsp;● 'Download files and read and modify the browser’s download history' – Export alteration rules to file.
+&emsp;● 'Display notifications to you' – Notifications.
+&emsp;● 'Access browser tabs' – Select and modify page elements.
+&emsp;● 'Access browser activity during navigation' – Reapply page alteration rules.
+&emsp;● "storage" – Storing extension preferences.
+&emsp;● "menus" – Add extension's items to browser menus.
+
+◼ <b>SUPPORT & FEEDBACK</b>
+&emsp;<a href="https://discourse.mozilla.org/t/support-lizard-select-and-remove-annoying-elements/43449">https://discourse.mozilla.org/t/support-lizard-select-and-remove-annoying-elements/43449</a>
+
+
++ Product Page Tags (20 tags)
+--------------------------------------------------------------
+aardvark, blink, click to remove, colorize, css selector, decolorize, dewidthify, element hiding helper for adblock plus, element zapper, greasemonkey, hacktheweb, hide, isolate, platypus, remove, remove it permanently, rip, stylish, tampermonkey, view source
+
+
+
++ Manage Version - Version Notes
+--------------------------------------------------------------
+<b>Changes</b>
+<ul>
+  <li>Added experimental 'Remember page alterations'. Turn on in extension Options page.</li>
+  <li>Added support for quitting session by tapping Escape twice (in addition to hotkey Q).</li>
+  <li>Added support for dark system color theme to the Options page.</li>
+  <li>Improved Options page UI.</li>
+  <li>Code improvements</li>
+  <li>Bugs fixed.</li>
+</ul>
+
+<b>Unresolved</b>
+<ul>
+  <li>Doesn't play nice with frames.</li>
+</ul>
+
++ Version Notes for next time
+--------------------------------------------------------------
+Code improvements - tightening the bolts.
+Under the hoods Performance enhancements.
+Bugs fixed.
