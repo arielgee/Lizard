@@ -1029,7 +1029,7 @@
 			} else if (type === prefs.SOURCE_TYPE.CSS) {
 
 				prefs.getViewCssType().then((cssType) => {
-					if (cssType == prefs.CSS_TYPE.MATCH_RULES) {
+					if (cssType === prefs.CSS_TYPE.MATCH_RULES) {
 
 						let result = lzUtil.getElementMatchedCSSRules(elm);
 						if (result.remoteStyleSheetDomains.length > 0) {
@@ -1663,7 +1663,7 @@
 		let w1 = inner.offsetWidth;
 		outer.style.overflow = "scroll";
 		let w2 = inner.offsetWidth;
-		if (w1 == w2) w2 = outer.clientWidth;
+		if (w1 === w2) w2 = outer.clientWidth;
 
 		document.body.removeChild(outer);
 
