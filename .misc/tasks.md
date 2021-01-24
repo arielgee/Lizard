@@ -93,6 +93,7 @@
 
 ## To-Do
 --------------
+* FREEZE: in `https://www.microsoft.com/en-us/wdsi/defenderupdates` try to color <TD> `30-bit | 64-bit | ARM`
 * replace substr() with substring() or slice() (trunc)
 * support for manually edit of urls and selectors
 * help user (on-boarding) when 'Alteration Rules' is loaded empty (first run only?)
