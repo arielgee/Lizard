@@ -88,13 +88,13 @@
 * replace x += 1 with x++ ; dummass
 * _normalizeUrl() cast to lower case => NO An Internet address is only case sensitive for everything after the domain name.
 * replace substr() with substring() or slice() (trunc) => WILL NOT modify SourceBeautifier.js.
+* FREEZE: in `https://www.microsoft.com/en-us/wdsi/defenderupdates` try to color <TD> `30-bit | 64-bit | ARM`
 ---
 
 ## REMEMBER: Update showVersionNotice() For Each New Version!
 
 ## To-Do
 --------------
-* FREEZE: in `https://www.microsoft.com/en-us/wdsi/defenderupdates` try to color <TD> `30-bit | 64-bit | ARM`
 * support for manually edit of urls and selectors
 * help user (on-boarding) when 'Alteration Rules' is loaded empty (first run only?)
 * add order property to S01_rules and use instead on created. also save to export

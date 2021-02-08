@@ -17,6 +17,11 @@
 		by Jake Verbaten <raynos2@gmail.com>
 		https://github.com/Raynos/xtend/
 		commit 37816c0 on on Jul 8, 2019
+
+	bugfix:
+		"Large amount of classes locks up getCombinations" #16
+		by: Vishal Telangre
+		https://github.com/fczbkk/css-selector-generator/issues/16#issuecomment-222778137
 */
 
 let CssSelectorGenerator = (function () {
@@ -121,6 +126,12 @@ let CssSelectorGenerator = (function () {
 	////////////////////////////////////////////////////////////////////////////////////
 	// Get class selectors for an element.
 	function getClassSelectors(element) {
+
+		// bugfix: Large amount of classes locks up getCombinations - https://github.com/fczbkk/css-selector-generator/issues/16#issuecomment-222778137
+		if(element.tagName === 'HTML') {
+			return [];
+		}
+
 		return (element.getAttribute("class") || "")
 			.trim()
 			.split(/\s+/)
@@ -229,6 +240,13 @@ let CssSelectorGenerator = (function () {
 		// see the empty first result, will be removed later
 		const result = [[]];
 
+		/*
+			bugfix: Large amount of classes locks up getCombinations
+
+			The following nested forEach() loops can consume a huge amount of memory if items.length is too large.
+			The length of the result array will be 2^(items.length - 1).
+			On tests when items.length was 45 the browser freeze when it tried to handle an array of 17,592,186,044,416 items.
+		*/
 		items.forEach((items_item) => {
 			result.forEach((result_item) => {
 				result.push(result_item.concat(items_item));
