@@ -416,8 +416,8 @@ let lzUtil = (function () {
 	String.prototype.format.regex = new RegExp("{-?[0-9]+}", "g");
 
 	//////////////////////////////////////////////////////////////////////
-	String.prototype.trunc = function (n) {
-		return (this.length > n) ? this.substr(0, n - 1) + "&hellip;" : this;
+	String.prototype.trunc = function(n) {
+		return (this.length > n) ? this.substring(0, n - 1) + "&hellip;" : this;
 	};
 
 	//////////////////////////////////////////////////////////////////////
