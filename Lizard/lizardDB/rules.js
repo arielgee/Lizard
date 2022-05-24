@@ -7,6 +7,7 @@
 	let m_elmTextFilterURLs;
 	let m_elmBtnClearFilterURLs;
 	let m_elmBtnRefreshURLs;
+	let m_elmBtnEditURL;
 	let m_elmBtnDeleteURL;
 	let m_elmBtnDeleteAllRules;
 	let m_elmListURLs;
@@ -17,6 +18,7 @@
 	let m_elmBtnClearFilterSelectors;
 	let m_elmBtnRefreshSelectors;
 	let m_elmBtnJumpToElement;
+	let m_elmBtnEditSelector;
 	let m_elmBtnDeleteSelector;
 	let m_elmListSelectors;
 	let m_elmNotifySelectorsList;
@@ -60,6 +62,7 @@
 		m_elmTextFilterURLs = document.getElementById("textFilterURLs");
 		m_elmBtnClearFilterURLs = document.getElementById("btnClearFilterURLs");
 		m_elmBtnRefreshURLs = document.getElementById("btnRefreshURLs");
+		m_elmBtnEditURL = document.getElementById("btnEditURL");
 		m_elmBtnDeleteURL = document.getElementById("btnDeleteURL");
 		m_elmBtnDeleteAllRules = document.getElementById("btnDeleteAllRules");
 		m_elmListURLs = document.getElementById("urlsList");
@@ -71,6 +74,7 @@
 		m_elmBtnClearFilterSelectors = document.getElementById("btnClearFilterSelectors");
 		m_elmBtnRefreshSelectors = document.getElementById("btnRefreshSelectors");
 		m_elmBtnJumpToElement = document.getElementById("btnJumpToElement");
+		m_elmBtnEditSelector = document.getElementById("btnEditSelector");
 		m_elmBtnDeleteSelector = document.getElementById("btnDeleteSelector");
 		m_elmListSelectors = document.getElementById("selectorsList");
 		m_elmNotifySelectorsList = document.getElementById("notifySelectorsList");
@@ -114,6 +118,7 @@
 		m_elmTextFilterURLs.addEventListener("keydown", onKeyDownFilterURLsText);
 		m_elmBtnClearFilterURLs.addEventListener("click", onClickBtnClearFilterURLs);
 		m_elmBtnRefreshURLs.addEventListener("click", onClickBtnRefreshURLs);
+		m_elmBtnEditURL.addEventListener("click", onClickBtnEditURL);
 		m_elmBtnDeleteURL.addEventListener("click", onClickBtnDeleteURL);
 		m_elmBtnDeleteAllRules.addEventListener("click", onClickBtnDeleteAllRules);
 		m_elmListURLs.addEventListener("mousedown", onMouseDownURLsList);
@@ -125,6 +130,7 @@
 		m_elmBtnClearFilterSelectors.addEventListener("click", onClickBtnClearFilterSelectors);
 		m_elmBtnRefreshSelectors.addEventListener("click", onClickBtnRefreshSelectors);
 		m_elmBtnJumpToElement.addEventListener("click", onClickBtnJumpToElement);
+		m_elmBtnEditSelector.addEventListener("click", onClickBtnEditSelector);
 		m_elmBtnDeleteSelector.addEventListener("click", onClickBtnDeleteSelector);
 		m_elmListSelectors.addEventListener("mousedown", onMouseDownSelectorsList);
 		m_elmListSelectors.addEventListener("keydown", onKeyDownList);
@@ -168,6 +174,25 @@
 	function onClickBtnRefreshURLs() {
 		loadURLsList();
 		notifyAction(m_elmNotifyUrlsList, "Refreshed");
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onClickBtnEditURL() {
+
+		if(!!m_elmSelListItemURL && m_elmSelListItemURL.style.display !== "none") {
+
+			// select the previous list item
+			const idxSel = ([].indexOf.call(m_elmListURLs.children, m_elmSelListItemURL));
+			const url = m_elmSelListItemURL.textContent;
+			const newUrl = messageBox("Edit URL.\n\n", "prompt", { defaultValue: url });
+
+			if(typeof(newUrl) === "string" && newUrl.trim() !== url) {
+				m_lizardDB.updateUrl(url, newUrl).then(() => {
+					notifyAction(m_elmNotifyUrlsList, "Updated");
+					loadURLsList(idxSel);
+				});
+			}
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
@@ -331,6 +356,24 @@
 		msg.data["newWin"] = event.shiftKey;
 
 		browser.runtime.sendMessage(msg);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////
+	function onClickBtnEditSelector() {
+
+		if(!!m_elmSelListItemURL && !!m_elmSelListItemSelector && m_elmSelListItemSelector.style.display !== "none") {
+
+			const idxSel = ([].indexOf.call(m_elmListSelectors.children, m_elmSelListItemSelector));
+			const selector = m_elmSelListItemSelector.textContent;
+			const newSelector = messageBox("Edit selector.\n\n", "prompt", { defaultValue: selector });
+
+			if(typeof(newSelector) === "string" && newSelector.trim() !== selector) {
+				m_lizardDB.updateCssSelector(m_elmSelListItemURL.textContent, selector, newSelector).then(() => {
+					loadSelectorsList(m_elmSelListItemURL.textContent, idxSel);
+					notifyAction(m_elmNotifySelectorsList, "Updated");
+				});
+			}
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
