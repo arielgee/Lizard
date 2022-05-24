@@ -453,7 +453,7 @@
 
 			if(count > 0) {
 				loadURLsList();
-				messageBox(`${count} valid rules for ${urlRules.length} URLs were successfully imported from file.\n\n'${file.name}'\n\n✱ Duplicate rules are merged and their details values are overwritten.`, "alert", false);
+				messageBox(`${count} valid rules for ${urlRules.length} URLs were successfully imported from file.\n\n'${file.name}'\n\n✱ Duplicate rules are merged and their details values are overwritten.`, "alert", {fail: false});
 			} else {
 				messageBox("No valid rules were found in file", "alert");
 			}
@@ -496,10 +496,10 @@
 				let result = await exportJsonFile.run(urlRules, "lizard-rules");
 
 				if( !!result.fileName && result.fileName.length > 0) {
-					messageBox(`${ruleCount} rules for ${urlRules.length} URLs were successfully exported to file.\n\n'${result.fileName}'`, "alert", false);
+					messageBox(`${ruleCount} rules for ${urlRules.length} URLs were successfully exported to file.\n\n'${result.fileName}'`, "alert", {fail: false});
 				}
 			} else {
-				messageBox("There isn't any rule to exported.", "alert", false);
+				messageBox("There isn't any rule to exported.", "alert", {fail: false});
 			}
 
 		} catch (error) {
@@ -633,7 +633,7 @@
 
 				});
 			} else {
-				messageBox("Selector has no value.\n\nAll fields are either 'false' or 'null'. It will be better to\ndelete it from the 'Delete Selector' button.", "alert", false);
+				messageBox("Selector has no value.\n\nAll fields are either 'false' or 'null'. It will be better to\ndelete it from the 'Delete Selector' button.", "alert", {fail: false});
 			}
 		}
 	}
@@ -747,8 +747,12 @@
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////
-	function messageBox(msgText, type = "alert", fail = true) {
+	function messageBox(msgText, type = "alert", details = {}) {
 
+		const {
+			fail = true,
+			defaultValue = "",
+		 } = details;
 		const lineIndent = "     ";
 		const prefixMessage = "➤ ";
 		const failPrefixMessage = prefixMessage + "Error\n\n" + lineIndent;
@@ -760,7 +764,7 @@
 		} else if(type === "confirm") {
 			return confirm(prefixMessage + msgText + "\n\n");
 		} else if(type === "prompt") {
-			return prompt(prefixMessage + msgText);
+			return prompt(prefixMessage + msgText, defaultValue);
 		}
 	}
 
