@@ -412,8 +412,7 @@ let CssSelectorGenerator = (function () {
 
 		const reducer = (data, selector_type) => {
 			const selectors_by_type = getSelectorsByType(element, selector_type);
-			const filtered_selectors =
-				filterSelectors(selectors_by_type, blacklist_re, whitelist_re);
+			const filtered_selectors = filterSelectors(selectors_by_type, blacklist_re, whitelist_re);
 			const found_selectors = orderSelectors(filtered_selectors, whitelist_re);
 
 			data[selector_type] = combineWithinSelector
